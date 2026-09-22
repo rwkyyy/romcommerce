@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<ruleset name="RomCommerce">
+    <description>WPCS + PHP compatibility ruleset for RomCommerce Lite. Scoped to shipped source only — tests/ use PSR-4 test-class naming and Mockery/Brain Monkey doubles that don't follow WP conventions, so they're covered by php -l and PHPUnit itself, not WPCS.</description>
+
+    <file>src</file>
+    <file>romcommerce.php</file>
+    <file>uninstall.php</file>
+
+    <arg value="sp"/>
+    <arg name="basepath" value="."/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="8"/>
+
+    <config name="minimum_supported_wp_version" value="6.0"/>
+    <config name="testVersion" value="7.4-"/>
+
+    <!-- WordPress-Extra (Core + Extra), not the full "WordPress" ruleset: WordPress-Docs'
+         mandatory file/class/function docblocks conflict with this project's documented
+         "no decorative comments" policy (CLAUDE.md) — WHY comments only. -->
+    <rule ref="WordPress-Extra">
+        <!-- This codebase uses PSR-4 (hand-rolled autoloader, see src/autoload.php), not WP's class-name-derived file naming. -->
+        <exclude name="WordPress.Files.FileName"/>
+        <!-- romcommerce/register_modules + romcommerce/booted are the documented Lite<->Pro public contract (CLAUDE.md) — namespaced like WooCommerce's own hooks, not renameable. -->
+        <exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores"/>
+        <!-- $class/$default/$numeric are the clearest names for what they hold; PHP allows reserved words as parameter names. -->
+        <exclude name="Universal.NamingConventions.NoReservedKeywordParameterNames"/>
+    </rule>
+
+    <!-- Real WordPress/WooCommerce capabilities WPCS doesn't recognize by default. -->
+    <rule ref="WordPress.WP.Capabilities">
+        <properties>
+            <property name="custom_capabilities" type="array">
+                <element value="manage_woocommerce"/>
+                <element value="edit_product"/>
+            </property>
+        </properties>
+    </rule>
+
+    <rule ref="PHPCompatibilityWP"/>
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="romcommerce"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
