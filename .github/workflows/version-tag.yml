@@ -1,0 +1,70 @@
+name: Tag release on version bump
+
+# Gates the tag on the same quality checks as ci.yml, then pushes a "vX.Y.Z"
+# tag when romcommerce.php's Version header has moved past the latest tag.
+# That tag push is what release.yml (wp.org SVN deploy) reacts to.
+#
+# Requires a secrets.RELEASE_TOKEN (a PAT with "Contents: read and write" on
+# this repo) instead of the default GITHUB_TOKEN: tags pushed with the default
+# token don't trigger other workflows (GitHub's anti-recursion guard), so
+# release.yml would never fire.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    name: Tag if version changed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+
+      - name: Quality gate (lint, WPCS, PHPStan, PHPUnit)
+        run: |
+          find src tests romcommerce.php uninstall.php -name '*.php' -print0 | xargs -0 -n1 php -l
+          composer phpcs
+          composer phpstan
+          composer test
+
+      - name: Read plugin version
+        id: version
+        run: |
+          HEADER_VERSION=$(grep -m1 "Version:" romcommerce.php | sed -E 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*//')
+          STABLE_TAG=$(grep -m1 "^Stable tag:" readme.txt | sed -E 's/^Stable tag:[[:space:]]*//')
+
+          if [ "$HEADER_VERSION" != "$STABLE_TAG" ]; then
+            echo "::error::romcommerce.php Version ($HEADER_VERSION) and readme.txt Stable tag ($STABLE_TAG) disagree."
+            exit 1
+          fi
+
+          echo "version=$HEADER_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether this version is already tagged
+        id: check
+        run: |
+          git fetch --tags
+          if git rev-parse -q --verify "refs/tags/v${{ steps.version.outputs.version }}" >/dev/null; then
+            echo "already_tagged=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already_tagged=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Tag and push
+        if: steps.check.outputs.already_tagged == 'false'
+        run: |
+          git tag "v${{ steps.version.outputs.version }}"
+          git push origin "v${{ steps.version.outputs.version }}"
