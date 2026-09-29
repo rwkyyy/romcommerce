@@ -30,7 +30,11 @@ final class Settings {
 		update_option( self::option_key( $module_id ), $settings, false );
 	}
 
-	public static function is_enabled( string $module_id, bool $default = true ): bool {
+	// Opt-in by default: a module a merchant has never touched must read as
+	// off, matching "you enable only the modules you need" (readme.txt). The
+	// two legal-floor modules (SAL Pictogram, Legal Guarantee Notice) pass
+	// $default = true explicitly to keep their deliberate default-on behaviour.
+	public static function is_enabled( string $module_id, bool $default = false ): bool {
 		$core = self::core();
 
 		return (bool) ( $core['enabled_modules'][ $module_id ] ?? $default );

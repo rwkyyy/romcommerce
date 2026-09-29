@@ -11,6 +11,7 @@ use RomCommerce\Settings;
 use WC_Order;
 use WC_Order_Item_Product;
 use WC_Product;
+use WP_Post;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -104,8 +105,9 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		return __( 'Legal Guarantee Notice', 'romcommerce' );
 	}
 
+	// Default on: a legal-floor compliance feature, not an opt-in extra.
 	public function is_enabled(): bool {
-		return Settings::is_enabled( self::ID );
+		return Settings::is_enabled( self::ID, true );
 	}
 
 	public function boot(): void {
@@ -869,7 +871,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 						'excluded_terms'            => isset( $_POST['romcommerce_lg_excluded_terms'] ) ? array_map( 'sanitize_text_field', (array) wp_unslash( $_POST['romcommerce_lg_excluded_terms'] ) ) : array(),
 						'alignment'                 => in_array( $alignment, self::ALIGNMENTS, true ) ? $alignment : 'left',
 						'garan_enabled'             => isset( $_POST['romcommerce_lg_garan_enabled'] ),
-						'page_id'                   => absint( wp_unslash( $_POST['romcommerce_lg_page_id'] ?? 0 ) ),
+						'page_id'                   => $this->save_page_id( absint( wp_unslash( $_POST['romcommerce_lg_page_id'] ?? 0 ) ) ),
 						'trigger_text'              => isset( $_POST['romcommerce_lg_trigger_text'] ) ? sanitize_text_field( wp_unslash( $_POST['romcommerce_lg_trigger_text'] ) ) : '',
 						'trigger_recommended_color' => isset( $_POST['romcommerce_lg_recommended_color'] ),
 					)
@@ -912,7 +914,13 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		);
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo ' <button type="submit" name="romcommerce_lg_create_page" value="1" class="button">' . esc_html__( 'Create notice page', 'romcommerce' ) . '</button>';
-		echo '<p class="description">' . esc_html__( 'Every notice link points here. Nothing shows until a page is set.', 'romcommerce' ) . '</p>';
+		echo '<p class="description">' . esc_html(
+			sprintf(
+				/* translators: %s: the [romcommerce_legal_guarantee_notice] shortcode */
+				__( 'Every notice link points here. Picking a page (new or existing) adds the %s shortcode to it automatically if it\'s missing.', 'romcommerce' ),
+				'[romcommerce_legal_guarantee_notice]'
+			)
+		) . '</p>';
 		echo '</td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Link text', 'romcommerce' ) . '</th><td>';
@@ -988,6 +996,45 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo '</tbody></table>';
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
+	}
+
+	/**
+	 * A merchant picking an existing page from the dropdown (rather than the
+	 * "Create notice page" button, which writes the shortcode into a page it
+	 * creates itself) would otherwise link every trigger at a page with no
+	 * shortcode on it — see ensure_shortcode_on_page(). Returns $page_id
+	 * unchanged; this is a save-time side effect, not a transform.
+	 */
+	private function save_page_id( int $page_id ): int {
+		if ( $page_id > 0 ) {
+			$this->ensure_shortcode_on_page( $page_id );
+		}
+
+		return $page_id;
+	}
+
+	/**
+	 * Idempotent (checked via has_shortcode()), so this is safe to call on
+	 * every save regardless of whether the page selection actually changed,
+	 * and won't duplicate the shortcode if a merchant already added it by hand.
+	 */
+	private function ensure_shortcode_on_page( int $page_id ): void {
+		$page = get_post( $page_id );
+
+		if ( ! $page instanceof WP_Post || 'page' !== $page->post_type ) {
+			return;
+		}
+
+		if ( has_shortcode( $page->post_content, 'romcommerce_legal_guarantee_notice' ) ) {
+			return;
+		}
+
+		wp_update_post(
+			array(
+				'ID'           => $page_id,
+				'post_content' => trim( $page->post_content . "\n\n[romcommerce_legal_guarantee_notice]" ),
+			)
+		);
 	}
 
 	private function handle_create_page(): void {

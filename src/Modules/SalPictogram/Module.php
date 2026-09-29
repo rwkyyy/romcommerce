@@ -33,8 +33,9 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		return __( 'SAL Pictogram', 'romcommerce' );
 	}
 
+	// Default on: a legal-floor compliance feature, not an opt-in extra.
 	public function is_enabled(): bool {
-		return Settings::is_enabled( self::ID );
+		return Settings::is_enabled( self::ID, true );
 	}
 
 	private const ALIGNMENTS = array( 'left', 'center', 'right' );
