@@ -4,7 +4,7 @@ Tags: woocommerce, romania, checkout, gdpr, invoicing
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4
+Stable tag: 0.5
 Requires Plugins: woocommerce
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -42,6 +42,11 @@ RomCommerce is a modular set of tools that adapt WooCommerce for the Romanian ma
 * **Multi-product review page**: one page where a customer reviews every product from a past order at once.
 * **WhatsApp / contact FAB**: a floating multi-channel contact button with a contextual WhatsApp link.
 * **Clear cart**: a one-click "empty cart" action.
+* **Coupon cleanup**: automatically moves expired coupons to the trash every day, with an optional setting to permanently empty the coupon trash after a set number of days.
+
+**Admin & branding**
+
+* **Admin & login branding**: replaces the WordPress logo on the login screen with your site logo, and applies one brand colour across wp-admin, the login screen, and buttons.
 
 = RomCommerce Pro =
 
@@ -88,6 +93,11 @@ Yes. RomCommerce declares HPOS compatibility and accesses orders only through Wo
 4. The floating multi-channel contact button.
 
 == Changelog ==
+
+= 0.5 =
+* New module: Admin & login branding — replace the WordPress logo on the login screen with your site logo, and apply one brand colour across wp-admin, the login screen, and buttons.
+* New module: Coupon cleanup — automatically moves expired coupons to the trash every day, with an optional setting to permanently empty the coupon trash after a configurable number of days (default 30).
+* EU legal guarantee notice: the EU GARAN label now supports a full-label reveal on click, taxonomy-based product exclusions, a merchant-uploaded label image, Brand/Trademark and Model identifier fields (including pulling the brand from WooCommerce's native Product Brands), half-year guarantee durations, a customisable trigger link (text and colour), and "more info" links to the underlying EU law text.
 
 = 0.4 =
 * New module: EU legal guarantee notice — the official EU-harmonised notice on the legal guarantee of conformity (Directive (EU) 2024/825 / Commission Implementing Regulation (EU) 2025/1960), mandatory EU-wide from 27 September 2026. Shown as a sitewide reminder with an official-artwork modal, with optional placements on checkout and product pages, and always included in the order confirmation email.

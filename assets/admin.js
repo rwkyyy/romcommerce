@@ -84,6 +84,14 @@
 		}
 		canvas().innerHTML = data.canvas;
 
+		// wc-enhanced-select.js only auto-inits once, on document ready — any
+		// .wc-enhanced-select markup that just arrived via innerHTML needs this
+		// re-triggered by hand. Safe to call even when nothing new needs it:
+		// the script itself skips elements already marked .enhanced.
+		if ( window.jQuery ) {
+			window.jQuery( document.body ).trigger( 'wc-enhanced-select-init' );
+		}
+
 		if ( pushUrl && data.url ) {
 			window.history.pushState( { rc: true }, '', data.url );
 		}

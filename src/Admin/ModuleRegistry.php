@@ -24,6 +24,7 @@ final class ModuleRegistry {
 		'checkout-billing'         => 'Checkout & Billing',
 		'orders-fulfilment'        => 'Orders & Fulfilment',
 		'storefront-merchandising' => 'Storefront & Merchandising',
+		'admin-branding'           => 'Admin & Branding',
 	);
 
 	private const MODULES = array(
@@ -107,6 +108,12 @@ final class ModuleRegistry {
 			'category'    => 'checkout-billing',
 			'label'       => 'Hide Voucher at Checkout',
 			'description' => 'Hides the coupon/voucher field from the checkout page.',
+		),
+		'coupon-cleanup'          => array(
+			'tier'        => 'lite',
+			'category'    => 'checkout-billing',
+			'label'       => 'Coupon Cleanup',
+			'description' => 'Automatically trashes expired coupons daily, with an option to permanently empty the coupon trash after a set number of days.',
 		),
 		'emergency-delivery-fees' => array(
 			'tier'        => 'pro',
@@ -207,6 +214,14 @@ final class ModuleRegistry {
 			'category'    => 'storefront-merchandising',
 			'label'       => 'Perks Shop',
 			'description' => 'Trust and service badges shown near the Add to Cart button.',
+		),
+
+		// Admin & Branding
+		'admin-branding'          => array(
+			'tier'        => 'lite',
+			'category'    => 'admin-branding',
+			'label'       => 'Admin & Login Branding',
+			'description' => 'Your site logo on the login screen and one brand colour across wp-admin, the login screen, and buttons. Pro adds a custom login background image with a gradient overlay.',
 		),
 	);
 

@@ -1,12 +1,1604 @@
-# Copyright (C) 2026 Uprise
-# This file is distributed under the GPL-2.0-or-later license.
+# Copyright (C) 2026 Uprise Team
+# This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: RomCommerce 0.1.0\n"
-"Report-Msgid-Bugs-To: https://romcommerce.ro\n"
+"Project-Id-Version: RomCommerce 0.5\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/trunk\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-29T13:05:38+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: romcommerce\n"
-"X-Generator: manual template\n"
+
+#. Plugin Name of the plugin
+#: romcommerce.php
+#: src/Admin/Menu.php:26
+#: src/Admin/Menu.php:27
+#: src/Admin/Page.php:36
+msgid "RomCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: romcommerce.php
+msgid "https://romcommerce.ro"
+msgstr ""
+
+#. Description of the plugin
+#: romcommerce.php
+msgid "Romanian commerce layer for WooCommerce: modular tools for compliance, checkout localisation, and Romanian-market essentials."
+msgstr ""
+
+#. Author of the plugin
+#: romcommerce.php
+msgid "Uprise Team"
+msgstr ""
+
+#. Author URI of the plugin
+#: romcommerce.php
+msgid "https://uprise.ro"
+msgstr ""
+
+#: romcommerce.php:51
+msgid "RomCommerce requires WooCommerce to be installed and active."
+msgstr ""
+
+#: src/Admin/Ajax.php:36
+msgid "Your session expired. The page will reload."
+msgstr ""
+
+#: src/Admin/Ajax.php:40
+msgid "You do not have permission to do that."
+msgstr ""
+
+#: src/Admin/Menu.php:82
+#: src/Modules/AdminBranding/Module.php:565
+#: src/Modules/WhatsappFab/Module.php:453
+msgid "Choose image"
+msgstr ""
+
+#: src/Admin/Menu.php:118
+#: src/Admin/Menu.php:119
+#: src/Admin/Page.php:158
+#: src/Admin/Page.php:269
+msgid "Dashboard"
+msgstr ""
+
+#: src/Admin/Page.php:149
+msgid "Module enabled."
+msgstr ""
+
+#: src/Admin/Page.php:150
+msgid "Module disabled."
+msgstr ""
+
+#: src/Admin/Page.php:159
+#: src/Admin/Page.php:310
+msgid "General"
+msgstr ""
+
+#: src/Admin/Page.php:163
+#: src/Admin/Page.php:331
+#: src/Admin/Page.php:421
+msgid "Modules"
+msgstr ""
+
+#: src/Admin/Page.php:173
+#: src/Admin/Page.php:457
+msgid "License"
+msgstr ""
+
+#: src/Admin/Page.php:174
+#: src/Admin/Page.php:471
+msgid "Status & Tools"
+msgstr ""
+
+#. translators: %s: plugin version number
+#: src/Admin/Page.php:182
+#, php-format
+msgid "RomCommerce Lite %s"
+msgstr ""
+
+#: src/Admin/Page.php:185
+msgid "for WooCommerce"
+msgstr ""
+
+#: src/Admin/Page.php:239
+msgid "enabled"
+msgstr ""
+
+#: src/Admin/Page.php:239
+msgid "disabled"
+msgstr ""
+
+#: src/Admin/Page.php:269
+#: src/Admin/Page.php:331
+msgid "Lite: complete & free"
+msgstr ""
+
+#: src/Admin/Page.php:273
+msgid "Reliable, scalable commerce for the Romanian market."
+msgstr ""
+
+#: src/Admin/Page.php:274
+msgid "Enable only what your shop needs. Every module is fully functional in Lite: no trial, no usage limit, no upsell logic hidden in the code."
+msgstr ""
+
+#: src/Admin/Page.php:281
+msgid "Modules enabled"
+msgstr ""
+
+#. translators: %d: total number of Lite modules
+#: src/Admin/Page.php:285
+#, php-format
+msgid "/ %d Lite modules"
+msgstr ""
+
+#: src/Admin/Page.php:291
+msgid "Legal & compliance"
+msgstr ""
+
+#: src/Admin/Page.php:292
+msgid "active"
+msgstr ""
+
+#: src/Admin/Page.php:294
+msgid "RomCommerce Pro"
+msgstr ""
+
+#: src/Admin/Page.php:295
+msgid "VIES lookup, address autocomplete, order confirmation and more. One licence, no per-module unlocks."
+msgstr ""
+
+#: src/Admin/Page.php:296
+msgid "See what's included"
+msgstr ""
+
+#: src/Admin/Page.php:300
+msgid "Manage modules"
+msgstr ""
+
+#: src/Admin/Page.php:307
+#: src/Modules/AdminBranding/Module.php:593
+#: src/Modules/ClearCart/Module.php:135
+#: src/Modules/CountiesPostcodes/Module.php:88
+#: src/Modules/CouponCleanup/Module.php:170
+#: src/Modules/FreeShippingBar/Module.php:267
+#: src/Modules/HideVoucher/Module.php:85
+#: src/Modules/LegalGuaranteeNotice/Module.php:878
+#: src/Modules/Maof/Module.php:53
+#: src/Modules/MultiAddress/Module.php:66
+#: src/Modules/PfPjBilling/Module.php:60
+#: src/Modules/PriceHistory/Module.php:219
+#: src/Modules/RelatedProducts/Module.php:123
+#: src/Modules/ReviewPage/Module.php:413
+#: src/Modules/SaleCategorySync/Module.php:178
+#: src/Modules/SalPictogram/Module.php:103
+#: src/Modules/VatId/Module.php:70
+#: src/Modules/WhatsappFab/Module.php:488
+msgid "Settings saved."
+msgstr ""
+
+#: src/Admin/Page.php:316
+msgid "Data on uninstall"
+msgstr ""
+
+#: src/Admin/Page.php:318
+msgid "Delete all RomCommerce data when the plugin is deleted"
+msgstr ""
+
+#: src/Admin/Page.php:319
+msgid "Off by default. When enabled, deleting RomCommerce (not merely deactivating it) also removes its settings, the price-history log, and saved delivery addresses. Product reviews are left in place. They are standard WooCommerce reviews. This cannot be undone."
+msgstr ""
+
+#: src/Admin/Page.php:321
+#: src/Modules/AdminBranding/Module.php:542
+#: src/Modules/ClearCart/Module.php:157
+#: src/Modules/CountiesPostcodes/Module.php:100
+#: src/Modules/CouponCleanup/Module.php:196
+#: src/Modules/FreeShippingBar/Module.php:245
+#: src/Modules/HideVoucher/Module.php:107
+#: src/Modules/LegalGuaranteeNotice/Module.php:989
+#: src/Modules/Maof/Module.php:65
+#: src/Modules/MultiAddress/Module.php:78
+#: src/Modules/PfPjBilling/Module.php:83
+#: src/Modules/PriceHistory/Module.php:245
+#: src/Modules/RelatedProducts/Module.php:155
+#: src/Modules/ReviewPage/Module.php:404
+#: src/Modules/SaleCategorySync/Module.php:163
+#: src/Modules/SalPictogram/Module.php:127
+#: src/Modules/VatId/Module.php:82
+#: src/Modules/WhatsappFab/Module.php:469
+msgid "Save changes"
+msgstr ""
+
+#. translators: %d: number of modules in this category
+#: src/Admin/Page.php:353
+#, php-format
+msgid "%d module"
+msgid_plural "%d modules"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Admin/Page.php:392
+msgid "Settings"
+msgstr ""
+
+#: src/Admin/Page.php:396
+#: src/Admin/Page.php:435
+msgid "Pro"
+msgstr ""
+
+#: src/Admin/Page.php:397
+msgid "Unlock"
+msgstr ""
+
+#: src/Admin/Page.php:399
+msgid "Not built yet"
+msgstr ""
+
+#: src/Admin/Page.php:408
+msgid "Disable module"
+msgstr ""
+
+#: src/Admin/Page.php:408
+msgid "Enable module"
+msgstr ""
+
+#: src/Admin/Page.php:422
+msgid "Unknown module."
+msgstr ""
+
+#: src/Admin/Page.php:438
+msgid "All modules"
+msgstr ""
+
+#: src/Admin/Page.php:445
+#: src/Modules/AdminBranding/Module.php:574
+msgid "Unlock with RomCommerce Pro"
+msgstr ""
+
+#: src/Admin/Page.php:448
+msgid "This module is not built yet."
+msgstr ""
+
+#: src/Admin/Page.php:463
+msgid "Activate your RomCommerce Pro license here once RomCommerce Pro is installed and active."
+msgstr ""
+
+#: src/Admin/Page.php:464
+msgid "Learn about RomCommerce Pro"
+msgstr ""
+
+#: src/Admin/Page.php:475
+msgid "RomCommerce version"
+msgstr ""
+
+#: src/Admin/Page.php:476
+msgid "PHP version"
+msgstr ""
+
+#: src/Admin/Page.php:477
+msgid "WooCommerce active"
+msgstr ""
+
+#: src/Admin/Page.php:477
+#: src/Admin/Page.php:481
+msgid "Yes"
+msgstr ""
+
+#: src/Admin/Page.php:477
+#: src/Admin/Page.php:481
+msgid "No"
+msgstr ""
+
+#: src/Admin/Page.php:481
+msgid "HPOS enabled"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:39
+msgid "Admin & Login Branding"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:519
+msgid "Replaces the WordPress logo on the login screen with your site logo (Settings → General → Site Icon/Logo) and applies one brand colour across wp-admin and the login screen."
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:525
+#: src/Modules/ClearCart/Module.php:144
+#: src/Modules/CouponCleanup/Module.php:179
+#: src/Modules/FreeShippingBar/Module.php:216
+#: src/Modules/HideVoucher/Module.php:94
+#: src/Modules/PfPjBilling/Module.php:71
+#: src/Modules/RelatedProducts/Module.php:132
+#: src/Modules/ReviewPage/Module.php:379
+#: src/Modules/SaleCategorySync/Module.php:137
+#: src/Modules/WhatsappFab/Module.php:393
+msgid "Module"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:527
+#: src/Modules/ClearCart/Module.php:146
+#: src/Modules/CouponCleanup/Module.php:181
+#: src/Modules/FreeShippingBar/Module.php:218
+#: src/Modules/HideVoucher/Module.php:96
+#: src/Modules/RelatedProducts/Module.php:134
+#: src/Modules/ReviewPage/Module.php:381
+#: src/Modules/SaleCategorySync/Module.php:139
+#: src/Modules/WhatsappFab/Module.php:395
+msgid "Enable"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:529
+msgid "Brand colour"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:531
+msgid "Used for the login button, the wp-admin menu highlight, and admin bar accents. Darker and lighter shades are derived automatically."
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:533
+msgid "Frontend dropdowns"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:535
+msgid "Also brand WooCommerce's select2 dropdowns on the frontend (e.g. checkout country/state fields)"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:539
+msgid "Login background"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:564
+msgid "Background image"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:567
+msgid "Overlay colour"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:570
+msgid "Overlay opacity"
+msgstr ""
+
+#: src/Modules/AdminBranding/Module.php:574
+msgid "A custom background image with a gradient overlay for the login screen."
+msgstr ""
+
+#: src/Modules/ClearCart/Module.php:31
+msgid "Clear Cart"
+msgstr ""
+
+#: src/Modules/ClearCart/Module.php:102
+msgid "Sigur doriți să goliți coșul?"
+msgstr ""
+
+#: src/Modules/ClearCart/Module.php:104
+msgid "Golește coșul"
+msgstr ""
+
+#: src/Modules/ClearCart/Module.php:138
+msgid "Adds a one-click button that empties the whole cart. Also available anywhere via the [romcommerce_clear_cart] shortcode."
+msgstr ""
+
+#: src/Modules/ClearCart/Module.php:148
+msgid "Cart page button"
+msgstr ""
+
+#: src/Modules/ClearCart/Module.php:150
+msgid "Show the button in the cart actions area"
+msgstr ""
+
+#: src/Modules/ClearCart/Module.php:152
+msgid "Confirmation"
+msgstr ""
+
+#: src/Modules/ClearCart/Module.php:154
+msgid "Ask the customer to confirm before emptying the cart"
+msgstr ""
+
+#: src/Modules/CountiesPostcodes/Module.php:30
+msgid "Counties & Postcodes"
+msgstr ""
+
+#: src/Modules/CountiesPostcodes/Module.php:79
+msgid "Codul poștal din România trebuie să conțină exact 6 cifre."
+msgstr ""
+
+#: src/Modules/CountiesPostcodes/Module.php:91
+msgid "Validates Romanian postal codes (6 digits) at checkout. County data comes from WooCommerce core, so nothing is duplicated."
+msgstr ""
+
+#: src/Modules/CountiesPostcodes/Module.php:96
+msgid "Postcode validation"
+msgstr ""
+
+#: src/Modules/CountiesPostcodes/Module.php:98
+msgid "Require a valid 6-digit Romanian postcode at checkout"
+msgstr ""
+
+#: src/Modules/CountiesPostcodes/Module.php:103
+msgid "RomCommerce Pro adds bidirectional postcode/street autocomplete from a Romanian address dataset for a faster checkout."
+msgstr ""
+
+#: src/Modules/CouponCleanup/Module.php:40
+msgid "Coupon Cleanup"
+msgstr ""
+
+#: src/Modules/CouponCleanup/Module.php:173
+msgid "Keeps your coupon list tidy without manual upkeep: expired coupons are moved to the trash automatically, and can optionally be deleted for good after they have sat there a while."
+msgstr ""
+
+#: src/Modules/CouponCleanup/Module.php:183
+msgid "Trash expired coupons"
+msgstr ""
+
+#: src/Modules/CouponCleanup/Module.php:185
+msgid "Every day, move published coupons past their expiry date to the trash"
+msgstr ""
+
+#: src/Modules/CouponCleanup/Module.php:187
+msgid "Empty coupon trash"
+msgstr ""
+
+#: src/Modules/CouponCleanup/Module.php:189
+msgid "Permanently delete coupons after they have been in the trash for"
+msgstr ""
+
+#: src/Modules/CouponCleanup/Module.php:191
+msgid "days"
+msgstr ""
+
+#: src/Modules/CouponCleanup/Module.php:192
+msgid "This is separate from your site's general trash setting — it only affects coupons, and applies even if that site-wide auto-empty is disabled."
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:32
+msgid "Free Shipping Bar"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:71
+msgid "Felicitări! Beneficiați de livrare gratuită."
+msgstr ""
+
+#. translators: %s: formatted remaining amount
+#: src/Modules/FreeShippingBar/Module.php:77
+#, php-format
+msgid "Mai adăugați %s pentru livrare gratuită."
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:210
+msgid "Shows how much more the customer needs to spend to qualify for free shipping. The threshold is read from your WooCommerce free-shipping method automatically."
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:220
+msgid "Placements"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:222
+msgid "Under the Add to Cart button"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:224
+msgid "On the cart page"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:226
+msgid "On the checkout page"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:227
+msgid "Toggle off any placement your theme already provides to avoid a double indicator."
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:229
+msgid "Colours"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:230
+msgid "Active (filled)"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:232
+msgid "Inactive (track)"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:236
+msgid "Corner radius"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:238
+msgid "0 for square corners, up to 30 for a fully rounded bar."
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:240
+msgid "Manual thresholds"
+msgstr ""
+
+#: src/Modules/FreeShippingBar/Module.php:242
+msgid "One per line as COUNTRY:AMOUNT (e.g. RO:200). Overrides the auto-detected threshold for that country. Use it when free shipping is not a WooCommerce core method."
+msgstr ""
+
+#: src/Modules/HideVoucher/Module.php:29
+msgid "Hide Voucher at Checkout"
+msgstr ""
+
+#: src/Modules/HideVoucher/Module.php:88
+msgid "Hides the coupon field so customers do not leave checkout to search for a code."
+msgstr ""
+
+#: src/Modules/HideVoucher/Module.php:98
+msgid "Hide on checkout"
+msgstr ""
+
+#: src/Modules/HideVoucher/Module.php:100
+msgid "Remove the coupon field from the checkout page"
+msgstr ""
+
+#: src/Modules/HideVoucher/Module.php:102
+msgid "Hide on cart"
+msgstr ""
+
+#: src/Modules/HideVoucher/Module.php:104
+msgid "Also remove the coupon field from the cart page"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:104
+msgid "Legal Guarantee Notice"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:172
+msgid "Drepturile tale privind garanția legală"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:261
+msgid "Legal guarantee notice"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:262
+msgid "Exclude this product from the notice link on its product page, even if its categories/tags aren't excluded in the module's settings."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:430
+msgid "Notificarea armonizată UE privind garanția legală de conformitate"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:431
+msgid "Vezi informațiile complete pe portalul Your Europe"
+msgstr ""
+
+#. translators: %s: guarantee duration in years, e.g. "3" or "2,5"
+#: src/Modules/LegalGuaranteeNotice/Module.php:459
+#, php-format
+msgid "Garanție de producător (EU GARAN): %s ani — vezi eticheta completă"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:470
+msgid "Detalii despre garanția de durabilitate"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:539
+msgid "Eticheta EU GARAN"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:604
+msgid "EU GARAN"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:641
+msgid "Guarantee duration (years)"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:643
+msgid "Only for a voluntary producer durability guarantee that is free of charge and covers the entire product. The EU GARAN label shows automatically on this product's page once this is 2.5 years or more; leave blank or below 2.5 to not show it. Half-year values (2.5, 3.5…) are allowed; anything else is rounded to the nearest half. RomCommerce does not verify eligibility."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:656
+msgid "Use WooCommerce brand"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:658
+msgid "Use this product's assigned WooCommerce Brand instead of the field below."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:666
+msgid "Brand / Trademark (optional)"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:668
+msgid "Filled in directly on the official label graphic in place of this field's caption. Ignored if \"Use WooCommerce brand\" above is checked, or if a full label image is uploaded below."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:675
+msgid "Model identifier (optional)"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:677
+msgid "Filled in directly on the official label graphic in place of this field's caption. Ignored if a full label image is uploaded below."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:682
+msgid "Full label image (optional)"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:689
+msgid "Select image"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:690
+msgid "Remove"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:691
+msgid "A producer-supplied, already-compliant full EU GARAN label image (brand/model/duration already filled in). When set, this is shown instead of our auto-generated version when a shopper expands the badge."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:710
+msgid "Select GARAN label image"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:776
+msgid "Beneficiați de o garanție legală de conformitate de minimum 2 ani pentru bunurile achiziționate în Uniunea Europeană."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:780
+#: src/Modules/LegalGuaranteeNotice/Module.php:785
+#: src/Modules/LegalGuaranteeNotice/Module.php:1003
+msgid "Garanția legală de conformitate"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:787
+#: src/Modules/LegalGuaranteeNotice/Module.php:837
+msgid "Detalii"
+msgstr ""
+
+#. translators: 1: product name, 2: guarantee duration in years, e.g. "3" or "2,5"
+#: src/Modules/LegalGuaranteeNotice/Module.php:815
+#, php-format
+msgid "%1$s beneficiază de eticheta EU GARAN — garanție de producător pe durabilitate, gratuită, %2$s ani."
+msgstr ""
+
+#. translators: %s: brand or trademark name
+#: src/Modules/LegalGuaranteeNotice/Module.php:825
+#, php-format
+msgid "Brand/Marcă: %s."
+msgstr ""
+
+#. translators: %s: model identifier
+#: src/Modules/LegalGuaranteeNotice/Module.php:830
+#, php-format
+msgid "Model: %s."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:851
+msgid "More info"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:897
+msgid "Show notice"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:899
+msgid "Show the EU legal-guarantee notice sitewide. Mandatory EU-wide from 27 September 2026."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:900
+msgid "Directive (EU) 2024/825"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:903
+msgid "Notice page"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:909
+#: src/Modules/ReviewPage/Module.php:389
+#: src/Modules/SaleCategorySync/Module.php:148
+msgid "— none —"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:914
+msgid "Create notice page"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:915
+msgid "Every notice link points here. Nothing shows until a page is set."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:918
+msgid "Link text"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:920
+msgid "Shown on the footer, checkout, and product-page links."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:923
+msgid "Extra placements"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:924
+msgid "Checkout page, above the terms and conditions checkbox"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:925
+msgid "Single product pages"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:926
+msgid "The notice already appears in the footer and order emails. These add it to extra spots."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:929
+msgid "Exclude products"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:936
+msgid "Search categories, tags, brands…"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:961
+msgid "Products in these terms skip the product-page link (any taxonomy, not just categories). The footer reminder is unaffected. To exclude a single product without excluding its whole category, use the checkbox on that product's General tab."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:964
+#: src/Modules/SalPictogram/Module.php:116
+msgid "Alignment"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:966
+#: src/Modules/SalPictogram/Module.php:118
+msgid "Left"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:967
+#: src/Modules/SalPictogram/Module.php:119
+msgid "Center"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:968
+#: src/Modules/SalPictogram/Module.php:120
+msgid "Right"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:969
+msgid "None — I'll add the link myself"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:974
+msgid "Where the footer link sits. \"None\" skips the automatic footer link; other placements still work."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:977
+msgid "Link color"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:978
+msgid "Use recommended color"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:979
+msgid "Unchecked, the link inherits your theme's own link color."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:982
+msgid "EU GARAN label"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:983
+msgid "Enable for products with a qualifying producer durability guarantee"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:984
+msgid "Reg. (EU) 2025/1960"
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:985
+msgid "Adds an EU GARAN tab to each product's edit screen. The label shows once that product's guarantee duration is 2.5 years or more. Separate from the notice above, and optional."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:997
+msgid "A notice page is already linked."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:1012
+msgid "The notice page could not be created."
+msgstr ""
+
+#: src/Modules/LegalGuaranteeNotice/Module.php:1020
+msgid "Notice page created and linked."
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:45
+#: src/Modules/Maof/Module.php:36
+msgid "MAOF"
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:84
+msgid "Posibile comenzi asociate: verificare manuală necesară"
+msgstr ""
+
+#. translators: %d: number of other active orders
+#: src/Modules/Maof/Admin.php:88
+#, php-format
+msgid "%d activă"
+msgid_plural "%d active"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Modules/Maof/Admin.php:112
+msgid "MAOF: posibile comenzi asociate"
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:132
+msgid "Nicio comandă asociată în ultimele 12 luni."
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:136
+msgid "Posibile comenzi asociate: verificare manuală, nu o confirmare."
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:139
+msgid "Comandă"
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:140
+msgid "Status"
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:141
+msgid "Potrivire"
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:167
+msgid "Potrivirile slabe (un singur identificator) nu sunt o dovadă."
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:183
+msgid "puternică"
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:183
+msgid "slabă"
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:186
+msgid "e-mail + telefon"
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:188
+msgid "e-mail"
+msgstr ""
+
+#: src/Modules/Maof/Admin.php:190
+msgid "telefon"
+msgstr ""
+
+#: src/Modules/Maof/Module.php:56
+msgid "Shows authorised staff possible related orders (by e-mail or phone, over a 12-month window) and warns about active duplicate orders. It is decision support only. It never cancels, blocks or refuses an order automatically, and no risk score is stored."
+msgstr ""
+
+#: src/Modules/Maof/Module.php:61
+msgid "MAOF finder"
+msgstr ""
+
+#: src/Modules/Maof/Module.php:63
+msgid "Show the MAOF column and order review box"
+msgstr ""
+
+#: src/Modules/Maof/Module.php:69
+msgid "Privacy notice paragraph"
+msgstr ""
+
+#: src/Modules/Maof/Module.php:70
+msgid "Add a paragraph like this to your checkout privacy information (GDPR Art. 13). Adjust the contact details and the period if you change them."
+msgstr ""
+
+#: src/Modules/Maof/Module.php:72
+msgid "The Legitimate Interests Assessment, the Article 30 record and the DPIA screening are merchant obligations. RomCommerce Pro’s compliance checklist surfaces them as attestations."
+msgstr ""
+
+#: src/Modules/Maof/Module.php:76
+msgid "Pentru prevenirea erorilor de procesare și livrare, a comenzilor duplicate și, după caz, a utilizării abuzive a serviciului, comparăm adresa de e-mail și/sau numărul de telefon furnizate la plasarea comenzii cu datele comenzilor din ultimele 12 luni. Prelucrarea se întemeiază pe interesul nostru legitim de a asigura procesarea corectă și sigură a comenzilor și de a preveni pierderile operaționale, conform art. 6 alin. (1) lit. f) din RGPD. Rezultatul este un indicator intern destinat personalului autorizat și nu determină automat anularea sau refuzarea unei comenzi. În cazul identificării unor posibile comenzi asociate, situația este verificată manual. Puteți solicita accesul sau rectificarea datelor și vă puteți opune prelucrării, în condițiile art. 21 din RGPD, contactându-ne la [adresă de contact]."
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:66
+msgid "Etichetă (ex. Acasă, Birou)"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:67
+msgid "Prenume"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:68
+msgid "Nume"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:69
+msgid "Firmă (opțional)"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:70
+msgid "Țară"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:71
+msgid "Județ"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:72
+msgid "Oraș"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:73
+msgid "Cod poștal"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:74
+#: src/Modules/MultiAddress/MyAccount.php:167
+msgid "Adresă"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:75
+msgid "Adresă (rând 2, opțional)"
+msgstr ""
+
+#: src/Modules/MultiAddress/AddressBook.php:76
+msgid "Telefon (opțional)"
+msgstr ""
+
+#: src/Modules/MultiAddress/Checkout.php:29
+msgid "Alegeți o adresă salvată"
+msgstr ""
+
+#: src/Modules/MultiAddress/Checkout.php:31
+msgid "— adresă nouă —"
+msgstr ""
+
+#: src/Modules/MultiAddress/Checkout.php:37
+msgid "Selectarea unei adrese salvate completează adresa de livrare și activează automat \"Livrare la altă adresă\" dacă nu era deja bifată."
+msgstr ""
+
+#: src/Modules/MultiAddress/Module.php:40
+msgid "Multiple Delivery Addresses"
+msgstr ""
+
+#: src/Modules/MultiAddress/Module.php:69
+msgid "Lets logged-in customers save several delivery addresses under “Adrese de livrare” in their account and pick one at checkout."
+msgstr ""
+
+#: src/Modules/MultiAddress/Module.php:74
+msgid "Multiple addresses"
+msgstr ""
+
+#: src/Modules/MultiAddress/Module.php:76
+msgid "Enable the saved delivery address book"
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:49
+#: src/Modules/MultiAddress/MyAccount.php:54
+msgid "Adrese de livrare"
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:89
+msgid "Sesiunea a expirat. Încercați din nou."
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:102
+msgid "Completați toate câmpurile obligatorii (marcate cu *)."
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:111
+msgid "Ați atins numărul maxim de adrese salvate."
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:113
+msgid "Adresa a fost salvată."
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:128
+msgid "Acțiune invalidă."
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:134
+msgid "Adresa a fost ștearsă."
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:153
+msgid "Adaugă o adresă"
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:161
+msgid "Nu aveți adrese de livrare salvate."
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:166
+msgid "Etichetă"
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:178
+msgid "Editează"
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:179
+msgid "Ștergeți această adresă?"
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:179
+msgid "Șterge"
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:200
+msgid "obligatoriu"
+msgstr ""
+
+#: src/Modules/MultiAddress/MyAccount.php:213
+msgid "Salvează adresa"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:79
+msgid "Tip client"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:82
+msgid "Persoană fizică"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:83
+msgid "Persoană juridică"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:94
+msgid "Denumire firmă"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:104
+msgid "CUI / CIF"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:114
+msgid "Nr. Reg. Com. (opțional)"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:123
+msgid "Bancă (opțional)"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:132
+msgid "IBAN (opțional)"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:145
+msgid "CNP"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:168
+msgid "Vă rugăm să introduceți CUI / CIF pentru persoană juridică."
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:171
+msgid "Vă rugăm să introduceți denumirea firmei."
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:176
+msgid "IBAN-ul introdus nu este valid."
+msgstr ""
+
+#: src/Modules/PfPjBilling/Checkout.php:185
+msgid "CNP-ul introdus nu este valid."
+msgstr ""
+
+#: src/Modules/PfPjBilling/Module.php:41
+msgid "PF/PJ Billing Fields"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Module.php:65
+msgid "Adds individual (PF) vs company (PJ) billing fields at checkout and writes the data where Romanian invoicing plugins (SmartBill, Oblio, EasySales) read it."
+msgstr ""
+
+#: src/Modules/PfPjBilling/Module.php:73
+msgid "Enable PF/PJ billing fields"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Module.php:75
+msgid "CNP field"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Module.php:77
+msgid "Show the CNP field for individuals at checkout"
+msgstr ""
+
+#: src/Modules/PfPjBilling/Module.php:78
+msgid "Off by default: a legal derogation lets the 13-zero placeholder stand in for the CNP, so the field stays hidden and the placeholder is stored under the hood. Enable only if you truly need to collect the real CNP."
+msgstr ""
+
+#: src/Modules/PfPjBilling/Module.php:79
+msgid "The CNP is a national ID number with elevated protection under Law 190/2018 art. 4. Collect it only when necessary and state the purpose in your privacy notice."
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:31
+msgid "Price History"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:89
+msgid "Istoric preț"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:109
+msgid "Ultimele 30 de zile"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:132
+msgid "Nu există încă modificări de preț înregistrate."
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:139
+msgid "Data"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:140
+msgid "Preț efectiv"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:183
+msgid "Preț minim pe ultimele 30 de zile:"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:225
+msgid "Records every effective price change and shows the lowest price of the last 30 days next to reduced prices, as required by the Omnibus Directive."
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:230
+msgid "Price history"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:232
+msgid "Log price changes and display the 30-day lowest price"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:234
+msgid "Emphasis"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:236
+msgid "None"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:237
+msgid "Bold"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:238
+msgid "Underline"
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:243
+msgid "A small visual emphasis on the \"lowest price of the last 30 days\" line shown on the product page."
+msgstr ""
+
+#: src/Modules/PriceHistory/Module.php:248
+msgid "RomCommerce Pro adds a placement/location selector for where the 30-day floor text is shown, plus a dedicated price-history report with sparklines."
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:30
+msgid "Related Products"
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:126
+msgid "Controls the related-products block on single-product pages: which relation rules apply, how many products show, and in how many columns."
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:136
+msgid "Hide related products"
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:138
+msgid "Remove the related-products block entirely"
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:139
+msgid "When enabled, the options below are ignored."
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:141
+msgid "Relate by"
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:143
+msgid "Shared category"
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:145
+msgid "Shared tag"
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:146
+msgid "If neither is selected, WooCommerce falls back to random products."
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:148
+msgid "Number of products"
+msgstr ""
+
+#: src/Modules/RelatedProducts/Module.php:151
+msgid "Columns"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:38
+msgid "Multi-Product Review Page"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:55
+msgid "Recenziile la produse sunt dezactivate în acest magazin."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:65
+msgid "Această comandă nu este încă disponibilă pentru evaluare."
+msgstr ""
+
+#. translators: %d: number of reviews saved
+#: src/Modules/ReviewPage/Module.php:163
+#, php-format
+msgid "%d recenzie a fost trimisă. Mulțumim!"
+msgid_plural "%d recenzii au fost trimise. Mulțumim!"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Modules/ReviewPage/Module.php:169
+msgid "Selectați o notă și scrieți o recenzie pentru a trimite."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:243
+msgid "Această comandă nu conține produse care pot fi evaluate."
+msgstr ""
+
+#. translators: %s: order number
+#: src/Modules/ReviewPage/Module.php:248
+#, php-format
+msgid "Evaluați produsele din comanda #%s"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:260
+msgid "Ați evaluat deja acest produs. Vă mulțumim!"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:267
+msgid "Notă"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:268
+msgid "— alegeți —"
+msgstr ""
+
+#. translators: %d: star rating value
+#: src/Modules/ReviewPage/Module.php:271
+#, php-format
+msgid "%d stea"
+msgid_plural "%d stele"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Modules/ReviewPage/Module.php:275
+msgid "Recenzia dumneavoastră"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:278
+msgid "Trimiteți recenzia"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:283
+msgid "Ați evaluat toate produsele din această comandă."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:285
+msgid "Trimiteți toate recenziile"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:292
+msgid "Perioada de evaluare a expirat"
+msgstr ""
+
+#. translators: %d: review window in days
+#: src/Modules/ReviewPage/Module.php:296
+#, php-format
+msgid "Produsele pot fi evaluate în %d de zile de la finalizarea comenzii. Această perioadă a expirat."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:303
+#: src/Modules/ReviewPage/Module.php:425
+msgid "Evaluați produsele"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:324
+msgid "Alegeți o comandă pentru a evalua produsele:"
+msgstr ""
+
+#. translators: 1: order number, 2: order completed date
+#: src/Modules/ReviewPage/Module.php:329
+#, php-format
+msgid "Comanda #%1$s (%2$s)"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:337
+msgid "Această pagină se deschide dintr-un link de evaluare primit pentru comanda dumneavoastră. Verificați e-mailul comenzii pentru linkul de evaluare."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:373
+msgid "A single page where customers review every product from a past order at once. Reviews are saved into WooCommerce's native review system."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:383
+msgid "Review page"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:394
+msgid "The page containing the [romcommerce_review_page] shortcode. Review links point here."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:395
+msgid "Create review page"
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:398
+msgid "Eligibility window"
+msgstr ""
+
+#. translators: %d: number of days
+#: src/Modules/ReviewPage/Module.php:400
+#, php-format
+msgid "%d days after the order is completed."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:407
+msgid "RomCommerce Pro adds review-page template customization and automatic review-reminder cadence."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:419
+msgid "A review page is already linked."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:434
+msgid "The review page could not be created."
+msgstr ""
+
+#: src/Modules/ReviewPage/Module.php:442
+msgid "Review page created and linked."
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:31
+msgid "Sale Category Sync"
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:131
+msgid "Keeps the category below in sync automatically: whenever a product is saved, and once a day when WooCommerce starts/ends scheduled sales, products currently on sale are added to it and products no longer on sale are removed from it. You never need to tag products by hand."
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:141
+msgid "Sale category"
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:155
+msgid "No product categories exist yet."
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:158
+msgid "Products on sale are added to this category; products no longer on sale are removed from it."
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:159
+msgid "Create a \"Reduceri\" category"
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:167
+msgid "Resync all products now"
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:168
+msgid "Only needed for a one-off fix: for example, you just picked this category, or you imported/changed products in a way that skipped the automatic sync. It walks every published product and re-checks its sale state right now; the automatic sync above keeps handling everything afterwards."
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:188
+msgid "The category could not be created."
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:195
+msgid "Sale category created and selected."
+msgstr ""
+
+#: src/Modules/SaleCategorySync/Module.php:200
+msgid "All products resynced."
+msgstr ""
+
+#: src/Modules/SalPictogram/Module.php:33
+msgid "SAL Pictogram"
+msgstr ""
+
+#: src/Modules/SalPictogram/Module.php:74
+msgid "Soluționarea Alternativă a Litigiilor (ANPC)"
+msgstr ""
+
+#: src/Modules/SalPictogram/Module.php:112
+msgid "Show pictogram"
+msgstr ""
+
+#: src/Modules/SalPictogram/Module.php:114
+msgid "Display the official SAL pictogram on the homepage"
+msgstr ""
+
+#: src/Modules/SalPictogram/Module.php:125
+msgid "Where the pictogram sits inside your site's footer."
+msgstr ""
+
+#: src/Modules/VatId/Module.php:32
+msgid "VAT ID Validation"
+msgstr ""
+
+#: src/Modules/VatId/Module.php:62
+msgid "CUI / CIF-ul introdus nu are un format valid."
+msgstr ""
+
+#: src/Modules/VatId/Module.php:73
+msgid "Validates the CUI/CIF format and checksum at checkout for company (PJ) orders. Works alongside the PF/PJ billing fields."
+msgstr ""
+
+#: src/Modules/VatId/Module.php:78
+msgid "VAT ID validation"
+msgstr ""
+
+#: src/Modules/VatId/Module.php:80
+msgid "Reject invalid CUI/CIF at checkout"
+msgstr ""
+
+#: src/Modules/VatId/Module.php:85
+msgid "RomCommerce Pro adds a live VIES lookup that confirms the VAT ID is registered and can autofill the company name and address from it."
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:32
+msgid "WhatsApp"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:35
+msgid "Phone in international format, digits only (e.g. 40712345678)"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:40
+msgid "Telefon"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:43
+msgid "Phone number"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:48
+msgid "E-mail"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:51
+msgid "E-mail address"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:56
+msgid "Messenger"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:59
+msgid "Messenger link (m.me/…)"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:64
+msgid "Facebook"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:67
+msgid "Facebook Page URL"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:72
+msgid "Grup Facebook"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:75
+msgid "Facebook Group URL"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:80
+msgid "Instagram"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:83
+msgid "Instagram profile URL"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:88
+msgid "YouTube"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:91
+msgid "YouTube channel URL"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:96
+msgid "TikTok"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:99
+msgid "TikTok profile URL"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:104
+msgid "Telegram"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Channels.php:107
+msgid "Telegram link (t.me/…)"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:105
+msgid "WhatsApp / Contact FAB"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:157
+msgid "Deschideți canalele de contact"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:387
+msgid "A floating multi-channel contact button. Enable the channels you use and enter each one's link or number. Only WhatsApp prefills a message from the current page."
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:397
+msgid "Position"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:399
+msgid "Bottom left"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:400
+msgid "Bottom right"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:402
+msgid "Bottom left avoids colliding with the cart widget and most live-chat plugins."
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:406
+msgid "Channels"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:407
+msgid "Each channel can use its own colour and icon: the default brand icon, an image from your media library, a custom SVG, or a dashicon (WordPress' built-in icon set)."
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:422
+msgid "Enabled"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:427
+msgid "Colour"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:432
+msgid "Icon"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:435
+msgid "Default"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:436
+msgid "Image (media library)"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:437
+msgid "Custom SVG"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:438
+msgid "Dashicon"
+msgstr ""
+
+#: src/Modules/WhatsappFab/Module.php:462
+msgid "A dashicon slug. See the Dashicons reference under any WordPress admin page."
+msgstr ""

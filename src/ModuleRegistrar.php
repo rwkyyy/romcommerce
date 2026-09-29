@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace RomCommerce;
 
+use RomCommerce\Modules\AdminBranding\Module as AdminBrandingModule;
 use RomCommerce\Modules\ClearCart\Module as ClearCartModule;
+use RomCommerce\Modules\CouponCleanup\Module as CouponCleanupModule;
 use RomCommerce\Modules\CountiesPostcodes\Module as CountiesPostcodesModule;
 use RomCommerce\Modules\FreeShippingBar\Module as FreeShippingBarModule;
 use RomCommerce\Modules\HideVoucher\Module as HideVoucherModule;
@@ -49,5 +51,7 @@ final class ModuleRegistrar {
 		$modules->register( new ReviewPageModule() );
 		$modules->register( new WhatsappFabModule() );
 		$modules->register( new ClearCartModule() );
+		$modules->register( new CouponCleanupModule() );
+		$modules->register( new AdminBrandingModule() );
 	}
 }

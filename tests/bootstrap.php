@@ -24,6 +24,9 @@ foreach (
 		'WEEK_IN_SECONDS'   => 60 * 60 * 24 * 7,
 		'MONTH_IN_SECONDS'  => 60 * 60 * 24 * 30,
 		'YEAR_IN_SECONDS'   => 60 * 60 * 24 * 365,
+		// wp-includes/wp-db.php: a $wpdb::get_results() output-format flag,
+		// not a function, so Brain Monkey can't stub it per test either.
+		'ARRAY_A'           => 'ARRAY_A',
 	) as $constant => $value
 ) {
 	if ( ! defined( $constant ) ) {
@@ -33,3 +36,11 @@ foreach (
 
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 require_once dirname( __DIR__ ) . '/src/autoload.php';
+
+// romcommerce.php itself is never require'd here (it would try to boot a real
+// plugin lifecycle) but a few modules resolve real on-disk assets (e.g. the
+// EU GARAN label SVGs) via ROMCOMMERCE_DIR, so it's defined standalone,
+// pointing at the same plugin root romcommerce.php itself would use.
+if ( ! defined( 'ROMCOMMERCE_DIR' ) ) {
+	define( 'ROMCOMMERCE_DIR', dirname( __DIR__ ) );
+}

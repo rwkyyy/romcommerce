@@ -55,6 +55,15 @@ final class Menu {
 		// present before the AJAX-swapped canvas ever renders that pane.
 		wp_enqueue_media();
 
+		// WooCommerce's own select2 skin lives inside its general admin.css,
+		// not a standalone stylesheet — enqueued here (not per-module) so any
+		// pane's taxonomy/term picker (e.g. Legal Guarantee Notice's exclusion
+		// list) gets it without each module re-enqueuing it. admin.js
+		// re-triggers wc-enhanced-select-init after every AJAX canvas swap,
+		// since this script's own auto-init only runs once on page load.
+		wp_enqueue_style( 'woocommerce_admin_styles' );
+		wp_enqueue_script( 'wc-enhanced-select' );
+
 		wp_enqueue_script(
 			'romcommerce-admin',
 			plugins_url( 'assets/admin.js', ROMCOMMERCE_FILE ),

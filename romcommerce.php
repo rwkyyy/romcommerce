@@ -3,7 +3,7 @@
  * Plugin Name:       RomCommerce
  * Plugin URI:        https://romcommerce.ro
  * Description:       Romanian commerce layer for WooCommerce: modular tools for compliance, checkout localisation, and Romanian-market essentials.
- * Version:           0.4
+ * Version:           0.5
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -22,7 +22,7 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ROMCOMMERCE_VERSION', '0.4' );
+define( 'ROMCOMMERCE_VERSION', '0.5' );
 define( 'ROMCOMMERCE_FILE', __FILE__ );
 define( 'ROMCOMMERCE_DIR', __DIR__ );
 
