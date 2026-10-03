@@ -673,9 +673,92 @@
     padding-top: 15px;
 }
 
+/* A hairline row divider + extra bottom padding — WP core's form-table gives
+   each row almost no visual separation from the next, which reads as a wall
+   of fields once a row holds more than one control (radios, a colour swatch,
+   a description line). */
+.romcommerce-admin .rc-pane .form-table > tbody > tr:not(:last-child) > th,
+.romcommerce-admin .rc-pane .form-table > tbody > tr:not(:last-child) > td {
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(30, 30, 30, 0.08);
+}
+
 .romcommerce-admin .rc-pane .description {
     color: var(--rc-muted);
     font-size: 12px;
+}
+
+/* Section header inside a module pane — reuses the dashboard's own category-
+   header language (tile + heading + rule) so a module's settings read as
+   part of the same system instead of plain form-table markup. The tile picks
+   up --rc-accent from the pane's own rc-cat-* class, so it matches that
+   module's colour on the dashboard grid with no extra wiring. */
+.romcommerce-admin .rc-pane .rc-cat-head {
+    margin-top: 30px;
+}
+
+.romcommerce-admin .rc-pane .rc-cat-head:first-child {
+    margin-top: 2px;
+}
+
+/* Dense repeating settings (e.g. a per-channel list) as bordered cards
+   instead of stacked form-table rows, so each item reads as one unit and the
+   eye has somewhere to stop between them. */
+.romcommerce-admin .rc-pane .rc-item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+}
+
+.romcommerce-admin .rc-pane .rc-item {
+    border: 1.5px solid var(--rc-ink);
+    background: var(--rc-surface);
+    padding: 16px 18px 18px;
+}
+
+.romcommerce-admin .rc-pane .rc-item.is-enabled {
+    box-shadow: var(--rc-shadow-soft);
+}
+
+.romcommerce-admin .rc-pane .rc-item-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.romcommerce-admin .rc-pane .rc-item-head .rc-tile {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    box-shadow: inset 0 0 0 1px rgba(30, 30, 30, 0.25);
+}
+
+.romcommerce-admin .rc-pane .rc-item-head h4 {
+    flex: 1;
+    margin: 0;
+    font-family: var(--rc-font-head);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--rc-ink);
+}
+
+.romcommerce-admin .rc-pane .rc-item-enable {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--rc-muted);
+    white-space: nowrap;
+}
+
+.romcommerce-admin .rc-pane .rc-item-body > * {
+    margin: 0 0 12px;
+}
+
+.romcommerce-admin .rc-pane .rc-item-body > *:last-child {
+    margin-bottom: 0;
 }
 
 .romcommerce-admin .rc-pane input[type="text"],
@@ -867,5 +950,403 @@
     .romcommerce-admin .rc-canvas,
     .romcommerce-admin .rc-pane .button-primary {
         transition-duration: 0.001ms;
+    }
+}
+
+/* Placements map — a central, read-only view of where each enabled module
+   renders. The wireframe canvas is kept monochrome (greys + ink) so the one
+   meaningful colour, the red of an occupied slot, carries all the signal. */
+.romcommerce-admin .rc-pm-intro {
+    max-width: 60ch;
+    margin: 0 0 18px;
+    color: var(--rc-muted);
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.romcommerce-admin .rc-pm-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1.5px solid var(--rc-ink);
+    margin-bottom: 20px;
+}
+
+.romcommerce-admin .rc-pm-tab {
+    position: relative;
+    top: 1.5px;
+    padding: 9px 16px;
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--rc-muted);
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    border-bottom: none;
+}
+
+.romcommerce-admin .rc-pm-tab:hover {
+    color: var(--rc-ink);
+}
+
+.romcommerce-admin .rc-pm-tab.is-active {
+    color: var(--rc-ink);
+    background: var(--rc-surface);
+    border-color: var(--rc-ink);
+    border-bottom: 1.5px solid var(--rc-surface);
+}
+
+.romcommerce-admin .rc-pm-count {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--rc-surface-soft);
+    color: var(--rc-muted);
+}
+
+.romcommerce-admin .rc-pm-tab.is-active .rc-pm-count {
+    background: var(--rc-red);
+    color: #fff;
+}
+
+.romcommerce-admin .rc-pm-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 24px;
+    align-items: start;
+}
+
+/* The monochrome wireframe. */
+.romcommerce-admin .rc-pm-scene {
+    position: relative;
+    background: #DAD7D0;
+    border: 1.5px solid var(--rc-ink);
+    overflow: hidden;
+}
+
+.romcommerce-admin .rc-pm-bar {
+    height: 12px;
+    background: var(--rc-ink);
+    opacity: 0.85;
+}
+
+.romcommerce-admin .rc-pm-stage {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.romcommerce-admin .rc-pm-img {
+    height: 72px;
+    background-image: repeating-linear-gradient(45deg, #C4C1B9, #C4C1B9 6px, #A6A39A 6px, #A6A39A 12px);
+}
+
+/* Product surface: the canonical gallery-left / summary-right PDP split. */
+.romcommerce-admin .rc-pm-cols {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.romcommerce-admin .rc-pm-col {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.romcommerce-admin .rc-pm-col:first-child {
+    flex: 0 0 46%;
+}
+
+.romcommerce-admin .rc-pm-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* A box with the universal "photo" glyph (sun over mountains), so the image
+   area reads as an image rather than another stretch of scribble. */
+.romcommerce-admin .rc-pm-img.is-main {
+    height: 170px;
+    background-color: #C4C1B9;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 48px 48px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238A877E'%3E%3Ccircle cx='7.5' cy='7' r='2'/%3E%3Cpath d='M3 19 L9 12 L13 16.5 L16 13 L21 19 Z'/%3E%3C/svg%3E");
+    border: 1.5px solid #918E85;
+}
+
+.romcommerce-admin .rc-pm-thumbs {
+    display: flex;
+    gap: 6px;
+}
+
+.romcommerce-admin .rc-pm-thumb {
+    flex: 1 1 0;
+    height: 34px;
+    border: 1px solid #A6A39A;
+    background-image: repeating-linear-gradient(45deg, #C4C1B9, #C4C1B9 5px, #A6A39A 5px, #A6A39A 10px);
+}
+
+.romcommerce-admin .rc-pm-line {
+    height: 10px;
+    background-repeat: repeat-x;
+    background-size: 27px 10px;
+    opacity: 0.85;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='27' height='10'%3E%3Cpath d='M0 5.5 Q3.5 1.5 7 5.5 T14 5.5 T21 5.5 T28 5.5' stroke='%23A6A39A' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.romcommerce-admin .rc-pm-line.is-big {
+    height: 13px;
+    background-size: 30px 13px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='13'%3E%3Cpath d='M0 7 Q4 1.5 8 7 T16 7 T24 7 T32 7' stroke='%23918E85' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.romcommerce-admin .rc-pm-rowline {
+    height: 15px;
+    background: #EFEDE9;
+    border: 1px solid #A6A39A;
+}
+
+.romcommerce-admin .rc-pm-btn {
+    width: 92px;
+    height: 22px;
+    background: var(--rc-ink);
+    opacity: 0.5;
+}
+
+.romcommerce-admin .rc-pm-btn.is-right {
+    align-self: flex-end;
+}
+
+.romcommerce-admin .rc-pm-btn.is-full {
+    width: 100%;
+}
+
+/* Slots: the only place colour appears. */
+.romcommerce-admin .rc-pm-slot {
+    border-radius: 1px;
+}
+
+.romcommerce-admin .rc-pm-slot.is-available {
+    height: 18px;
+    border: 1.5px dashed rgba(30, 30, 30, 0.32);
+    display: flex;
+    align-items: center;
+    padding: 0 7px;
+}
+
+.romcommerce-admin .rc-pm-availlabel {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: rgba(30, 30, 30, 0.4);
+}
+
+.romcommerce-admin .rc-pm-slot.is-occupied {
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 7px;
+    border: 2px solid var(--rc-red);
+    background: rgba(244, 54, 58, 0.09);
+}
+
+.romcommerce-admin .rc-pm-slot.is-collision {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+}
+
+.romcommerce-admin .rc-pm-who {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--rc-ink);
+    line-height: 1.25;
+}
+
+.romcommerce-admin .rc-pm-rank {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--rc-red);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.romcommerce-admin .rc-pm-footerstrip {
+    border-top: 1.5px dashed #A6A39A;
+    padding: 9px 16px 11px;
+}
+
+.romcommerce-admin .rc-pm-fab {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--rc-red);
+    background: rgba(244, 54, 58, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    font-weight: 700;
+    color: var(--rc-red-deep);
+}
+
+/* Sidebar: the module list for the active surface. */
+.romcommerce-admin .rc-pm-sidehead {
+    margin: 2px 0 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    color: var(--rc-muted);
+}
+
+.romcommerce-admin .rc-pm-empty {
+    font-size: 12.5px;
+    color: var(--rc-muted);
+}
+
+.romcommerce-admin .rc-pm-modrow {
+    border: 1.5px solid var(--rc-surface-soft);
+    padding: 10px 11px;
+    margin-bottom: 9px;
+}
+
+.romcommerce-admin .rc-pm-modtop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.romcommerce-admin .rc-pm-modname {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.romcommerce-admin .rc-pm-pill {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    background: rgba(46, 125, 50, 0.16);
+    color: #1b5e20;
+}
+
+.romcommerce-admin .rc-pm-where {
+    margin: 5px 0 0;
+    font-size: 11.5px;
+    color: var(--rc-muted);
+}
+
+.romcommerce-admin .rc-pm-gear {
+    display: inline-block;
+    margin-top: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rc-blue);
+    text-decoration: none;
+}
+
+.romcommerce-admin .rc-pm-gear:hover {
+    text-decoration: underline;
+}
+
+/* Footer stacking-order control — the one editable thing on this screen. */
+.romcommerce-admin .rc-pm-order {
+    border: 1.5px solid var(--rc-red);
+    padding: 10px 11px;
+    margin-bottom: 14px;
+}
+
+.romcommerce-admin .rc-pm-orderhead {
+    margin: 0 0 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--rc-red-deep);
+}
+
+.romcommerce-admin .rc-pm-orderhelp {
+    margin: 0 0 9px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--rc-muted);
+}
+
+.romcommerce-admin .rc-pm-orderrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border: 1.5px solid rgba(30, 30, 30, 0.2);
+    padding: 6px 9px;
+    margin-bottom: 6px;
+}
+
+.romcommerce-admin .rc-pm-ordername {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.romcommerce-admin .rc-pm-orderarrows {
+    display: flex;
+    gap: 4px;
+}
+
+.romcommerce-admin .rc-pm-moveform {
+    margin: 0;
+}
+
+.romcommerce-admin .rc-pm-move {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 1.5px solid var(--rc-ink);
+    background: var(--rc-surface);
+    color: var(--rc-ink);
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 1;
+}
+
+.romcommerce-admin .rc-pm-move:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+@media (max-width: 960px) {
+    .romcommerce-admin .rc-pm-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 782px) {
+    .romcommerce-admin .rc-pm-cols {
+        flex-direction: column;
+    }
+
+    .romcommerce-admin .rc-pm-col:first-child {
+        flex: 1 1 auto;
     }
 }

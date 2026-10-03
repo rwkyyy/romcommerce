@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace RomCommerce\Modules\LegalGuaranteeNotice;
 
 use RomCommerce\Admin\SettingsForm;
+use RomCommerce\Modules\HasPlacements;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
 use RomCommerce\Settings;
+use RomCommerce\Support\Placement;
 use WC_Order;
 use WC_Order_Item_Product;
 use WC_Product;
@@ -79,7 +81,7 @@ defined( 'ABSPATH' ) || exit;
  * lets a later <style> block's rule silently override an earlier one using
  * the same class name; garan_svg() namespaces every render to prevent it.
  */
-final class Module implements ModuleInterface, HasSettingsUi {
+final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 	private const ID = 'legal-guarantee-notice';
 
@@ -113,18 +115,12 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	public function boot(): void {
 		add_shortcode( 'romcommerce_legal_guarantee_notice', array( $this, 'render_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'wp_footer', array( $this, 'render_footer_trigger' ) );
 		add_action( 'woocommerce_email_after_order_table', array( $this, 'render_email_notice' ), 10, 4 );
 
-		if ( $this->show_on_checkout() ) {
-			// Priority 5 lands this just above WC core's own terms-and-conditions
-			// checkbox, which core hooks onto the same action at priority 10.
-			add_action( 'woocommerce_review_order_before_submit', array( $this, 'render_checkout_trigger' ), 5 );
-		}
-
-		if ( $this->show_on_product_page() ) {
-			add_action( 'woocommerce_single_product_summary', array( $this, 'render_product_page_trigger' ), 15 );
-		}
+		// Placement hooks wire on init, not here: placements() calls page_url()
+		// -> get_permalink(), which dereferences the not-yet-created $wp_rewrite
+		// global and fatals at plugins_loaded. See HasPlacements.
+		add_action( 'init', array( $this, 'register_placements' ) );
 
 		add_action( 'woocommerce_product_options_general_product_data', array( $this, 'render_general_tab_fields' ) );
 		add_action( 'save_post_product', array( $this, 'save_general_tab_fields' ) );
@@ -136,6 +132,46 @@ final class Module implements ModuleInterface, HasSettingsUi {
 			add_action( 'save_post_product', array( $this, 'save_garan_meta' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_garan_media_library' ) );
 		}
+	}
+
+	public function register_placements(): void {
+		$callbacks = array(
+			'footer'               => array( $this, 'render_footer_trigger' ),
+			'checkout_submit'      => array( $this, 'render_checkout_trigger' ),
+			'product_page_summary' => array( $this, 'render_product_page_trigger' ),
+		);
+
+		foreach ( $this->placements() as $placement ) {
+			if ( $placement['active'] && isset( $callbacks[ $placement['slot'] ] ) ) {
+				Placement::hook( $placement['slot'], $callbacks[ $placement['slot'] ] );
+			}
+		}
+	}
+
+	/**
+	 * Footer `active` folds in the two conditions under which the footer link
+	 * renders nothing anyway (no notice page set, or alignment 'none'), so the
+	 * Placements map reflects what a shopper actually sees — the GARAN badge
+	 * and order-email line stay off the map, being product-meta-gated and
+	 * email-only respectively, not merchant-placed storefront widgets.
+	 *
+	 * @return array<int, array{slot: string, active: bool}>
+	 */
+	public function placements(): array {
+		return array(
+			array(
+				'slot'   => 'footer',
+				'active' => '' !== $this->page_url() && 'none' !== $this->alignment(),
+			),
+			array(
+				'slot'   => 'product_page_summary',
+				'active' => $this->show_on_product_page(),
+			),
+			array(
+				'slot'   => 'checkout_submit',
+				'active' => $this->show_on_checkout(),
+			),
+		);
 	}
 
 	/**
@@ -322,7 +358,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 			if ( 'none' !== $this->alignment() ) {
 				wp_register_script( 'romcommerce-legal-guarantee', false, array(), ROMCOMMERCE_VERSION, true );
 				wp_enqueue_script( 'romcommerce-legal-guarantee' );
-				wp_add_inline_script( 'romcommerce-legal-guarantee', $this->relocate_script_js() );
+				wp_add_inline_script( 'romcommerce-legal-guarantee', Placement::footer_relocation_script( 'romcommerce-lg-anchor' ) );
 			}
 		}
 
@@ -382,7 +418,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 			return;
 		}
 
-		echo '<div id="romcommerce-lg-anchor" style="text-align:' . esc_attr( $this->alignment() ) . ';">';
+		echo '<div id="romcommerce-lg-anchor" data-rc-footer-order="' . esc_attr( (string) Placement::footer_rank( self::ID ) ) . '" style="text-align:' . esc_attr( $this->alignment() ) . ';">';
 		$this->render_inline_link();
 		echo '</div>';
 	}
@@ -841,14 +877,6 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		}
 	}
 
-	private function relocate_script_js(): string {
-		return '(function(){'
-			. 'var anchor=document.getElementById("romcommerce-lg-anchor");if(!anchor){return;}'
-			. 'var footer=document.querySelector("footer[role=\'contentinfo\']")||document.getElementById("colophon")||document.querySelector("footer");'
-			. 'if(footer){footer.appendChild(anchor);}'
-			. '})();';
-	}
-
 	private function render_law_link( string $url, string $citation ): void {
 		echo ' <a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'More info', 'romcommerce' ) . ' ↗ ' . esc_html( $citation ) . '</a>';
 	}
@@ -970,15 +998,16 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo '</td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Alignment', 'romcommerce' ) . '</th><td>';
-		$labels = array(
-			'left'   => __( 'Left', 'romcommerce' ),
-			'center' => __( 'Center', 'romcommerce' ),
-			'right'  => __( 'Right', 'romcommerce' ),
-			'none'   => __( 'None — I\'ll add the link myself', 'romcommerce' ),
+		Placement::position_field(
+			'romcommerce_lg_alignment',
+			array(
+				'left'   => __( 'Left', 'romcommerce' ),
+				'center' => __( 'Center', 'romcommerce' ),
+				'right'  => __( 'Right', 'romcommerce' ),
+				'none'   => __( 'None — I\'ll add the link myself', 'romcommerce' ),
+			),
+			$alignment
 		);
-		foreach ( $labels as $value => $label ) {
-			echo '<label style="margin-right:16px;"><input type="radio" name="romcommerce_lg_alignment" value="' . esc_attr( $value ) . '"' . checked( $alignment, $value, false ) . '> ' . esc_html( $label ) . '</label>';
-		}
 		echo '<p class="description">' . esc_html__( 'Where the footer link sits. "None" skips the automatic footer link; other placements still work.', 'romcommerce' ) . '</p>';
 		echo '</td></tr>';
 

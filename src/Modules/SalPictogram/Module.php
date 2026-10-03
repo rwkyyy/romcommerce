@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace RomCommerce\Modules\SalPictogram;
 
 use RomCommerce\Admin\SettingsForm;
+use RomCommerce\Modules\HasPlacements;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
 use RomCommerce\Settings;
+use RomCommerce\Support\Placement;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
  * the browser scales height proportionally rather than distorting the
  * artwork. See docs/research-backlog.md D9.
  */
-final class Module implements ModuleInterface, HasSettingsUi {
+final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 	private const ID = 'sal-pictogram';
 
@@ -38,51 +40,83 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		return Settings::is_enabled( self::ID, true );
 	}
 
-	private const ALIGNMENTS = array( 'left', 'center', 'right' );
+	private const ALIGNMENTS = array( 'left', 'center', 'right', 'none' );
 
 	public function boot(): void {
+		add_shortcode( 'romcommerce_sal_pictogram', array( $this, 'render_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'wp_footer', array( $this, 'render_pictogram' ) );
+		// Placement hooks wire on init, not here — see HasPlacements.
+		add_action( 'init', array( $this, 'register_placements' ) );
+	}
+
+	public function register_placements(): void {
+		foreach ( $this->placements() as $placement ) {
+			if ( $placement['active'] ) {
+				Placement::hook( $placement['slot'], array( $this, 'render_pictogram' ) );
+			}
+		}
 	}
 
 	/**
-	 * wp_footer fires after the theme's own <footer> markup has already closed,
-	 * so a plain echo there always lands outside it. A tiny relocation script
-	 * moves the rendered pictogram into the page's actual footer landmark once
-	 * it exists in the DOM — the only theme-agnostic way to land inside an
-	 * arbitrary theme's footer without a template override. Fails soft: no
-	 * footer element found leaves the pictogram exactly where PHP put it.
+	 * Footer `active` folds in the alignment 'none' escape hatch, same as
+	 * Legal Guarantee Notice: a merchant choosing 'none' is placing the
+	 * pictogram themselves via the shortcode, so the Placements map should
+	 * show the footer slot as off.
+	 *
+	 * @return array<int, array{slot: string, active: bool}>
 	 */
+	public function placements(): array {
+		return array(
+			array(
+				'slot'   => 'footer',
+				'active' => 'none' !== $this->alignment(),
+			),
+		);
+	}
+
 	public function enqueue_assets(): void {
-		if ( ! is_front_page() ) {
+		if ( ! is_front_page() || 'none' === $this->alignment() ) {
 			return;
 		}
 
 		wp_register_script( 'romcommerce-sal-pictogram', false, array(), ROMCOMMERCE_VERSION, true );
 		wp_enqueue_script( 'romcommerce-sal-pictogram' );
-		wp_add_inline_script( 'romcommerce-sal-pictogram', $this->relocate_script_js() );
+		wp_add_inline_script( 'romcommerce-sal-pictogram', Placement::footer_relocation_script( 'romcommerce-sal-pictogram' ) );
 	}
 
 	public function render_pictogram(): void {
-		if ( ! is_front_page() ) {
+		if ( ! is_front_page() || 'none' === $this->alignment() ) {
 			return;
 		}
 
-		$src = plugins_url( 'assets/images/sal-pictogram.png', ROMCOMMERCE_FILE );
-
-		echo '<div id="romcommerce-sal-pictogram" style="text-align:' . esc_attr( $this->alignment() ) . ';">';
-		echo '<a href="https://reclamatiisal.anpc.ro" target="_blank" rel="noopener noreferrer" class="romcommerce-sal-pictogram" style="display:inline-block;">';
-		echo '<img src="' . esc_url( $src ) . '" alt="' . esc_attr__( 'Soluționarea Alternativă a Litigiilor (ANPC)', 'romcommerce' ) . '" width="250" style="width:250px;height:auto;">';
-		echo '</a>';
+		echo '<div id="romcommerce-sal-pictogram" data-rc-footer-order="' . esc_attr( (string) Placement::footer_rank( self::ID ) ) . '" style="text-align:' . esc_attr( $this->alignment() ) . ';">';
+		echo $this->pictogram_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built and escaped field-by-field in pictogram_markup().
 		echo '</div>';
 	}
 
-	private function relocate_script_js(): string {
-		return '(function(){'
-			. 'var el=document.getElementById("romcommerce-sal-pictogram");if(!el){return;}'
-			. 'var footer=document.querySelector("footer[role=\'contentinfo\']")||document.getElementById("colophon")||document.querySelector("footer");'
-			. 'if(footer){footer.appendChild(el);}'
-			. '})();';
+	/**
+	 * [romcommerce_sal_pictogram] — the official artwork + its mandatory link,
+	 * for a merchant who wants it somewhere other than the automatic footer
+	 * placement (a legal/contact page, a widget, a template part) — typically
+	 * paired with alignment set to "None" below, but works regardless of that
+	 * setting so it can also be used to duplicate the pictogram elsewhere.
+	 * Unlike render_pictogram(), not gated to is_front_page(): the homepage
+	 * requirement only constrains the automatic placement, not where a
+	 * merchant chooses to additionally show it by hand.
+	 */
+	public function render_shortcode(): string {
+		return $this->pictogram_markup();
+	}
+
+	private function pictogram_markup(): string {
+		$src = plugins_url( 'assets/images/sal-pictogram.png', ROMCOMMERCE_FILE );
+
+		ob_start();
+		echo '<a href="https://reclamatiisal.anpc.ro" target="_blank" rel="noopener noreferrer" class="romcommerce-sal-pictogram" style="display:inline-block;">';
+		echo '<img src="' . esc_url( $src ) . '" alt="' . esc_attr__( 'Soluționarea Alternativă a Litigiilor (ANPC)', 'romcommerce' ) . '" width="250" style="width:250px;height:auto;">';
+		echo '</a>';
+
+		return (string) ob_get_clean();
 	}
 
 	private function alignment(): string {
@@ -115,15 +149,23 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo esc_html__( 'Display the official SAL pictogram on the homepage', 'romcommerce' ) . '</label></td>';
 		echo '</tr><tr>';
 		echo '<th scope="row">' . esc_html__( 'Alignment', 'romcommerce' ) . '</th><td>';
-		$labels = array(
-			'left'   => __( 'Left', 'romcommerce' ),
-			'center' => __( 'Center', 'romcommerce' ),
-			'right'  => __( 'Right', 'romcommerce' ),
+		Placement::position_field(
+			'romcommerce_sal_alignment',
+			array(
+				'left'   => __( 'Left', 'romcommerce' ),
+				'center' => __( 'Center', 'romcommerce' ),
+				'right'  => __( 'Right', 'romcommerce' ),
+				'none'   => __( 'None — I\'ll place it myself', 'romcommerce' ),
+			),
+			$alignment
 		);
-		foreach ( $labels as $value => $label ) {
-			echo '<label style="margin-right:16px;"><input type="radio" name="romcommerce_sal_alignment" value="' . esc_attr( $value ) . '"' . checked( $alignment, $value, false ) . '> ' . esc_html( $label ) . '</label>';
-		}
-		echo '<p class="description">' . esc_html__( 'Where the pictogram sits inside your site\'s footer.', 'romcommerce' ) . '</p>';
+		echo '<p class="description">' . esc_html(
+			sprintf(
+				/* translators: %s: the [romcommerce_sal_pictogram] shortcode */
+				__( 'Where the pictogram sits inside your site\'s footer. "None" skips the automatic footer placement; use the %s shortcode to place it yourself, e.g. in a legal/contact page or a widget.', 'romcommerce' ),
+				'[romcommerce_sal_pictogram]'
+			)
+		) . '</p>';
 		echo '</td></tr></tbody></table>';
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';

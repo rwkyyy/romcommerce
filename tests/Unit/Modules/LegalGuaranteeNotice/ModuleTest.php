@@ -150,6 +150,68 @@ final class ModuleTest extends TestCase {
 		self::assertFalse( $this->invokePrivate( new Module(), 'trigger_recommended_color', array() ) );
 	}
 
+	/**
+	 * Defaults: the footer link needs a configured notice page, so it's off out
+	 * of the box; the checkout placement defaults on, the product-page one off.
+	 */
+	public function test_placements_default_state(): void {
+		Functions\when( 'get_option' )->justReturn( array() );
+
+		self::assertSame(
+			array(
+				'footer'               => false,
+				'product_page_summary' => false,
+				'checkout_submit'      => true,
+			),
+			$this->placement_state()
+		);
+	}
+
+	public function test_placements_footer_active_once_a_page_is_set_and_alignment_is_not_none(): void {
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'page_id'              => 42,
+				'alignment'            => 'left',
+				'show_on_product_page' => true,
+				'show_on_checkout'     => false,
+			)
+		);
+		Functions\when( 'get_post_type' )->justReturn( 'page' );
+		Functions\when( 'get_permalink' )->justReturn( 'https://example.test/legal' );
+
+		self::assertSame(
+			array(
+				'footer'               => true,
+				'product_page_summary' => true,
+				'checkout_submit'      => false,
+			),
+			$this->placement_state()
+		);
+	}
+
+	public function test_placements_footer_inactive_when_alignment_is_none_even_with_a_page(): void {
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'page_id'   => 42,
+				'alignment' => 'none',
+			)
+		);
+		Functions\when( 'get_post_type' )->justReturn( 'page' );
+		Functions\when( 'get_permalink' )->justReturn( 'https://example.test/legal' );
+
+		self::assertFalse( $this->placement_state()['footer'] );
+	}
+
+	/** @return array<string, bool> slot id => active */
+	private function placement_state(): array {
+		$state = array();
+		foreach ( ( new Module() )->placements() as $placement ) {
+			$state[ $placement['slot'] ] = $placement['active'];
+		}
+
+		return $state;
+	}
+
 	public function test_garan_brand_returns_the_manual_field_when_not_using_the_woo_brand(): void {
 		$product = Mockery::mock( WC_Product::class );
 		$product->shouldReceive( 'get_meta' )->with( '_romcommerce_garan_brand_use_woo', true )->andReturn( 'no' );

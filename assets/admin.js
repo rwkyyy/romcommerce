@@ -24,7 +24,7 @@
 		return;
 	}
 
-	var NAV_KEYS = [ 'tab', 'category', 'module' ];
+	var NAV_KEYS = [ 'tab', 'category', 'module', 'surface' ];
 
 	function rail() {
 		return app.querySelector( '.rc-rail' );
@@ -38,7 +38,7 @@
 		app.classList.toggle( 'is-loading', !! on );
 	}
 
-	/** Nav state (tab/category/module) from an arbitrary URL, as form fields. */
+	/** Nav state (tab/category/module/surface) from an arbitrary URL, as form fields. */
 	function navParams( href ) {
 		var url    = new URL( href, window.location.origin );
 		var params = new URLSearchParams();

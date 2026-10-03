@@ -180,9 +180,30 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		}
 
 		echo '<p class="romcommerce-omnibus-floor"' . $this->emphasis_style_attr() . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- emphasis_style_attr() esc_attr()s its own value.
-		echo esc_html__( 'Preț minim pe ultimele 30 de zile:', 'romcommerce' ) . ' ';
+		echo esc_html( $this->floor_text() ) . ' ';
 		echo wp_kses_post( wc_price( (float) $floor ) );
 		echo '</p>';
+	}
+
+	private function default_floor_text(): string {
+		return __( 'Preț minim pe ultimele 30 de zile:', 'romcommerce' );
+	}
+
+	/** Merchant-editable label preceding the 30-day floor price. */
+	private function floor_text(): string {
+		$text = $this->custom_floor_text();
+
+		return '' !== $text ? $text : $this->default_floor_text();
+	}
+
+	/**
+	 * Only what the merchant typed, '' when blank. The settings field shows the
+	 * default as a placeholder rather than as its value: prefilling it would
+	 * save the default as custom text on the next unrelated save, freezing it
+	 * against later translation and default-wording updates.
+	 */
+	private function custom_floor_text(): string {
+		return (string) ( Settings::get( self::ID )['floor_text'] ?? '' );
 	}
 
 	/** Small optional emphasis (bold/underline) on the 30-day floor line, merchant's choice. */
@@ -212,9 +233,14 @@ final class Module implements ModuleInterface, HasSettingsUi {
 			Settings::set_enabled( self::ID, isset( $_POST['romcommerce_price_history_enabled'] ) );
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via SettingsForm::verify().
 			$emphasis = sanitize_key( wp_unslash( $_POST['romcommerce_price_history_emphasis'] ?? 'none' ) );
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via SettingsForm::verify().
+			$floor_text = sanitize_text_field( wp_unslash( $_POST['romcommerce_price_history_text'] ?? '' ) );
 			Settings::update(
 				self::ID,
-				array( 'emphasis' => in_array( $emphasis, array( 'none', 'bold', 'underline' ), true ) ? $emphasis : 'none' )
+				array(
+					'emphasis'   => in_array( $emphasis, array( 'none', 'bold', 'underline' ), true ) ? $emphasis : 'none',
+					'floor_text' => $floor_text,
+				)
 			);
 			echo '<div class="notice notice-success"><p>' . esc_html__( 'Settings saved.', 'romcommerce' ) . '</p></div>';
 		}
@@ -241,6 +267,10 @@ final class Module implements ModuleInterface, HasSettingsUi {
 			echo '<label style="margin-right:16px;"><input type="radio" name="romcommerce_price_history_emphasis" value="' . esc_attr( $value ) . '"' . checked( $emphasis, $value, false ) . '> ' . esc_html( $label ) . '</label>';
 		}
 		echo '<p class="description">' . esc_html__( 'A small visual emphasis on the "lowest price of the last 30 days" line shown on the product page.', 'romcommerce' ) . '</p>';
+		echo '</td></tr><tr>';
+		echo '<th scope="row">' . esc_html__( 'Floor text', 'romcommerce' ) . '</th><td>';
+		echo '<input type="text" name="romcommerce_price_history_text" value="' . esc_attr( $this->custom_floor_text() ) . '" class="regular-text" placeholder="' . esc_attr( $this->default_floor_text() ) . '">';
+		echo '<p class="description">' . esc_html__( 'Text shown before the price. The price itself is always appended right after it. Leave blank to use the default.', 'romcommerce' ) . '</p>';
 		echo '</td></tr></tbody></table>';
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';

@@ -101,6 +101,17 @@ final class Page {
 	private function nav_args( string $tab, string $category, string $module ): array {
 		$args = array( 'tab' => $tab );
 
+		// The Placements screen's own nav state is the surface, not
+		// category/module — carry it so AJAX swaps round-trip to the URL.
+		if ( 'placements' === $tab ) {
+			$surface = $this->query_arg( 'surface', '' );
+			if ( '' !== $surface ) {
+				$args['surface'] = $surface;
+			}
+
+			return $args;
+		}
+
 		if ( '' !== $category ) {
 			$args['category'] = $category;
 		}
@@ -170,6 +181,7 @@ final class Page {
 		}
 		echo '</li>';
 
+		$this->rail_item( 'placements', __( 'Placements', 'romcommerce' ), 'placements' === $tab );
 		$this->rail_item( 'license', __( 'License', 'romcommerce' ), 'license' === $tab, true );
 		$this->rail_item( 'status', __( 'Status & Tools', 'romcommerce' ), 'status' === $tab );
 
@@ -251,6 +263,9 @@ final class Page {
 				return;
 			case 'modules':
 				$this->render_modules_content( $category, $module );
+				return;
+			case 'placements':
+				$this->render_placements();
 				return;
 			case 'license':
 				$this->render_license();
@@ -338,6 +353,14 @@ final class Page {
 		foreach ( ModuleRegistry::CATEGORIES as $cat_id => $cat_label ) {
 			$this->render_cat_block( $cat_id );
 		}
+	}
+
+	private function render_placements(): void {
+		$this->canvas_head( __( 'Placements', 'romcommerce' ), __( 'Lite: complete & free', 'romcommerce' ) );
+
+		echo '<p class="rc-pm-intro">' . esc_html__( 'Where your active modules render on the storefront. Pick a surface to redraw the map; open a module to change where it shows.', 'romcommerce' ) . '</p>';
+
+		( new PlacementMap() )->render();
 	}
 
 	private function render_cat_block( string $cat_id ): void {

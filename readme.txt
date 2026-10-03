@@ -4,7 +4,7 @@ Tags: woocommerce, romania, checkout, gdpr, invoicing
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5
+Stable tag: 0.6
 Requires Plugins: woocommerce
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -94,6 +94,17 @@ Yes. RomCommerce declares HPOS compatibility and accesses orders only through Wo
 
 == Changelog ==
 
+= 0.6 =
+* New: Placements screen — a visual map of where your active modules appear on the product page, cart, checkout, and site-wide, with links straight to each module's settings. When more than one module sits in the site footer, you can set which one shows first.
+* New: a one-time "RomCommerce is active" notice after activation, linking to the module list. Dismiss it once and it stays gone.
+* SAL pictogram: new [romcommerce_sal_pictogram] shortcode, plus a "None" alignment option for placing the pictogram yourself.
+* Admin & login branding: optional custom login logo (for themes without a site logo setting), a login field style choice (rounded, sharp, or underline), a separate button shape choice, and brand colours on WooCommerce dropdowns.
+* Admin & login branding: fixed login fields showing a doubled border on focus.
+* WhatsApp/Contact FAB: custom greeting message for WhatsApp, Telegram, and e-mail, with an option to add a link to the current page; toggle button colour; optional rotating channel icons on the closed button; a redesigned channel settings layout.
+* WhatsApp/Contact FAB: fixed the toggle button drifting away from the channel list when positioned bottom-right, and themes recolouring its icons on hover.
+* Price history: the text before the 30-day lowest price can now be edited.
+* Free shipping bar: colours are now set with colour pickers.
+
 = 0.5 =
 * New module: Admin & login branding — replace the WordPress logo on the login screen with your site logo, and apply one brand colour across wp-admin, the login screen, and buttons.
 * New module: Coupon cleanup — automatically moves expired coupons to the trash every day, with an optional setting to permanently empty the coupon trash after a configurable number of days (default 30).
@@ -121,6 +132,9 @@ Yes. RomCommerce declares HPOS compatibility and accesses orders only through Wo
 * Initial release with the Lite module set: SAL pictogram, price history (Omnibus), PF/PJ billing, VAT ID validation, related-orders finder, counties & postcodes, hide voucher, multiple delivery addresses, free shipping bar, sale category sync, related products, multi-product review page, WhatsApp/contact FAB, and clear cart.
 
 == Upgrade Notice ==
+
+= 0.6 =
+Adds a Placements screen showing where each module appears on your store, plus improvements to admin & login branding, the WhatsApp/Contact button, and the SAL pictogram. Existing settings keep their current look.
 
 = 0.3 =
 Bug fixes and refinements across several modules, including a checkout billing-fields fix and a saved-delivery-address fix. See the changelog for details.

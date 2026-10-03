@@ -1,5 +1,5 @@
 # RomCommerce
-## Strat de comerț românesc pentru WooCommerce
+## Pachet de funcționalități pentru magazinele românești
 
 [![Versiune WordPress.org](https://img.shields.io/wordpress/plugin/v/romcommerce.svg?logo=wordpress&logoColor=white&label=wp.org)](https://ro.wordpress.org/plugins/romcommerce/)
 [![Testat până la](https://img.shields.io/wordpress/plugin/tested/romcommerce.svg?label=testat%20p%C3%A2n%C4%83%20la)](https://ro.wordpress.org/plugins/romcommerce/)
@@ -13,16 +13,16 @@
 
 Extensie modulară pentru WooCommerce, gândită pentru piața românească: în loc să instalezi zeci de
 pluginuri mici cu un singur scop, activezi doar modulele de care ai nevoie dintr-un singur sistem
-coerent — unelte de conformitate legală, localizare checkout și integrări specifice pieței românești.
+coerent, cu unelte de conformitate legală, localizare checkout și integrări specifice pieței românești.
 
 Site oficial: **[romcommerce.ro](https://romcommerce.ro)**.
 
 Acesta este repository-ul de dezvoltare al versiunii **Lite**. Pluginul este publicat pe WordPress.org
-la **[ro.wordpress.org/plugins/romcommerce](https://ro.wordpress.org/plugins/romcommerce/)** — acolo
+la **[ro.wordpress.org/plugins/romcommerce](https://ro.wordpress.org/plugins/romcommerce/)**. Acolo
 găsiți versiunea stabilă de instalat. Descrierea completă și changelog-ul publicate pe WordPress.org se
 află în [`readme.txt`](readme.txt).
 
-RomCommerce Lite este complet funcțional de sine stătător — niciun modul din Lite nu e o versiune
+RomCommerce Lite este complet funcțional de sine stătător: niciun modul din Lite nu e o versiune
 trunchiată care așteaptă un upgrade.
 
 ## Funcționalități
@@ -39,8 +39,8 @@ trunchiată care așteaptă un upgrade.
   acolo unde le citesc pluginurile românești de facturare (SmartBill, Oblio, EasySales).
 * **Validare CUI/CIF**: verificare de format și cifră de control la checkout.
 * **Detector de comenzi posibil legate (MAOF)**: semnalează comenzile posibil legate ale unui client și
-  comenzile active duplicate, pentru verificare manuală — doar suport decizional, nu blochează sau
-  anulează nimic automat.
+  comenzile active duplicate, pentru verificare manuală (doar suport decizional, nu blochează sau
+  anulează nimic automat).
 
 **Checkout și facturare**
 
@@ -48,7 +48,7 @@ trunchiată care așteaptă un upgrade.
 * **Ascunde câmpul de cupon la checkout**.
 * **Adrese multiple de livrare**: clienții pot salva mai multe adrese de livrare în cont.
 
-**Vitrină și merchandising**
+**Catalog și merchandising**
 
 * **Bară de transport gratuit**: indicator „mai adaugă X pentru transport gratuit”.
 * **Sincronizare categorie de reduceri**: menține o categorie populată automat cu produsele la reducere.
@@ -69,12 +69,23 @@ Lista completă e în [`readme.txt`](readme.txt), secțiunea `== Description ==`
 
 ## Lite vs. Pro
 
-**RomCommerce Pro** (licențiat separat, nepublicat pe WordPress.org) adaugă module suplimentare:
-validare telefon (RO/internațional) și email, confirmare comandă cu un click (email + cod QR),
-plăți/validare prin QR, taxe de livrare urgentă, autocompletare adresă din baza de date de coduri
-poștale, nomenclator curieri, rezervare pentru ridicare din magazin, depozite și prețuri personalizate,
-ambalaj cadou, insignă SEAP, stratul de risc MAOF (urmărire comenzi neridicate, coduri de motiv pentru
-retur, flux de excepție) și un checklist de conformitate. Licențiere pe site, nu per-modul.
+**RomCommerce Pro** (licențiat separat, acces plătit) adaugă module suplimentare:
+
+* Validare telefon (RO/internațional)
+* Verificare email la checkout
+* Confirmare comandă cu un click (email + cod QR)
+* Plăți și validare prin cod QR
+* Taxe de livrare urgentă
+* Autocompletare adresă din baza de date de coduri poștale
+* Nomenclator curieri
+* Rezervare pentru ridicare din magazin
+* Depozite și prețuri personalizate
+* Ambalaj cadou
+* Insignă SEAP
+* Stratul de risc MAOF: urmărire comenzi neridicate, coduri de motiv pentru retur, flux de excepție
+* Checklist de conformitate
+
+Licențiere pe site, nu per-modul.
 
 Detalii și prețuri: **[romcommerce.ro/pro](https://romcommerce.ro/pro)**.
 
@@ -98,7 +109,7 @@ composer phpstan    # analiză statică (nivel 5)
 composer test       # PHPUnit
 ```
 
-`composer.json` este strict pentru dezvoltare — `vendor/` și `composer.lock` nu sunt niciodată livrate
+`composer.json` este strict pentru dezvoltare: `vendor/` și `composer.lock` nu sunt niciodată livrate
 (vezi `.distignore`). Pluginul livrat nu are niciun pas de build: autoloaderul PSR-4 e scris de mână,
 fără Composer sau Node în runtime.
 
@@ -110,11 +121,8 @@ La fiecare push sau pull request pe `main`, [GitHub Actions](.github/workflows/c
 * PHPCS (WordPress Coding Standards) și PHPStan;
 * suita PHPUnit (Brain Monkey/Mockery, fără o instalare WordPress reală), pe PHP 8.1, 8.2 și 8.3.
 
-Comportamentul real față de WordPress/WooCommerce e verificat separat, pe un mediu de staging real —
-suita PHPUnit acoperă doar logica pură.
-
-Tag-urile de release (`vX.Y.Z`, create automat când versiunea din headerul pluginului avansează) publică
-automat pe SVN-ul WordPress.org și creează un [GitHub Release](https://github.com/rwkyyy/romcommerce/releases).
+Comportamentul real față de WordPress/WooCommerce e verificat separat, pe un mediu de staging real.
+Suita PHPUnit acoperă doar logica pură.
 
 ## Suport și contribuții
 

@@ -10,11 +10,17 @@ defined( 'ABSPATH' ) || exit;
  * Static catalog of the contact channels the FAB can expose. Each entry carries
  * a default (translatable) label, a brand colour, a link "kind" (how the href is
  * built), a value hint for the settings field, and either an inline SVG glyph or
- * a text monogram fallback — the reference build's shape. Only WhatsApp is
- * contextual; every other channel is a plain link. Brand SVGs are provided for
- * the channels with an unambiguous public glyph (WhatsApp, phone, email); the
+ * a text monogram fallback — the reference build's shape. Brand SVGs are provided
+ * for the channels with an unambiguous public glyph (WhatsApp, phone, email); the
  * rest use a coloured monogram rather than shipping approximate/trademarked
  * vector art, exactly the fallback the spec allows.
+ *
+ * `supports_message` marks the channels whose link format actually carries a
+ * prefilled message to the recipient app (wa.me's `text=`, t.me's `text=`,
+ * mailto's `body=`) — WhatsApp, Telegram, Email. Every other channel's URL has
+ * no such parameter (opening Messenger/Facebook/Instagram/YouTube/TikTok just
+ * loads the profile), so a "message" setting there would be stored but never
+ * reach the visitor — deliberately left off the catalog entry instead.
  */
 final class Channels {
 
@@ -24,89 +30,99 @@ final class Channels {
 	public const KIND_MAILTO   = 'mailto';
 
 	/**
-	 * @return array<string, array{label: string, color: string, kind: string, hint: string, icon: string, text: string}>
+	 * @return array<string, array{label: string, color: string, kind: string, hint: string, icon: string, text: string, supports_message: bool}>
 	 */
 	public static function catalog(): array {
 		return array(
 			'whatsapp'       => array(
-				'label' => __( 'WhatsApp', 'romcommerce' ),
-				'color' => '#25D366',
-				'kind'  => self::KIND_WHATSAPP,
-				'hint'  => __( 'Phone in international format, digits only (e.g. 40712345678)', 'romcommerce' ),
-				'icon'  => self::whatsapp_icon(),
-				'text'  => '',
+				'label'            => __( 'WhatsApp', 'romcommerce' ),
+				'color'            => '#25D366',
+				'kind'             => self::KIND_WHATSAPP,
+				'hint'             => __( 'Phone in international format, digits only (e.g. 40712345678)', 'romcommerce' ),
+				'icon'             => self::whatsapp_icon(),
+				'text'             => '',
+				'supports_message' => true,
 			),
 			'phone'          => array(
-				'label' => __( 'Telefon', 'romcommerce' ),
-				'color' => '#303F9F',
-				'kind'  => self::KIND_TEL,
-				'hint'  => __( 'Phone number', 'romcommerce' ),
-				'icon'  => self::phone_icon(),
-				'text'  => '',
+				'label'            => __( 'Telefon', 'romcommerce' ),
+				'color'            => '#303F9F',
+				'kind'             => self::KIND_TEL,
+				'hint'             => __( 'Phone number', 'romcommerce' ),
+				'icon'             => self::phone_icon(),
+				'text'             => '',
+				'supports_message' => false,
 			),
 			'email'          => array(
-				'label' => __( 'E-mail', 'romcommerce' ),
-				'color' => '#D32F2F',
-				'kind'  => self::KIND_MAILTO,
-				'hint'  => __( 'E-mail address', 'romcommerce' ),
-				'icon'  => self::email_icon(),
-				'text'  => '',
+				'label'            => __( 'E-mail', 'romcommerce' ),
+				'color'            => '#D32F2F',
+				'kind'             => self::KIND_MAILTO,
+				'hint'             => __( 'E-mail address', 'romcommerce' ),
+				'icon'             => self::email_icon(),
+				'text'             => '',
+				'supports_message' => true,
 			),
 			'messenger'      => array(
-				'label' => __( 'Messenger', 'romcommerce' ),
-				'color' => '#0084FF',
-				'kind'  => self::KIND_URL,
-				'hint'  => __( 'Messenger link (m.me/…)', 'romcommerce' ),
-				'icon'  => '',
-				'text'  => 'M',
+				'label'            => __( 'Messenger', 'romcommerce' ),
+				'color'            => '#0084FF',
+				'kind'             => self::KIND_URL,
+				'hint'             => __( 'Messenger link (m.me/…)', 'romcommerce' ),
+				'icon'             => '',
+				'text'             => 'M',
+				'supports_message' => false,
 			),
 			'facebook'       => array(
-				'label' => __( 'Facebook', 'romcommerce' ),
-				'color' => '#1877F2',
-				'kind'  => self::KIND_URL,
-				'hint'  => __( 'Facebook Page URL', 'romcommerce' ),
-				'icon'  => '',
-				'text'  => 'f',
+				'label'            => __( 'Facebook', 'romcommerce' ),
+				'color'            => '#1877F2',
+				'kind'             => self::KIND_URL,
+				'hint'             => __( 'Facebook Page URL', 'romcommerce' ),
+				'icon'             => '',
+				'text'             => 'f',
+				'supports_message' => false,
 			),
 			'facebook_group' => array(
-				'label' => __( 'Grup Facebook', 'romcommerce' ),
-				'color' => '#1877F2',
-				'kind'  => self::KIND_URL,
-				'hint'  => __( 'Facebook Group URL', 'romcommerce' ),
-				'icon'  => '',
-				'text'  => 'g',
+				'label'            => __( 'Grup Facebook', 'romcommerce' ),
+				'color'            => '#1877F2',
+				'kind'             => self::KIND_URL,
+				'hint'             => __( 'Facebook Group URL', 'romcommerce' ),
+				'icon'             => '',
+				'text'             => 'g',
+				'supports_message' => false,
 			),
 			'instagram'      => array(
-				'label' => __( 'Instagram', 'romcommerce' ),
-				'color' => '#E4405F',
-				'kind'  => self::KIND_URL,
-				'hint'  => __( 'Instagram profile URL', 'romcommerce' ),
-				'icon'  => '',
-				'text'  => 'IG',
+				'label'            => __( 'Instagram', 'romcommerce' ),
+				'color'            => '#E4405F',
+				'kind'             => self::KIND_URL,
+				'hint'             => __( 'Instagram profile URL', 'romcommerce' ),
+				'icon'             => '',
+				'text'             => 'IG',
+				'supports_message' => false,
 			),
 			'youtube'        => array(
-				'label' => __( 'YouTube', 'romcommerce' ),
-				'color' => '#FF0000',
-				'kind'  => self::KIND_URL,
-				'hint'  => __( 'YouTube channel URL', 'romcommerce' ),
-				'icon'  => '',
-				'text'  => 'YT',
+				'label'            => __( 'YouTube', 'romcommerce' ),
+				'color'            => '#FF0000',
+				'kind'             => self::KIND_URL,
+				'hint'             => __( 'YouTube channel URL', 'romcommerce' ),
+				'icon'             => '',
+				'text'             => 'YT',
+				'supports_message' => false,
 			),
 			'tiktok'         => array(
-				'label' => __( 'TikTok', 'romcommerce' ),
-				'color' => '#000000',
-				'kind'  => self::KIND_URL,
-				'hint'  => __( 'TikTok profile URL', 'romcommerce' ),
-				'icon'  => '',
-				'text'  => 'TT',
+				'label'            => __( 'TikTok', 'romcommerce' ),
+				'color'            => '#000000',
+				'kind'             => self::KIND_URL,
+				'hint'             => __( 'TikTok profile URL', 'romcommerce' ),
+				'icon'             => '',
+				'text'             => 'TT',
+				'supports_message' => false,
 			),
 			'telegram'       => array(
-				'label' => __( 'Telegram', 'romcommerce' ),
-				'color' => '#1C88BC',
-				'kind'  => self::KIND_URL,
-				'hint'  => __( 'Telegram link (t.me/…)', 'romcommerce' ),
-				'icon'  => '',
-				'text'  => 'TG',
+				'label'            => __( 'Telegram', 'romcommerce' ),
+				'color'            => '#1C88BC',
+				'kind'             => self::KIND_URL,
+				'hint'             => __( 'Telegram link (t.me/…)', 'romcommerce' ),
+				'icon'             => '',
+				'text'             => 'TG',
+				'supports_message' => true,
 			),
 		);
 	}

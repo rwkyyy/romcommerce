@@ -106,4 +106,50 @@ final class ModuleTest extends TestCase {
 
 		self::assertNull( $this->invokePrivate( new Module(), 'country_override', array() ) );
 	}
+
+	public function test_placements_default_to_all_three_slots_active(): void {
+		Functions\when( 'get_option' )->justReturn( array() );
+
+		self::assertSame(
+			array(
+				array(
+					'slot'   => 'add_to_cart',
+					'active' => true,
+				),
+				array(
+					'slot'   => 'cart',
+					'active' => true,
+				),
+				array(
+					'slot'   => 'checkout_review',
+					'active' => true,
+				),
+			),
+			( new Module() )->placements()
+		);
+	}
+
+	public function test_placements_reflect_each_toggled_off_placement(): void {
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'placement_product'  => false,
+				'placement_cart'     => true,
+				'placement_checkout' => false,
+			)
+		);
+
+		$active = array();
+		foreach ( ( new Module() )->placements() as $placement ) {
+			$active[ $placement['slot'] ] = $placement['active'];
+		}
+
+		self::assertSame(
+			array(
+				'add_to_cart'     => false,
+				'cart'            => true,
+				'checkout_review' => false,
+			),
+			$active
+		);
+	}
 }

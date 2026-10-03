@@ -33,6 +33,7 @@ final class ChannelsTest extends TestCase {
 			self::assertArrayHasKey( 'hint', $channel, "channel {$key} missing hint" );
 			self::assertArrayHasKey( 'icon', $channel, "channel {$key} missing icon" );
 			self::assertArrayHasKey( 'text', $channel, "channel {$key} missing text" );
+			self::assertArrayHasKey( 'supports_message', $channel, "channel {$key} missing supports_message" );
 			// Every channel needs either an icon glyph or a text monogram fallback.
 			self::assertTrue( '' !== $channel['icon'] || '' !== $channel['text'], "channel {$key} has neither icon nor text" );
 		}
@@ -45,5 +46,19 @@ final class ChannelsTest extends TestCase {
 		self::assertSame( Channels::KIND_TEL, $catalog['phone']['kind'] );
 		self::assertSame( Channels::KIND_MAILTO, $catalog['email']['kind'] );
 		self::assertSame( Channels::KIND_URL, $catalog['facebook']['kind'] );
+	}
+
+	/**
+	 * WhatsApp, Telegram, and Email are the only channels whose link format
+	 * carries a prefilled-message parameter (wa.me/t.me's `text=`, mailto's
+	 * `body=`) — every other channel's URL has nowhere for a message to go.
+	 */
+	public function test_only_whatsapp_telegram_and_email_support_a_message(): void {
+		$catalog = Channels::catalog();
+
+		foreach ( $catalog as $key => $channel ) {
+			$expected = in_array( $key, array( 'whatsapp', 'telegram', 'email' ), true );
+			self::assertSame( $expected, $channel['supports_message'], "channel {$key} has the wrong supports_message flag" );
+		}
 	}
 }

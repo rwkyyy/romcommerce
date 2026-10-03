@@ -26,6 +26,7 @@ final class Plugin {
 		// flagged as discouraged by Plugin Check.
 		( new Admin\Menu() )->register();
 		( new Admin\Ajax() )->register();
+		( new Admin\WelcomeNotice() )->register();
 		( new ModuleRegistrar() )->register();
 
 		do_action( 'romcommerce/register_modules', $this->modules );

@@ -155,6 +155,39 @@ final class ArchitectureRulesTest extends TestCase {
 	}
 
 	/**
+	 * The 2026-10-01 Pallas fatal: a HasPlacements module looped its own
+	 * placements() straight from boot() to wire its live hooks, but boot() runs
+	 * at plugins_loaded and Legal Guarantee Notice's placements() calls
+	 * get_permalink() — which dereferences the not-yet-created $wp_rewrite global
+	 * and fatals, taking down wp-admin. The forbidden-call scan above can't catch
+	 * this: get_permalink() is reached indirectly through placements(), not
+	 * written in the boot() body. The fix moved every module's placement wiring
+	 * onto init via register_placements(), so boot() must never evaluate
+	 * placements() itself. See docs/decisions.md.
+	 */
+	public function test_module_boot_methods_do_not_evaluate_placements_at_plugins_loaded(): void {
+		$violations = array();
+
+		foreach ( $this->phpFilesUnderSrc() as $file ) {
+			if ( false === strpos( $file, '/Modules/' ) ) {
+				continue;
+			}
+
+			$body = $this->extractVoidMethodBody( (string) file_get_contents( $file ), 'boot' );
+
+			if ( null === $body ) {
+				continue;
+			}
+
+			if ( false !== strpos( $body, '$this->placements()' ) ) {
+				$violations[] = $file . ' evaluates $this->placements() inside boot() — wire placement hooks on init via register_placements() instead';
+			}
+		}
+
+		self::assertSame( array(), $violations, implode( ', ', $violations ) );
+	}
+
+	/**
 	 * Every Lite-tier id in the admin nav (Admin\ModuleRegistry, the single
 	 * source of nav copy) must correspond to exactly one module actually
 	 * registered by ModuleRegistrar, and vice versa — otherwise a typo'd id

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace RomCommerce\Modules\FreeShippingBar;
 
 use RomCommerce\Admin\SettingsForm;
+use RomCommerce\Modules\HasPlacements;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
 use RomCommerce\Settings;
+use RomCommerce\Support\Placement;
 use WC_Shipping_Zones;
 
 defined( 'ABSPATH' ) || exit;
@@ -20,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
  * free-shipping method matching the cart's destination zone, with a per-country
  * manual override for shops whose free shipping isn't a core WC method.
  */
-final class Module implements ModuleInterface, HasSettingsUi {
+final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 	private const ID = 'free-shipping-bar';
 
@@ -37,17 +39,34 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	}
 
 	public function boot(): void {
-		if ( $this->placement( 'product' ) ) {
-			add_action( 'woocommerce_after_add_to_cart_button', array( $this, 'render' ) );
-		}
+		// Placement hooks wire on init, not here — see HasPlacements.
+		add_action( 'init', array( $this, 'register_placements' ) );
+	}
 
-		if ( $this->placement( 'cart' ) ) {
-			add_action( 'woocommerce_after_cart_table', array( $this, 'render' ) );
+	public function register_placements(): void {
+		foreach ( $this->placements() as $placement ) {
+			if ( $placement['active'] ) {
+				Placement::hook( $placement['slot'], array( $this, 'render' ) );
+			}
 		}
+	}
 
-		if ( $this->placement( 'checkout' ) ) {
-			add_action( 'woocommerce_checkout_before_order_review', array( $this, 'render' ) );
-		}
+	/** @return array<int, array{slot: string, active: bool}> */
+	public function placements(): array {
+		return array(
+			array(
+				'slot'   => 'add_to_cart',
+				'active' => $this->placement( 'product' ),
+			),
+			array(
+				'slot'   => 'cart',
+				'active' => $this->placement( 'cart' ),
+			),
+			array(
+				'slot'   => 'checkout_review',
+				'active' => $this->placement( 'checkout' ),
+			),
+		);
 	}
 
 	public function render(): void {
@@ -228,9 +247,9 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 		echo '<tr><th scope="row">' . esc_html__( 'Colours', 'romcommerce' ) . '</th><td>';
 		echo '<label style="display:inline-block;margin-right:24px;">' . esc_html__( 'Active (filled)', 'romcommerce' ) . '<br>';
-		echo '<input type="text" name="rc_active_color" value="' . esc_attr( $this->active_color() ) . '" class="regular-text" placeholder="#303f9f"></label>';
+		echo '<input type="color" name="rc_active_color" value="' . esc_attr( $this->active_color() ) . '"></label>';
 		echo '<label style="display:inline-block;">' . esc_html__( 'Inactive (track)', 'romcommerce' ) . '<br>';
-		echo '<input type="text" name="rc_inactive_color" value="' . esc_attr( $this->inactive_color() ) . '" class="regular-text" placeholder="#eceff1"></label>';
+		echo '<input type="color" name="rc_inactive_color" value="' . esc_attr( $this->inactive_color() ) . '"></label>';
 		echo '</td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Corner radius', 'romcommerce' ) . '</th><td>';
