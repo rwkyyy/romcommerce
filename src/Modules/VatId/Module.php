@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace RomCommerce\Modules\VatId;
 
+use RomCommerce\Admin\ProSection;
 use RomCommerce\Admin\SettingsForm;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
+use RomCommerce\Modules\PfPjBilling\BlockCheckout;
 use RomCommerce\Modules\PfPjBilling\Fields;
 use RomCommerce\Settings;
 use RomCommerce\Support\Validators;
@@ -40,6 +42,28 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		// Priority 20 so PF/PJ's presence checks (priority 10) run first; this
 		// only judges the validity of a value that is actually present.
 		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate' ), 20, 2 );
+		add_action( 'woocommerce_blocks_validate_location_contact_fields', array( $this, 'validate_block' ), 20, 2 );
+	}
+
+	/**
+	 * Block checkout counterpart of validate(), on PF/PJ's block fields.
+	 *
+	 * @param \WP_Error            $errors
+	 * @param array<string, mixed> $fields Submitted "contact" location values.
+	 */
+	public function validate_block( $errors, $fields ): void {
+		if ( ! $errors instanceof \WP_Error || ! is_array( $fields ) ) {
+			return;
+		}
+
+		$values = BlockCheckout::values( $fields );
+		if ( Fields::TYPE_PJ === $values[ Fields::PERSON_TYPE ] && '' !== $values[ Fields::CUI ] && ! Validators::cui( $values[ Fields::CUI ] ) ) {
+			$errors->add( 'romcommerce_vat_id', self::invalid_message() );
+		}
+	}
+
+	private static function invalid_message(): string {
+		return __( 'CUI / CIF-ul introdus nu are un format valid.', 'romcommerce' );
 	}
 
 	/**
@@ -59,7 +83,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		}
 
 		if ( ! Validators::cui( $cui ) ) {
-			$errors->add( 'romcommerce_vat_id', __( 'CUI / CIF-ul introdus nu are un format valid.', 'romcommerce' ) );
+			$errors->add( 'romcommerce_vat_id', self::invalid_message() );
 		}
 	}
 
@@ -82,6 +106,6 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
 
-		echo '<hr><p><span class="romcommerce-badge">Pro</span> ' . esc_html__( 'RomCommerce Pro adds a live VIES lookup that confirms the VAT ID is registered and can autofill the company name and address from it.', 'romcommerce' ) . '</p>';
+		ProSection::line( __( 'Live VIES lookup', 'romcommerce' ), __( 'Confirms the VAT ID is registered and can fill in the company name and address from it.', 'romcommerce' ) );
 	}
 }

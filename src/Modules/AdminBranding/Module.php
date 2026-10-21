@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RomCommerce\Modules\AdminBranding;
 
+use RomCommerce\Admin\ProSection;
 use RomCommerce\Admin\SettingsForm;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
@@ -20,11 +21,11 @@ defined( 'ABSPATH' ) || exit;
  * colour (darker/lighter shades derived automatically) replaces WP's default
  * blue across the login screen, the admin menu, the admin bar, and primary
  * buttons. One module, Lite and Pro alike — Pro's login background image +
- * gradient overlay is a section of this same settings pane, rendered here as
- * disabled fields with an upgrade link unless Pro hooks
- * 'romcommerce/admin_branding/background_fields' to replace them with live
- * ones (WP.org constraint 4 in CLAUDE.md: render-only teaser fields, zero Pro
- * logic in Lite).
+ * gradient overlay is a section of this same settings pane, shown as a
+ * disabled preview in the pane's Pro section unless Pro hooks
+ * 'romcommerce/admin_branding/background_fields' to put live fields in the
+ * form instead (WP.org constraint 4 in CLAUDE.md: render-only teaser fields,
+ * zero Pro logic in Lite).
  *
  * The login logo also has an explicit media-library override: themes that
  * never declared add_theme_support( 'custom-logo' ) don't expose a Logo
@@ -35,8 +36,6 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	private const ID = 'admin-branding';
 
 	private const DEFAULT_COLOR = '#303F9F';
-
-	private const PRO_URL = 'https://romcommerce.ro/pro';
 
 	private const FIELD_STYLES = array( 'rounded', 'square', 'underline' );
 
@@ -519,28 +518,42 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	}
 
 	/**
-	 * admin_head fires after the current user's own admin colour-scheme
-	 * stylesheet is printed, so plain rules here (no !important) reliably
-	 * win regardless of which scheme the user has picked.
+	 * admin_head fires after the user's admin colour-scheme stylesheet, so a
+	 * selector matching core's own wins the specificity tie without
+	 * !important. Three rules need more than a tie. Core sets
+	 * --wp-admin-theme-color on body.admin-color-*, which outranks :root,
+	 * hence html body.wp-admin. The scheme's submenu link rules reach (1,5,3)
+	 * through .opensub and a:focus + .wp-submenu variants, and its
+	 * hover/current icon rules set their own colour, so the submenu and icon
+	 * blocks add #adminmenuwrap (#adminmenu's wrapper) as a second ID, which
+	 * outranks every one of them.
 	 */
 	private function admin_brand_css( string $base, string $darker10, string $darker20, string $lighter ): string {
-		$menu_text = esc_html( $this->contrast_text_color( $base ) );
-		$base      = esc_html( $base );
-		$darker10  = esc_html( $darker10 );
-		$darker20  = esc_html( $darker20 );
-		$lighter   = esc_html( $lighter );
+		$menu_text  = esc_html( $this->contrast_text_color( $base ) );
+		$rgb        = esc_html( $this->hex_to_rgb_triplet( $base ) );
+		$rgb_dark10 = esc_html( $this->hex_to_rgb_triplet( $darker10 ) );
+		$rgb_dark20 = esc_html( $this->hex_to_rgb_triplet( $darker20 ) );
+		$base       = esc_html( $base );
+		$darker10   = esc_html( $darker10 );
+		$darker20   = esc_html( $darker20 );
+		$lighter    = esc_html( $lighter );
 
 		return '
-			:root {
+			html body.wp-admin {
 				--wp-admin-theme-color: ' . $base . ';
+				--wp-admin-theme-color--rgb: ' . $rgb . ';
 				--wp-admin-theme-color-darker-10: ' . $darker10 . ';
+				--wp-admin-theme-color-darker-10--rgb: ' . $rgb_dark10 . ';
 				--wp-admin-theme-color-darker-20: ' . $darker20 . ';
+				--wp-admin-theme-color-darker-20--rgb: ' . $rgb_dark20 . ';
 				--wp-admin-border-color-focus: ' . $lighter . ';
 			}
 
 			#adminmenu li.current a.menu-top,
 			#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 			#adminmenu li.wp-has-current-submenu.opensub a.wp-has-current-submenu,
+			#adminmenu li.wp-has-current-submenu .wp-submenu .wp-submenu-head,
+			.folded #adminmenu li.current.menu-top,
 			#adminmenu li a.menu-top:focus {
 				background: ' . $base . ';
 				color: ' . $menu_text . ';
@@ -555,10 +568,8 @@ final class Module implements ModuleInterface, HasSettingsUi {
 				color: ' . $menu_text . ';
 			}
 
-			#adminmenu .wp-submenu a:hover,
-			#adminmenu .wp-submenu a:focus,
-			#adminmenu .wp-submenu li.current a:hover,
-			#adminmenu .wp-submenu li.current a:focus {
+			#adminmenuwrap #adminmenu .wp-submenu a:hover,
+			#adminmenuwrap #adminmenu .wp-submenu a:focus {
 				color: ' . $lighter . ';
 			}
 
@@ -569,7 +580,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 				color: ' . $menu_text . ';
 			}
 
-			#adminmenu div.wp-menu-image:before {
+			#adminmenuwrap #adminmenu div.wp-menu-image:before {
 				color: inherit;
 			}
 
@@ -598,7 +609,20 @@ final class Module implements ModuleInterface, HasSettingsUi {
 			#wpadminbar li:hover .ab-icon:before,
 			#wpadminbar li:hover .ab-item:before,
 			#wpadminbar.nojs .quicklinks .menupop:hover ul li a:focus,
-			#wpadminbar.nojs .quicklinks .menupop:hover ul li a:hover {
+			#wpadminbar.nojs .quicklinks .menupop:hover ul li a:hover,
+			#wpadminbar:not(.mobile) > #wp-toolbar li:hover span.ab-label,
+			#wpadminbar:not(.mobile) > #wp-toolbar li.hover span.ab-label,
+			#wpadminbar:not(.mobile) > #wp-toolbar a:focus span.ab-label,
+			#wpadminbar:not(.mobile) li:hover .ab-icon:before,
+			#wpadminbar:not(.mobile) li:hover .ab-item:before,
+			#wpadminbar:not(.mobile) li:hover .ab-item:after,
+			#wpadminbar:not(.mobile) li:hover #adminbarsearch:before,
+			#wpadminbar .quicklinks li a:hover .blavatar,
+			#wpadminbar .quicklinks li a:focus .blavatar,
+			#wpadminbar .quicklinks .ab-sub-wrapper .menupop.hover > a .blavatar,
+			#wpadminbar .menupop .menupop > .ab-item:hover:before,
+			#wpadminbar.mobile .quicklinks .hover .ab-icon:before,
+			#wpadminbar.mobile .quicklinks .hover .ab-item:before {
 				color: ' . $lighter . ';
 			}
 
@@ -620,13 +644,9 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	 * + shadow) — everything select2 draws besides the closed widget itself,
 	 * which admin_brand_css()'s own .select2-selection rule already covers.
 	 * Colours are hardcoded to $base rather than reusing WooCommerce's own
-	 * var(--wp-admin-theme-color) rules for these same selectors: that
-	 * variable is set by WP core's admin colour-scheme CSS at higher
-	 * specificity (body.admin-color-* beats a bare :root), so a merchant on
-	 * a non-default scheme would see WP's colour win over ours for anything
-	 * consuming the variable. Hardcoding sidesteps that entirely and keeps
-	 * this scoped to select2 only — it never touches --wp-admin-theme-color
-	 * itself, so nothing else that variable feeds is affected.
+	 * var(--wp-admin-theme-color) rules for these same selectors: the
+	 * frontend call prints only these rules and never sets that variable,
+	 * so the colour has to travel with them.
 	 *
 	 * wc-wp-version-gte-53 is a body class WooCommerce adds only in wp-admin
 	 * (its own WP 5.3+ compatibility gate for this exact selector), so
@@ -683,10 +703,12 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo esc_html__( 'Enable', 'romcommerce' ) . '</label></td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Custom login logo', 'romcommerce' ) . '</th><td>';
-		echo '<label><input type="checkbox" name="rc_use_custom_logo" value="1"' . checked( $this->use_custom_logo(), true, false ) . '> ';
+		$picker_toggle = 'document.getElementById(' . wp_json_encode( 'romcommerce_login_logo_picker' ) . ').style.display=this.checked?\'\':\'none\'';
+		echo '<label><input type="checkbox" name="rc_use_custom_logo" value="1"' . checked( $this->use_custom_logo(), true, false ) . ' onchange="' . esc_attr( $picker_toggle ) . '"> ';
 		echo esc_html__( 'Use an uploaded image instead of the site logo', 'romcommerce' ) . '</label>';
 		echo '<p class="description">' . esc_html__( 'For themes that don\'t support a site logo, so there is no Logo field to set in Appearance → Customize → Site Identity.', 'romcommerce' ) . '</p>';
 		$logo_id = $this->custom_logo_attachment_id();
+		echo '<div id="romcommerce_login_logo_picker"' . ( $this->use_custom_logo() ? '' : ' style="display:none;"' ) . '>';
 		echo '<p><span id="romcommerce_login_logo_preview" style="display:block;margin:6px 0;">';
 		if ( $logo_id > 0 ) {
 			echo wp_get_attachment_image( $logo_id, 'medium', false, array( 'style' => 'max-width:240px;height:auto;display:block;' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_get_attachment_image() escapes its own output.
@@ -694,7 +716,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo '</span>';
 		echo '<input type="hidden" id="romcommerce_login_logo_id" name="rc_logo_id" value="' . esc_attr( (string) $logo_id ) . '">';
 		$picker_onclick = 'romcommerceOpenMediaPicker(' . wp_json_encode( 'romcommerce_login_logo_id' ) . ',' . wp_json_encode( 'romcommerce_login_logo_preview' ) . ')';
-		echo '<button type="button" class="button" onclick="' . esc_attr( $picker_onclick ) . '">' . esc_html__( 'Choose image', 'romcommerce' ) . '</button></p></td></tr>';
+		echo '<button type="button" class="button" onclick="' . esc_attr( $picker_onclick ) . '">' . esc_html__( 'Choose image', 'romcommerce' ) . '</button></p></div></td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Brand colour', 'romcommerce' ) . '</th><td>';
 		echo '<input type="color" name="rc_color" value="' . esc_attr( $this->base_color() ) . '">';
@@ -731,29 +753,39 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 		echo '</tbody></table>';
 
-		echo '<h3>' . esc_html__( 'Login background', 'romcommerce' ) . '</h3>';
-		$this->render_background_fields();
+		$live_fields = $this->pro_background_fields();
+		if ( '' !== $live_fields ) {
+			echo '<h3>' . esc_html__( 'Login background', 'romcommerce' ) . '</h3>';
+			echo $live_fields; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Pro's own hook callback is responsible for escaping what it echoes here.
+		}
 
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
+
+		if ( '' === $live_fields ) {
+			$this->render_background_teaser();
+		}
 	}
 
 	/**
 	 * Pro hooks 'romcommerce/admin_branding/background_fields' to echo its
-	 * own live fields here instead — see the class docblock. Lite's fallback
-	 * below is deliberately handler-free: disabled inputs with no name
-	 * attributes, so nothing they contain can ever be submitted or persisted.
+	 * own live fields inside the form, so they save with it — see the class
+	 * docblock. Lite never adds anything here itself.
 	 */
-	private function render_background_fields(): void {
+	private function pro_background_fields(): string {
 		ob_start();
 		do_action( 'romcommerce/admin_branding/background_fields', $this );
-		$live_fields = trim( (string) ob_get_clean() );
 
-		if ( '' !== $live_fields ) {
-			echo $live_fields; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Pro's own hook callback is responsible for escaping what it echoes here.
-			return;
-		}
+		return trim( (string) ob_get_clean() );
+	}
 
+	/**
+	 * Without Pro, a preview below the form: disabled inputs with no name
+	 * attributes, outside the <form>, so nothing in it can be submitted.
+	 */
+	private function render_background_teaser(): void {
+		ProSection::open( __( 'Login background', 'romcommerce' ) );
+		echo '<p>' . esc_html__( 'A custom background image with a gradient overlay for the login screen.', 'romcommerce' ) . '</p>';
 		echo '<table class="form-table"><tbody>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Background image', 'romcommerce' ) . '</th><td>';
@@ -766,7 +798,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo '<input type="number" value="55" disabled> %</td></tr>';
 
 		echo '</tbody></table>';
-		echo '<p><span class="romcommerce-badge">Pro</span> ' . esc_html__( 'A custom background image with a gradient overlay for the login screen.', 'romcommerce' ) . ' <a href="' . esc_url( self::PRO_URL ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Unlock with RomCommerce Pro', 'romcommerce' ) . '</a></p>';
+		ProSection::close();
 	}
 
 	private function handle_save( bool $enabled, string $color, bool $frontend_select2, bool $use_custom_logo, int $logo_id, string $field_style, string $button_shape ): void {

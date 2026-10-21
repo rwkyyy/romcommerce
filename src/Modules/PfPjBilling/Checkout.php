@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace RomCommerce\Modules\PfPjBilling;
 
 use RomCommerce\Settings;
-use RomCommerce\Support\Validators;
 use WC_Order;
 
 defined( 'ABSPATH' ) || exit;
@@ -159,61 +158,28 @@ final class Checkout {
 	 * @param \WP_Error            $errors
 	 */
 	public function validate( $data, $errors ): void {
-		$type = $this->posted( Fields::PERSON_TYPE );
-
-		if ( Fields::TYPE_PJ === $type ) {
-			// The legal floor for a company invoice is CUI + company name; the
-			// checksum itself is enforced by the VAT-ID module when enabled.
-			if ( '' === $this->posted( Fields::CUI ) ) {
-				$errors->add( 'romcommerce_cui', __( 'Vă rugăm să introduceți CUI / CIF pentru persoană juridică.', 'romcommerce' ) );
-			}
-			if ( '' === $this->posted( 'billing_company' ) ) {
-				$errors->add( 'romcommerce_company', __( 'Vă rugăm să introduceți denumirea firmei.', 'romcommerce' ) );
-			}
-
-			$iban = $this->posted( Fields::IBAN );
-			if ( '' !== $iban && ! Validators::iban( $iban ) ) {
-				$errors->add( 'romcommerce_iban', __( 'IBAN-ul introdus nu este valid.', 'romcommerce' ) );
-			}
-		}
-
-		// CNP is validated only when provided; an empty field falls back to the
-		// placeholder derogation rather than blocking checkout.
-		if ( Fields::TYPE_PF === $type && $this->cnp_enabled() ) {
-			$cnp = $this->posted( Fields::CNP );
-			if ( '' !== $cnp && ! Validators::cnp( $cnp ) ) {
-				$errors->add( 'romcommerce_cnp', __( 'CNP-ul introdus nu este valid.', 'romcommerce' ) );
-			}
+		foreach ( BillingData::errors( $this->posted_values(), $this->cnp_enabled() ) as $code => $message ) {
+			$errors->add( $code, $message );
 		}
 	}
 
-	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $data is required by the woocommerce_checkout_update_order_meta hook signature; unused here.
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $data is required by the woocommerce_checkout_create_order hook signature; unused here.
 	public function save( WC_Order $order, array $data ): void {
-		$type = Fields::TYPE_PJ === $this->posted( Fields::PERSON_TYPE ) ? Fields::TYPE_PJ : Fields::TYPE_PF;
-
 		// billing_company is unregistered from WC's native checkout fields (see
 		// remove_native_company_field()), so WC never writes it to the order on
 		// its own — set it here from our own rendered field.
 		$order->set_billing_company( $this->posted( 'billing_company' ) );
+		$order->update_meta_data( Fields::META_KEY, BillingData::for_order( $this->posted_values(), $this->cnp_enabled() ) );
+	}
 
-		$billing = array( 'type' => $type );
-
-		if ( Fields::TYPE_PJ === $type ) {
-			// Preserve the entered form (incl. any RO VAT-payer prefix) — invoicing
-			// tools distinguish VAT-registered companies by it. Validation strips
-			// RO internally for the checksum; storage keeps it.
-			$billing['cui']     = strtoupper( (string) preg_replace( '/\s+/', '', $this->posted( Fields::CUI ) ) );
-			$billing['reg_com'] = $this->posted( Fields::REG_COM );
-			$billing['bank']    = $this->posted( Fields::BANK );
-			$billing['iban']    = strtoupper( (string) preg_replace( '/\s+/', '', $this->posted( Fields::IBAN ) ) );
-		} else {
-			$posted_cnp     = $this->posted( Fields::CNP );
-			$billing['cnp'] = ( $this->cnp_enabled() && '' !== $posted_cnp )
-				? preg_replace( '/\D/', '', $posted_cnp )
-				: Fields::CNP_PLACEHOLDER;
+	/** @return array<string, string> */
+	private function posted_values(): array {
+		$values = array();
+		foreach ( array( Fields::PERSON_TYPE, 'billing_company', Fields::CUI, Fields::REG_COM, Fields::BANK, Fields::IBAN, Fields::CNP ) as $key ) {
+			$values[ $key ] = $this->posted( $key );
 		}
 
-		$order->update_meta_data( Fields::META_KEY, $billing );
+		return $values;
 	}
 
 	private function posted( string $key ): string {

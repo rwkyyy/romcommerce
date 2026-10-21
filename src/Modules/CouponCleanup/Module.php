@@ -73,6 +73,26 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		}
 	}
 
+	/**
+	 * Both jobs once, now, each only if its own toggle is on: the on-demand
+	 * run for WP-CLI and the abilities, never more than the cron would do.
+	 *
+	 * @return array{trashed_expired: bool, emptied_trash: bool}
+	 */
+	public function run_now(): array {
+		if ( $this->trash_expired_enabled() ) {
+			$this->trash_expired_coupons();
+		}
+		if ( $this->empty_trash_enabled() ) {
+			$this->empty_coupon_trash();
+		}
+
+		return array(
+			'trashed_expired' => $this->trash_expired_enabled(),
+			'emptied_trash'   => $this->empty_trash_enabled(),
+		);
+	}
+
 	public function trash_expired_coupons(): void {
 		$expired_ids = get_posts(
 			array(

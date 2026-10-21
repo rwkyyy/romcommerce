@@ -107,26 +107,65 @@ final class ModuleTest extends TestCase {
 		self::assertNull( $this->invokePrivate( new Module(), 'country_override', array() ) );
 	}
 
+	/**
+	 * @dataProvider shapes
+	 * @param array<string, mixed> $stored
+	 */
+	public function test_the_bar_shape_is_square_or_rounded_and_old_square_bars_stay_square( array $stored, string $expected ): void {
+		Functions\when( 'get_option' )->justReturn( $stored );
+
+		self::assertSame( $expected, $this->invokePrivate( new Module(), 'shape', array() ) );
+	}
+
+	/** @return array<string, array{0: array<string, mixed>, 1: string}> */
+	public static function shapes(): array {
+		return array(
+			'nothing saved'              => array( array(), 'rounded' ),
+			'saved square'               => array( array( 'shape' => 'square' ), 'square' ),
+			'unknown value'              => array( array( 'shape' => 'pill' ), 'rounded' ),
+			'old radius 0'               => array( array( 'border_radius' => 0 ), 'square' ),
+			'old radius 6'               => array( array( 'border_radius' => 6 ), 'rounded' ),
+			'new shape wins over radius' => array(
+				array(
+					'border_radius' => 0,
+					'shape'         => 'rounded',
+				),
+				'rounded',
+			),
+		);
+	}
+
+	public function test_the_thickness_stays_between_1_and_5_pixels(): void {
+		foreach ( array( 5 => array(), 1 => array( 'thickness' => 0 ), 3 => array( 'thickness' => 3 ) ) as $expected => $stored ) {
+			Functions\when( 'get_option' )->justReturn( $stored );
+			self::assertSame( $expected, $this->invokePrivate( new Module(), 'thickness', array() ) );
+		}
+		Functions\when( 'get_option' )->justReturn( array( 'thickness' => 12 ) );
+		self::assertSame( 5, $this->invokePrivate( new Module(), 'thickness', array() ) );
+	}
+
 	public function test_placements_default_to_all_three_slots_active(): void {
 		Functions\when( 'get_option' )->justReturn( array() );
 
-		self::assertSame(
-			array(
-				array(
-					'slot'   => 'add_to_cart',
-					'active' => true,
-				),
-				array(
-					'slot'   => 'cart',
-					'active' => true,
-				),
-				array(
-					'slot'   => 'checkout_review',
-					'active' => true,
-				),
-			),
-			( new Module() )->placements()
+		$placements = ( new Module() )->placements();
+
+		self::assertSame( array( 'product', 'cart', 'checkout' ), array_column( $placements, 'key' ) );
+		self::assertSame( array( 'add_to_cart', 'cart', 'checkout_review' ), array_column( $placements, 'slot' ) );
+		self::assertSame( array( true, true, true ), array_column( $placements, 'active' ) );
+	}
+
+	public function test_placements_follow_the_merchants_stored_area_choice(): void {
+		Functions\when( 'get_option' )->alias(
+			static function ( string $name ) {
+				return 'romcommerce_placement_choices' === $name
+					? array( 'free-shipping-bar' => array( 'cart' => 'cart_before_checkout_button' ) )
+					: array();
+			}
 		);
+
+		$placements = ( new Module() )->placements();
+
+		self::assertSame( array( 'add_to_cart', 'cart_before_checkout_button', 'checkout_review' ), array_column( $placements, 'slot' ) );
 	}
 
 	public function test_placements_reflect_each_toggled_off_placement(): void {

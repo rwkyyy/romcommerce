@@ -1,10 +1,13 @@
 name: CI
 
+# The single definition of every quality check. Runs on pull requests, and is
+# called by version-tag.yml on every push to main, so a release can only be
+# tagged when all of it passes. Add new checks here, never in version-tag.yml.
+
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+  workflow_call:
 
 jobs:
   lint:
@@ -15,6 +18,8 @@ jobs:
         php: ["7.4", "8.0", "8.1", "8.2", "8.3"]
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
@@ -27,6 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
@@ -39,6 +46,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
@@ -54,9 +63,129 @@ jobs:
         php: ["8.1", "8.2", "8.3"]
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           coverage: none
       - uses: ramsey/composer-install@v4
       - run: composer test
+
+  i18n:
+    name: Translations up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          coverage: none
+          tools: wp-cli
+      - run: sudo apt-get install -y --no-install-recommends gettext
+      - run: bash bin/check-i18n.sh
+
+  plugin-check:
+    name: Plugin Check (wp.org)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run env:start
+      - run: bash bin/plugin-check.sh
+
+  upgrade:
+    name: Upgrade from previous release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          # The previous release is rebuilt from its git tag.
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run env:start
+      - run: bash bin/upgrade-check.sh
+
+  integration:
+    name: "Integration (${{ matrix.name }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: latest, HPOS
+            hpos: true
+            oldest: false
+          - name: latest, legacy orders
+            hpos: false
+            oldest: false
+          # The floor the plugin headers promise: Requires PHP 7.4, WP 6.0, WC 7.0.
+          # HPOS stays off here: it was still experimental in WooCommerce 7.0.
+          - name: oldest supported (PHP 7.4, WP 6.0, WC 7.0)
+            hpos: false
+            oldest: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin the oldest supported stack
+        if: matrix.oldest
+        run: |
+          cat > .wp-env.override.json <<'JSON'
+          {
+            "core": "WordPress/WordPress#6.0",
+            "phpVersion": "7.4",
+            "plugins": [
+              "https://downloads.wordpress.org/plugin/woocommerce.7.0.0.zip",
+              "./.dist/romcommerce"
+            ]
+          }
+          JSON
+      - run: npm run env:start
+      - run: npm run ${{ matrix.hpos && 'test:integration:hpos' || 'test:integration' }}
+
+  e2e:
+    name: Browser tests (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run env:start
+      - run: npm run test:e2e
+      # Screenshot comparisons run in the pinned Playwright image, same as
+      # locally, so baselines rendered on a laptop match CI pixel for pixel.
+      - run: npm run test:e2e:visual
+      - name: Upload report and traces
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14

@@ -1,0 +1,85 @@
+name: Bundled data
+
+# Monthly check of the third-party data Lite bundles. Each job refreshes its
+# files and opens (or updates) a pull request only when something changed; a
+# release ships whatever is merged. The plugin itself never fetches any of it.
+on:
+  schedule:
+    - cron: '0 6 1 * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  intl-tel-input:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Refresh intl-tel-input
+        run: bash bin/update-intl-tel-input.sh
+
+      - name: Open or update the pull request
+        env:
+          # A PAT lets the PR trigger CI; the default token still opens it.
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+        run: |
+          if [ -z "$(git status --porcelain -- assets/lib/intl-tel-input)" ]; then
+            echo "intl-tel-input is current."
+            exit 0
+          fi
+          version="$(cat assets/lib/intl-tel-input/VERSION)"
+          branch=bundled/intl-tel-input
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C "$branch"
+          git add assets/lib/intl-tel-input
+          git commit -m "Update intl-tel-input to $version"
+          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$branch"
+          if [ -z "$(gh pr list --head "$branch" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --head "$branch" --base main \
+              --title "Update intl-tel-input to $version" \
+              --body "Monthly check found intl-tel-input $version on npm (phone validation). Check the upstream changelog (https://github.com/jackocnr/intl-tel-input/releases) and run the checkout e2e tests before merging."
+          else
+            gh pr edit "$branch" --title "Update intl-tel-input to $version"
+          fi
+
+  vat-rates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Fetch and validate rates
+        run: php bin/update-eu-vat-rates.php
+
+      - name: Open or update the pull request
+        env:
+          # A PAT lets the PR trigger CI; the default token still opens it.
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+        run: |
+          if git diff --quiet -- data/eu-vat-rates.json; then
+            echo "No rate changes."
+            exit 0
+          fi
+          branch=bundled/eu-vat-rates
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C "$branch"
+          git add data/eu-vat-rates.json
+          git commit -m "Update EU VAT rates ($(date -u +%Y-%m-%d))"
+          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$branch"
+          if [ -z "$(gh pr list --head "$branch" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --head "$branch" --base main \
+              --title "Update EU VAT rates" \
+              --body "Monthly refresh from https://api.vatcomply.com/vat_rates. Check the changed rates against the official EU source (TEDB) before merging; shops that imported rates get a refresh notice after the release."
+          fi

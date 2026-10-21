@@ -8,6 +8,7 @@ use RomCommerce\Admin\SettingsForm;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
 use RomCommerce\Settings;
+use RomCommerce\Support\Blocks;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,14 +24,17 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 	private Checkout $checkout;
 
+	private BlockCheckout $block_checkout;
+
 	private MetaShim $shim;
 
 	private Integrations $integrations;
 
 	public function __construct() {
-		$this->checkout     = new Checkout();
-		$this->shim         = new MetaShim();
-		$this->integrations = new Integrations();
+		$this->checkout       = new Checkout();
+		$this->block_checkout = new BlockCheckout();
+		$this->shim           = new MetaShim();
+		$this->integrations   = new Integrations();
 	}
 
 	public function id(): string {
@@ -47,6 +51,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 	public function boot(): void {
 		$this->checkout->register();
+		$this->block_checkout->register();
 		$this->shim->register();
 		$this->integrations->register();
 	}
@@ -63,6 +68,8 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		$cnp_enabled = (bool) ( Settings::get( self::ID )['cnp_enabled'] ?? false );
 
 		echo '<p>' . esc_html__( 'Adds individual (PF) vs company (PJ) billing fields at checkout and writes the data where Romanian invoicing plugins (SmartBill, Oblio, EasySales) read it.', 'romcommerce' ) . '</p>';
+
+		$this->render_block_checkout_notices();
 
 		echo '<form method="post">';
 		SettingsForm::nonce_field( self::ID );
@@ -82,5 +89,25 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo '</tbody></table>';
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
+	}
+
+	/**
+	 * The block checkout takes these fields only through WooCommerce's
+	 * Additional Checkout Fields API (8.9+), and shows its own Company field
+	 * next to ours unless the merchant hides it in the Checkout block.
+	 */
+	private function render_block_checkout_notices(): void {
+		if ( ! Blocks::checkout_uses_block() ) {
+			return;
+		}
+
+		if ( ! Blocks::has_checkout_fields_api() ) {
+			echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Your checkout page uses the Checkout block, which needs WooCommerce 8.9 or newer for these fields. Update WooCommerce, or switch the checkout page to the classic checkout shortcode.', 'romcommerce' ) . '</p></div>';
+			return;
+		}
+
+		if ( 'hidden' !== get_option( 'woocommerce_checkout_company_field', 'optional' ) ) {
+			echo '<div class="notice notice-info inline"><p>' . esc_html__( 'WooCommerce\'s own Company field is also shown on the block checkout. To avoid asking for the company name twice, hide it in the Checkout block settings (Company name: Hidden).', 'romcommerce' ) . '</p></div>';
+		}
 	}
 }

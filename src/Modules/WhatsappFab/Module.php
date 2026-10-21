@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace RomCommerce\Modules\WhatsappFab;
 
+use RomCommerce\Admin\IconPicker;
 use RomCommerce\Admin\SettingsForm;
 use RomCommerce\Modules\HasPlacements;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
 use RomCommerce\Settings;
+use RomCommerce\Support\CustomIcon;
 use RomCommerce\Support\Placement;
 use WC_Product;
 
@@ -28,88 +30,29 @@ defined( 'ABSPATH' ) || exit;
  * parameter. CSS/JS are hand-written strings (no build step) but enqueued via
  * a src=false handle + wp_add_inline_style()/wp_add_inline_script(), not
  * echoed as raw <style>/<script> tags.
+ *
+ * The optional Add-to-Cart button reuses the WhatsApp channel's number and
+ * message, but not its FAB `enabled` flag: a merchant may want the inline
+ * button without the floating hub, so a filled-in number is all it needs.
  */
 final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 	private const ID = 'whatsapp-fab';
 
-	private const ICON_TYPES = array( 'default', 'media', 'svg', 'dashicon' );
+	/** Same choices as the login branding's button shape, plus the circle the FAB has always had. */
+	private const SHAPES = array( 'circle', 'rounded', 'square' );
 
-	/**
-	 * Deliberately narrow allowlist for merchant-supplied inline SVG icons —
-	 * shape/paint primitives only, no scripting-capable elements. wp_kses()
-	 * matches attribute names case-insensitively but preserves the original
-	 * casing on output, so 'viewbox' here still lets a camelCase viewBox
-	 * survive (SVG/XML attribute names are case-sensitive).
-	 *
-	 * @var array<string, array<string, bool>>
-	 */
-	private const ALLOWED_SVG_TAGS = array(
-		'svg'     => array(
-			'viewbox'      => true,
-			'width'        => true,
-			'height'       => true,
-			'xmlns'        => true,
-			'fill'         => true,
-			'aria-hidden'  => true,
-			'focusable'    => true,
-			'class'        => true,
-			'stroke'       => true,
-			'stroke-width' => true,
-		),
-		'path'    => array(
-			'd'               => true,
-			'fill'            => true,
-			'fill-rule'       => true,
-			'clip-rule'       => true,
-			'stroke'          => true,
-			'stroke-width'    => true,
-			'stroke-linecap'  => true,
-			'stroke-linejoin' => true,
-		),
-		'g'       => array(
-			'fill'      => true,
-			'transform' => true,
-			'stroke'    => true,
-		),
-		'circle'  => array(
-			'cx'     => true,
-			'cy'     => true,
-			'r'      => true,
-			'fill'   => true,
-			'stroke' => true,
-		),
-		'rect'    => array(
-			'x'      => true,
-			'y'      => true,
-			'width'  => true,
-			'height' => true,
-			'rx'     => true,
-			'ry'     => true,
-			'fill'   => true,
-			'stroke' => true,
-		),
-		'polygon' => array(
-			'points' => true,
-			'fill'   => true,
-		),
-		'line'    => array(
-			'x1'           => true,
-			'y1'           => true,
-			'x2'           => true,
-			'y2'           => true,
-			'stroke'       => true,
-			'stroke-width' => true,
-		),
-		'title'   => array(),
-	);
+	private const ATC_SHAPES = array( 'rounded', 'pill', 'square' );
+
+	/** WhatsApp's brand green (owner, 2026-10-14). atc_text_color() puts black text on it: white is only 2:1. */
+	private const ATC_DEFAULT_COLOR = '#25D366';
 
 	public function id(): string {
 		return self::ID;
 	}
 
 	public function title(): string {
-		return __( 'WhatsApp / Contact FAB', 'romcommerce' );
+		return __( 'Floating contact FAB', 'romcommerce' );
 	}
 
 	public function is_enabled(): bool {
@@ -125,7 +68,7 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	public function register_placements(): void {
 		foreach ( $this->placements() as $placement ) {
 			if ( $placement['active'] ) {
-				Placement::hook( $placement['slot'], array( $this, 'render' ) );
+				Placement::hook( $placement['slot'], array( $this, 'atc' === $placement['key'] ? 'render_atc_button' : 'render' ) );
 			}
 		}
 	}
@@ -137,18 +80,44 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	 * `active` mirrors render()'s own bail-out: with no channel both enabled and
 	 * filled in, nothing renders, so the Placements map must not show the FAB.
 	 *
-	 * @return array<int, array{slot: string, active: bool}>
+	 * @return array<int, array{key: string, slot: string, active: bool, choices?: array<int, string>}>
 	 */
 	public function placements(): array {
-		return array(
+		return Placement::resolve(
+			self::ID,
 			array(
-				'slot'   => 'fixed',
-				'active' => array() !== $this->active_channels(),
-			),
+				array(
+					'key'    => 'fab',
+					'slot'   => 'fixed',
+					'active' => array() !== $this->active_channels(),
+				),
+				array(
+					'key'     => 'atc',
+					'slot'    => 'add_to_cart',
+					'active'  => $this->atc_button_ready(),
+					'choices' => array( 'add_to_cart', 'product_before_add_to_cart', 'product_after_add_to_cart' ),
+				),
+			)
 		);
 	}
 
 	public function enqueue_assets(): void {
+		$on_product = function_exists( 'is_product' ) && is_product();
+
+		if ( $on_product && $this->atc_button_ready() ) {
+			wp_register_style( 'romcommerce-whatsapp-atc', false, array(), ROMCOMMERCE_VERSION );
+			wp_enqueue_style( 'romcommerce-whatsapp-atc' );
+			wp_add_inline_style( 'romcommerce-whatsapp-atc', $this->atc_styles_css( $this->atc_color(), $this->atc_shape(), $this->atc_text_color( $this->atc_color() ) ) );
+		}
+
+		if ( $on_product && ( $this->atc_button_ready() || isset( $this->active_channels()['whatsapp'] ) ) ) {
+			// jQuery is a hard dependency only here: WooCommerce's variation form
+			// fires its events through jQuery, and product pages load it anyway.
+			wp_register_script( 'romcommerce-whatsapp-variation', false, array( 'jquery' ), ROMCOMMERCE_VERSION, true );
+			wp_enqueue_script( 'romcommerce-whatsapp-variation' );
+			wp_add_inline_script( 'romcommerce-whatsapp-variation', $this->variation_script_js() );
+		}
+
 		$channels = $this->active_channels();
 		if ( empty( $channels ) ) {
 			return;
@@ -162,7 +131,7 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 		wp_register_style( 'romcommerce-whatsapp-fab', false, array(), ROMCOMMERCE_VERSION );
 		wp_enqueue_style( 'romcommerce-whatsapp-fab' );
-		wp_add_inline_style( 'romcommerce-whatsapp-fab', $this->styles_css( $this->toggle_color() ) );
+		wp_add_inline_style( 'romcommerce-whatsapp-fab', $this->styles_css( $this->toggle_color(), $this->shape() ) );
 
 		wp_register_script( 'romcommerce-whatsapp-fab', false, array(), ROMCOMMERCE_VERSION, true );
 		wp_enqueue_script( 'romcommerce-whatsapp-fab' );
@@ -195,6 +164,25 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		echo '</span>';
 		echo '</button>';
 		echo '</div>';
+	}
+
+	public function render_atc_button(): void {
+		if ( is_admin() || ! $this->atc_button_ready() ) {
+			return;
+		}
+
+		global $product;
+		$current = $product instanceof WC_Product ? $product : null;
+
+		$stored = $this->channel_settings( 'whatsapp' );
+		$digits = $this->digits( (string) ( $stored['value'] ?? '' ) );
+		$text   = $this->message_text( 'whatsapp', $stored, $current );
+
+		echo '<div class="romcommerce-wa-atc">';
+		echo '<a class="romcommerce-wa-atc-button" href="' . esc_url( 'https://wa.me/' . $digits . '?text=' . rawurlencode( $text ) ) . '" data-rc-wa-number="' . esc_attr( $digits ) . '" data-rc-wa-base="' . esc_attr( $text ) . '">';
+		echo Channels::catalog()['whatsapp']['icon']; // phpcs:ignore WordPress.Security.EscapeOutput -- static inline SVG from Channels.
+		echo '<span>' . esc_html( $this->atc_label() ) . '</span>';
+		echo '</a></div>';
 	}
 
 	/**
@@ -245,24 +233,9 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	 * @param array<string, mixed>              $stored
 	 */
 	private function resolve_icon( array $channel, array $stored ): string {
-		$type = (string) ( $stored['icon_type'] ?? 'default' );
-
-		if ( 'media' === $type ) {
-			$media_id = (int) ( $stored['icon_media_id'] ?? 0 );
-			$image    = $media_id > 0 ? (string) wp_get_attachment_image( $media_id, array( 24, 24 ), false, array( 'alt' => '' ) ) : '';
-			if ( '' !== $image ) {
-				return $image;
-			}
-		} elseif ( 'svg' === $type ) {
-			$svg = trim( (string) ( $stored['icon_svg'] ?? '' ) );
-			if ( '' !== $svg ) {
-				return $svg;
-			}
-		} elseif ( 'dashicon' === $type ) {
-			$slug = (string) ( $stored['icon_dashicon'] ?? '' );
-			if ( '' !== $slug ) {
-				return '<span class="dashicons ' . esc_attr( $slug ) . '" aria-hidden="true"></span>';
-			}
+		$custom = CustomIcon::render( $stored, 24 );
+		if ( '' !== $custom ) {
+			return $custom;
 		}
 
 		if ( '' !== $channel['icon'] ) {
@@ -274,28 +247,12 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 	/** @param array<string, array{icon: string, text: string, ...}> $channels */
 	private function any_channel_uses_dashicon( array $channels ): bool {
+		$stored = array();
 		foreach ( array_keys( $channels ) as $id ) {
-			if ( 'dashicon' === ( $this->channel_settings( $id )['icon_type'] ?? 'default' ) ) {
-				return true;
-			}
+			$stored[] = $this->channel_settings( $id );
 		}
 
-		return false;
-	}
-
-	private function sanitize_svg( string $raw ): string {
-		$clean = wp_kses( $raw, self::ALLOWED_SVG_TAGS );
-
-		return false !== stripos( $clean, '<svg' ) ? $clean : '';
-	}
-
-	private function sanitize_dashicon( string $slug ): string {
-		$slug = sanitize_html_class( trim( $slug ) );
-		if ( '' === $slug ) {
-			return '';
-		}
-
-		return 0 === strpos( $slug, 'dashicons-' ) ? $slug : 'dashicons-' . $slug;
+		return CustomIcon::any_dashicon( $stored );
 	}
 
 	/**
@@ -345,29 +302,36 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	 * Telegram, Email) ever call this — every other channel's build_href()
 	 * branch never reaches it.
 	 *
+	 * $product, when given, wins over the queried page: the Add-to-Cart button
+	 * can render for a product embedded in another page ([product_page]).
+	 *
 	 * @param array<string, mixed> $stored
 	 */
-	private function message_text( string $id, array $stored ): string {
+	private function message_text( string $id, array $stored, ?WC_Product $product = null ): string {
 		$hello = trim( (string) ( $stored['hello_message'] ?? '' ) );
 
 		if ( '' === $hello ) {
 			// WhatsApp alone keeps its original auto-generated context so
 			// installs that predate the hello-message field see no change.
-			return 'whatsapp' === $id ? $this->whatsapp_base_text() : '';
+			return 'whatsapp' === $id ? $this->whatsapp_base_text( $product ) : '';
 		}
 
 		if ( empty( $stored['append_page_link'] ) ) {
 			return $hello;
 		}
 
-		return $hello . ' ' . $this->current_page_link();
+		return $hello . ' ' . $this->current_page_link( $product );
 	}
 
-	private function whatsapp_base_text(): string {
-		return $this->current_page_title() . ' - ' . $this->current_page_link();
+	private function whatsapp_base_text( ?WC_Product $product = null ): string {
+		return $this->current_page_title( $product ) . ' - ' . $this->current_page_link( $product );
 	}
 
-	private function current_page_title(): string {
+	private function current_page_title( ?WC_Product $product = null ): string {
+		if ( null !== $product ) {
+			return $product->get_name();
+		}
+
 		if ( function_exists( 'is_product' ) && is_product() ) {
 			$product = wc_get_product( get_queried_object_id() );
 			if ( $product instanceof WC_Product ) {
@@ -382,7 +346,11 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		return get_bloginfo( 'name' );
 	}
 
-	private function current_page_link(): string {
+	private function current_page_link( ?WC_Product $product = null ): string {
+		if ( null !== $product ) {
+			return (string) get_permalink( $product->get_id() );
+		}
+
 		if ( function_exists( 'is_product' ) && is_product() ) {
 			$product = wc_get_product( get_queried_object_id() );
 			if ( $product instanceof WC_Product ) {
@@ -437,8 +405,52 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		return '' !== $color ? $color : '#303f9f';
 	}
 
+	private function shape(): string {
+		$shape = (string) ( Settings::get( self::ID )['shape'] ?? '' );
+
+		return in_array( $shape, self::SHAPES, true ) ? $shape : 'circle';
+	}
+
+	private function atc_shape(): string {
+		$shape = (string) ( Settings::get( self::ID )['atc_shape'] ?? '' );
+
+		return in_array( $shape, self::ATC_SHAPES, true ) ? $shape : 'rounded';
+	}
+
 	private function cycle_icons(): bool {
 		return ! empty( Settings::get( self::ID )['cycle_icons'] );
+	}
+
+	private function atc_enabled(): bool {
+		return ! empty( Settings::get( self::ID )['atc_button'] );
+	}
+
+	private function atc_button_ready(): bool {
+		return $this->atc_enabled() && '' !== $this->digits( (string) ( $this->channel_settings( 'whatsapp' )['value'] ?? '' ) );
+	}
+
+	private function atc_label(): string {
+		$label = trim( (string) ( Settings::get( self::ID )['atc_label'] ?? '' ) );
+
+		return '' !== $label ? $label : __( 'Ask on WhatsApp', 'romcommerce' );
+	}
+
+	private function atc_color(): string {
+		$color = $this->sanitize_hex_color( (string) ( Settings::get( self::ID )['atc_color'] ?? '' ) );
+
+		return '' !== $color ? $color : self::ATC_DEFAULT_COLOR;
+	}
+
+	/** Black or white, whichever reads on the button colour (YIQ brightness, W3C's 128 threshold). */
+	private function atc_text_color( string $hex ): string {
+		$hex = ltrim( $hex, '#' );
+		if ( 3 === strlen( $hex ) ) {
+			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+		}
+
+		$yiq = ( hexdec( substr( $hex, 0, 2 ) ) * 299 + hexdec( substr( $hex, 2, 2 ) ) * 587 + hexdec( substr( $hex, 4, 2 ) ) * 114 ) / 1000;
+
+		return $yiq >= 128 ? '#000000' : '#ffffff';
 	}
 
 	private function toggle_icon(): string {
@@ -448,34 +460,85 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	/**
 	 * @param string $toggle_color Hex colour already validated by toggle_color() — safe to
 	 *                              splice into the raw CSS string without HTML-attribute escaping.
+	 * @param string $shape        One of SHAPES, already validated by shape().
 	 */
-	private function styles_css( string $toggle_color ): string {
+	private function styles_css( string $toggle_color, string $shape ): string {
+		$radius       = array(
+			'circle'  => '50%',
+			'rounded' => '25%',
+			'square'  => '0',
+		)[ $shape ] ?? '50%';
+		$label_radius = 'square' === $shape ? '0' : '4px';
+
 		// display:flex + align-items so the toggle button (an inline-block sibling
 		// after the list, not itself a flex item of any row) anchors to the same
 		// edge as the channel list instead of always hugging the container's left
 		// edge — without this, opening the list on pos-right widens the container
 		// leftward and the toggle visibly detaches from the right-anchored icons.
-		return '.romcommerce-fab{position:fixed;z-index:9999;bottom:20px;display:flex;flex-direction:column;}'
-			. '.romcommerce-fab.pos-left{left:20px;align-items:flex-start;}'
-			. '.romcommerce-fab.pos-right{right:20px;align-items:flex-end;}'
-			. '.romcommerce-fab-toggle{width:56px;height:56px;border-radius:50%;border:0;cursor:pointer;background:' . $toggle_color . ';color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.3);}'
+		//
+		// Every rule is scoped under the #romcommerce-fab id: page builders style
+		// bare elements through a body class (Elementor's ".elementor-kit-N button"
+		// sets border-radius:0, padding and background-color), which outranks a
+		// single class and flattened the toggle into an off-colour square.
+		return '#romcommerce-fab{position:fixed;z-index:9999;bottom:20px;display:flex;flex-direction:column;}'
+			. '#romcommerce-fab.pos-left{left:20px;align-items:flex-start;}'
+			. '#romcommerce-fab.pos-right{right:20px;align-items:flex-end;}'
+			. '#romcommerce-fab .romcommerce-fab-toggle{width:56px;height:56px;min-width:0;min-height:0;margin:0;padding:0;border-radius:' . $radius . ';border:0;cursor:pointer;background:' . $toggle_color . ';color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.3);}'
 			// A theme's own global a:hover/a:active (or button:hover) rule otherwise
-			// wins the cascade over our plain :hover-less color:#fff above, repainting
+			// wins the cascade over our plain :hover-less colours above, repainting
 			// the icon via fill:currentColor in whatever hover colour that theme uses.
-			. '.romcommerce-fab-toggle:hover,.romcommerce-fab-toggle:focus,.romcommerce-fab-toggle:active{color:#fff;}'
-			. '.romcommerce-fab-toggle-icon{display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .2s ease;}'
-			. '.romcommerce-fab-toggle-icon.is-fading{opacity:0;}'
-			. '.romcommerce-fab-toggle-icon svg{width:28px;height:28px;fill:currentColor;}'
-			. '.romcommerce-fab-toggle-icon img{width:24px;height:24px;object-fit:contain;}'
-			. '.romcommerce-fab-list{list-style:none;margin:0 0 12px;padding:0;display:none;}'
-			. '.romcommerce-fab.is-open .romcommerce-fab-list{display:block;}'
-			. '.romcommerce-fab-list li{margin-bottom:10px;display:flex;align-items:center;}'
-			. '.romcommerce-fab.pos-right .romcommerce-fab-list li{flex-direction:row-reverse;}'
-			. '.romcommerce-fab-channel{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.25);font-weight:700;}'
-			. '.romcommerce-fab-channel:link,.romcommerce-fab-channel:visited,.romcommerce-fab-channel:hover,.romcommerce-fab-channel:focus,.romcommerce-fab-channel:active{color:#fff;text-decoration:none;}'
-			. '.romcommerce-fab-channel svg{width:24px;height:24px;fill:currentColor;}'
-			. '.romcommerce-fab-monogram{font-size:20px;font-weight:700;line-height:1;}'
-			. '.romcommerce-fab-label{background:#1e1e1e;color:#fff;padding:4px 8px;border-radius:4px;font-size:13px;margin:0 8px;white-space:nowrap;}';
+			. '#romcommerce-fab .romcommerce-fab-toggle:hover,#romcommerce-fab .romcommerce-fab-toggle:focus,#romcommerce-fab .romcommerce-fab-toggle:active{background:' . $toggle_color . ';color:#fff;}'
+			. '#romcommerce-fab .romcommerce-fab-toggle-icon{display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .2s ease;}'
+			. '#romcommerce-fab .romcommerce-fab-toggle-icon.is-fading{opacity:0;}'
+			. '#romcommerce-fab .romcommerce-fab-toggle-icon svg{width:28px;height:28px;fill:currentColor;}'
+			. '#romcommerce-fab .romcommerce-fab-toggle-icon img{width:24px;height:24px;object-fit:contain;}'
+			. '#romcommerce-fab .romcommerce-fab-list{list-style:none;margin:0 0 12px;padding:0;display:none;}'
+			. '#romcommerce-fab.is-open .romcommerce-fab-list{display:block;}'
+			. '#romcommerce-fab .romcommerce-fab-list li{margin:0 0 10px;padding:0;display:flex;align-items:center;}'
+			. '#romcommerce-fab.pos-right .romcommerce-fab-list li{flex-direction:row-reverse;}'
+			. '#romcommerce-fab .romcommerce-fab-channel{width:46px;height:46px;padding:0;border:0;border-radius:' . $radius . ';display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.25);font-weight:700;}'
+			. '#romcommerce-fab .romcommerce-fab-channel:link,#romcommerce-fab .romcommerce-fab-channel:visited,#romcommerce-fab .romcommerce-fab-channel:hover,#romcommerce-fab .romcommerce-fab-channel:focus,#romcommerce-fab .romcommerce-fab-channel:active{color:#fff;text-decoration:none;}'
+			. '#romcommerce-fab .romcommerce-fab-channel svg{width:24px;height:24px;fill:currentColor;}'
+			. '#romcommerce-fab .romcommerce-fab-monogram{font-size:20px;font-weight:700;line-height:1;}'
+			. '#romcommerce-fab .romcommerce-fab-label{background:#1e1e1e;color:#fff;padding:4px 8px;border-radius:' . $label_radius . ';font-size:13px;line-height:1.4;margin:0 8px;white-space:nowrap;}';
+	}
+
+	/**
+	 * flex-basis forces its own row inside block themes' flex Add to Cart form;
+	 * clear does the same after Storefront's floated quantity and button. The
+	 * button rules carry the wrapper class so a page builder's
+	 * ".elementor-kit-N a:hover" can't repaint the text.
+	 *
+	 * @param string $color Hex colour already validated by atc_color().
+	 * @param string $shape One of ATC_SHAPES, already validated by atc_shape().
+	 * @param string $text  Text colour from atc_text_color().
+	 */
+	private function atc_styles_css( string $color, string $shape, string $text = '#ffffff' ): string {
+		$radius = array(
+			'rounded' => '4px',
+			'pill'    => '999px',
+			'square'  => '0',
+		)[ $shape ] ?? '4px';
+
+		return '.romcommerce-wa-atc{clear:both;flex-basis:100%;width:100%;margin:.75em 0 0;}'
+			. '.romcommerce-wa-atc .romcommerce-wa-atc-button{display:inline-flex;align-items:center;gap:.5em;padding:.6em 1.2em;border:0;border-radius:' . $radius . ';background:' . $color . ';color:' . $text . ';font-weight:600;text-decoration:none;line-height:1.4;}'
+			. '.romcommerce-wa-atc .romcommerce-wa-atc-button:link,.romcommerce-wa-atc .romcommerce-wa-atc-button:visited,.romcommerce-wa-atc .romcommerce-wa-atc-button:hover,.romcommerce-wa-atc .romcommerce-wa-atc-button:focus,.romcommerce-wa-atc .romcommerce-wa-atc-button:active{background:' . $color . ';color:' . $text . ';text-decoration:none;}'
+			. '.romcommerce-wa-atc .romcommerce-wa-atc-button:hover{filter:brightness(1.1);}'
+			. '.romcommerce-wa-atc .romcommerce-wa-atc-button svg{width:20px;height:20px;fill:currentColor;flex:none;}';
+	}
+
+	/**
+	 * Keeps every WhatsApp link on the page (FAB channel and Add-to-Cart
+	 * button) pointing at the selected variation, and back to the plain
+	 * product once the shopper clears the selection.
+	 */
+	private function variation_script_js(): string {
+		return '(function($){'
+			. 'function point(extra){$("[data-rc-wa-number]").each(function(){'
+			. 'this.setAttribute("href","https://wa.me/"+this.getAttribute("data-rc-wa-number")+"?text="+encodeURIComponent(this.getAttribute("data-rc-wa-base")+extra));});}'
+			. '$(document).on("found_variation",".variations_form",function(ev,variation){point(variation&&variation.variation_id?(" (#"+variation.variation_id+")"):"");});'
+			. '$(document).on("reset_data",".variations_form",function(){point("");});'
+			. '})(window.jQuery);';
 	}
 
 	private function script_js(): string {
@@ -500,10 +563,6 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			. '};'
 			. 'setTimeout(cycleTick,2500);'
 			. '}'
-			. 'var wa=fab.querySelector("[data-rc-wa-number]");'
-			. 'if(wa&&window.jQuery){window.jQuery(".variations_form").on("found_variation",function(ev,variation){'
-			. 'var base=wa.getAttribute("data-rc-wa-base");var extra=variation&&variation.variation_id?(" (#"+variation.variation_id+")"):"";'
-			. 'wa.setAttribute("href","https://wa.me/"+wa.getAttribute("data-rc-wa-number")+"?text="+encodeURIComponent(base+extra));});}'
 			. '})();';
 	}
 
@@ -518,8 +577,16 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 				( isset( $_POST['rc_position'] ) && 'right' === sanitize_key( wp_unslash( $_POST['rc_position'] ) ) ) ? 'right' : 'left',
 				isset( $_POST['rc_toggle_color'] ) ? $this->sanitize_hex_color( (string) wp_unslash( $_POST['rc_toggle_color'] ) ) : '',
 				isset( $_POST['rc_cycle_icons'] ),
-				$this->parse_channels( ( isset( $_POST['rc_channel'] ) && is_array( $_POST['rc_channel'] ) ) ? wp_unslash( $_POST['rc_channel'] ) : array() )
+				isset( $_POST['rc_shape'] ) ? sanitize_key( wp_unslash( $_POST['rc_shape'] ) ) : '',
+				$this->parse_channels( ( isset( $_POST['rc_channel'] ) && is_array( $_POST['rc_channel'] ) ) ? wp_unslash( $_POST['rc_channel'] ) : array() ),
+				array(
+					'atc_button' => isset( $_POST['rc_atc_button'] ),
+					'atc_label'  => isset( $_POST['rc_atc_label'] ) ? sanitize_text_field( wp_unslash( $_POST['rc_atc_label'] ) ) : '',
+					'atc_color'  => isset( $_POST['rc_atc_color'] ) ? $this->sanitize_hex_color( (string) wp_unslash( $_POST['rc_atc_color'] ) ) : '',
+					'atc_shape'  => isset( $_POST['rc_atc_shape'] ) ? sanitize_key( wp_unslash( $_POST['rc_atc_shape'] ) ) : '',
+				)
 			);
+			Placement::save_choices( self::ID, $this->placements(), isset( $_POST['rc_area'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['rc_area'] ) ) : array() );
 			// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
@@ -550,12 +617,27 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		echo '<tr><th scope="row">' . esc_html__( 'Toggle button colour', 'romcommerce' ) . '</th><td>';
 		echo '<input type="color" name="rc_toggle_color" value="' . esc_attr( $this->toggle_color() ) . '"></td></tr>';
 
+		echo '<tr><th scope="row"><label for="rc-fab-shape">' . esc_html__( 'Button shape', 'romcommerce' ) . '</label></th><td>';
+		$this->shape_select(
+			'rc_shape',
+			'rc-fab-shape',
+			array(
+				'circle'  => __( 'Circle', 'romcommerce' ),
+				'rounded' => __( 'Rounded', 'romcommerce' ),
+				'square'  => __( 'Square', 'romcommerce' ),
+			),
+			$this->shape()
+		);
+		echo '<p class="description">' . esc_html__( 'For the main button and every channel button.', 'romcommerce' ) . '</p></td></tr>';
+
 		echo '<tr><th scope="row">' . esc_html__( 'Cycle animation', 'romcommerce' ) . '</th><td>';
 		echo '<label><input type="checkbox" name="rc_cycle_icons" value="1"' . checked( $this->cycle_icons(), true, false ) . '> ';
 		echo esc_html__( 'Cycle through the active channel icons on the closed toggle button', 'romcommerce' ) . '</label>';
 		echo '<p class="description">' . esc_html__( 'Shows each enabled channel\'s icon in turn, then pauses for a few seconds before cycling again. Only applies with 2 or more channels enabled.', 'romcommerce' ) . '</p></td></tr>';
 
 		echo '</tbody></table>';
+
+		$this->render_atc_settings();
 
 		$total_channels   = count( Channels::catalog() );
 		$enabled_channels = 0;
@@ -580,10 +662,6 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			$label          = (string) ( $stored['label'] ?? '' );
 			$color          = (string) ( $stored['color'] ?? '' );
 			$resolved_color = '' !== $color ? $color : $channel['color'];
-			$icon_type      = (string) ( $stored['icon_type'] ?? 'default' );
-			$icon_media_id  = (int) ( $stored['icon_media_id'] ?? 0 );
-			$icon_svg       = (string) ( $stored['icon_svg'] ?? '' );
-			$icon_dashicon  = (string) ( $stored['icon_dashicon'] ?? '' );
 			$hello_message  = (string) ( $stored['hello_message'] ?? '' );
 			$append_link    = ! empty( $stored['append_page_link'] );
 
@@ -616,47 +694,67 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			echo '<p><label>' . esc_html__( 'Colour', 'romcommerce' ) . ' ';
 			echo '<input type="color" name="rc_channel[' . esc_attr( $id ) . '][color]" value="' . esc_attr( $resolved_color ) . '"></label></p>';
 
-			$toggle_onchange = 'romcommerceToggleIcon(this,' . wp_json_encode( $id ) . ')';
-
-			echo '<p><label>' . esc_html__( 'Icon', 'romcommerce' ) . ' ';
-			echo '<select name="rc_channel[' . esc_attr( $id ) . '][icon_type]" onchange="' . esc_attr( $toggle_onchange ) . '">';
-			$icon_labels = array(
-				'default'  => __( 'Default', 'romcommerce' ),
-				'media'    => __( 'Image (media library)', 'romcommerce' ),
-				'svg'      => __( 'Custom SVG', 'romcommerce' ),
-				'dashicon' => __( 'Dashicon', 'romcommerce' ),
-			);
-			foreach ( $icon_labels as $type_value => $type_label ) {
-				echo '<option value="' . esc_attr( $type_value ) . '"' . selected( $icon_type, $type_value, false ) . '>' . esc_html( $type_label ) . '</option>';
-			}
-			echo '</select></label></p>';
-
-			echo '<div id="rc-icon-' . esc_attr( $id ) . '-media"' . ( 'media' === $icon_type ? '' : ' style="display:none;"' ) . '>';
-			echo '<input type="hidden" id="rc-icon-media-id-' . esc_attr( $id ) . '" name="rc_channel[' . esc_attr( $id ) . '][icon_media_id]" value="' . esc_attr( (string) $icon_media_id ) . '">';
-			echo '<span id="rc-icon-media-preview-' . esc_attr( $id ) . '">';
-			if ( $icon_media_id > 0 ) {
-				echo wp_get_attachment_image( $icon_media_id, array( 32, 32 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_get_attachment_image() escapes its own output.
-			}
-			echo '</span> ';
-			$picker_onclick = 'romcommerceOpenMediaPicker(' . wp_json_encode( 'rc-icon-media-id-' . $id ) . ',' . wp_json_encode( 'rc-icon-media-preview-' . $id ) . ')';
-			echo '<button type="button" class="button" onclick="' . esc_attr( $picker_onclick ) . '">' . esc_html__( 'Choose image', 'romcommerce' ) . '</button>';
-			echo '</div>';
-
-			echo '<div id="rc-icon-' . esc_attr( $id ) . '-svg"' . ( 'svg' === $icon_type ? '' : ' style="display:none;"' ) . '>';
-			echo '<textarea name="rc_channel[' . esc_attr( $id ) . '][icon_svg]" rows="3" class="large-text code" placeholder="&lt;svg viewBox=&quot;0 0 24 24&quot;&gt;…&lt;/svg&gt;">' . esc_textarea( $icon_svg ) . '</textarea>';
-			echo '</div>';
-
-			echo '<div id="rc-icon-' . esc_attr( $id ) . '-dashicon"' . ( 'dashicon' === $icon_type ? '' : ' style="display:none;"' ) . '>';
-			echo '<input type="text" name="rc_channel[' . esc_attr( $id ) . '][icon_dashicon]" value="' . esc_attr( $icon_dashicon ) . '" class="regular-text" placeholder="dashicons-facebook">';
-			echo '<p class="description">' . esc_html__( 'A dashicon slug. See the Dashicons reference under any WordPress admin page.', 'romcommerce' ) . '</p>';
-			echo '</div>';
+			IconPicker::fields( $id, 'rc_channel[' . $id . ']', $stored, __( 'Default', 'romcommerce' ) );
 
 			echo '</div></div>';
 		}
 		echo '</div>';
 
+		IconPicker::dashicon_grid();
+
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
+	}
+
+	private function render_atc_settings(): void {
+		echo '<div class="rc-cat-head"><span class="rc-tile"></span><h3>' . esc_html__( 'Add to Cart button', 'romcommerce' ) . '</h3><span class="rc-rule"></span></div>';
+		echo '<p class="description">' . esc_html__( 'A WhatsApp button on the product page, with the product name and link already in the message. It uses the WhatsApp number from the channels below; the WhatsApp channel does not have to be enabled in the floating button.', 'romcommerce' ) . '</p>';
+
+		if ( $this->atc_enabled() && ! $this->atc_button_ready() ) {
+			echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'The button is on but will not show until you enter a WhatsApp number below.', 'romcommerce' ) . '</p></div>';
+		}
+
+		echo '<table class="form-table"><tbody>';
+
+		echo '<tr><th scope="row">' . esc_html__( 'Button', 'romcommerce' ) . '</th><td>';
+		echo '<label><input type="checkbox" name="rc_atc_button" value="1"' . checked( $this->atc_enabled(), true, false ) . '> ';
+		echo esc_html__( 'Show a WhatsApp button on product pages', 'romcommerce' ) . '</label></td></tr>';
+
+		echo '<tr><th scope="row"><label for="rc-atc-label">' . esc_html__( 'Button text', 'romcommerce' ) . '</label></th><td>';
+		echo '<input type="text" id="rc-atc-label" name="rc_atc_label" value="' . esc_attr( (string) ( Settings::get( self::ID )['atc_label'] ?? '' ) ) . '" class="regular-text" placeholder="' . esc_attr__( 'Ask on WhatsApp', 'romcommerce' ) . '">';
+		echo '<p class="description">' . esc_html__( 'Leave blank to use the default text, which follows the site language.', 'romcommerce' ) . '</p></td></tr>';
+
+		echo '<tr><th scope="row">' . esc_html__( 'Button colour', 'romcommerce' ) . '</th><td>';
+		echo '<input type="color" name="rc_atc_color" value="' . esc_attr( $this->atc_color() ) . '">';
+		echo '<p class="description">' . esc_html__( 'The text is white, so pick a dark colour that keeps it readable.', 'romcommerce' ) . '</p></td></tr>';
+
+		echo '<tr><th scope="row"><label for="rc-atc-shape">' . esc_html__( 'Button shape', 'romcommerce' ) . '</label></th><td>';
+		$this->shape_select(
+			'rc_atc_shape',
+			'rc-atc-shape',
+			array(
+				'rounded' => __( 'Rounded', 'romcommerce' ),
+				'pill'    => __( 'Pill', 'romcommerce' ),
+				'square'  => __( 'Square', 'romcommerce' ),
+			),
+			$this->atc_shape()
+		);
+		echo '</td></tr>';
+
+		echo '<tr><th scope="row"><label for="rc-area-atc">' . esc_html__( 'Location', 'romcommerce' ) . '</label></th><td>';
+		Placement::area_field( 'rc_area[atc]', Placement::find( $this->placements(), 'atc' ), 'rc-area-atc' );
+		echo '<p class="description">' . esc_html__( 'The button shows only where the Add to Cart form shows, except "After the Add to Cart form", which also shows on out-of-stock products in classic themes.', 'romcommerce' ) . '</p></td></tr>';
+
+		echo '</tbody></table>';
+	}
+
+	/** @param array<string, string> $choices */
+	private function shape_select( string $name, string $id, array $choices, string $current ): void {
+		echo '<select name="' . esc_attr( $name ) . '" id="' . esc_attr( $id ) . '">';
+		foreach ( $choices as $value => $label ) {
+			echo '<option value="' . esc_attr( $value ) . '"' . selected( $current, $value, false ) . '>' . esc_html( $label ) . '</option>';
+		}
+		echo '</select>';
 	}
 
 	/**
@@ -664,9 +762,11 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	 * @param string                                    $position     Sanitized FAB position.
 	 * @param string                                    $toggle_color Sanitized toggle button hex colour, or '' to reset to the default.
 	 * @param bool                                      $cycle_icons  Whether the toggle button cycles through active channel icons.
+	 * @param string                                    $shape        Requested button shape; anything outside SHAPES saves as circle.
 	 * @param array<string, array<string, string|bool>> $channels     Parsed channel settings.
+	 * @param array{atc_button: bool, atc_label: string, atc_color: string, atc_shape: string} $atc Sanitized Add-to-Cart button settings.
 	 */
-	private function handle_save( bool $enabled, string $position, string $toggle_color, bool $cycle_icons, array $channels ): void {
+	private function handle_save( bool $enabled, string $position, string $toggle_color, bool $cycle_icons, string $shape, array $channels, array $atc ): void {
 		Settings::set_enabled( self::ID, $enabled );
 		Settings::update(
 			self::ID,
@@ -674,7 +774,12 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 				'position'     => $position,
 				'toggle_color' => $toggle_color,
 				'cycle_icons'  => $cycle_icons,
+				'shape'        => in_array( $shape, self::SHAPES, true ) ? $shape : 'circle',
 				'channels'     => $channels,
+				'atc_button'   => $atc['atc_button'],
+				'atc_label'    => $atc['atc_label'],
+				'atc_color'    => $atc['atc_color'],
+				'atc_shape'    => in_array( $atc['atc_shape'], self::ATC_SHAPES, true ) ? $atc['atc_shape'] : 'rounded',
 			)
 		);
 
@@ -696,11 +801,6 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		foreach ( Channels::catalog() as $id => $channel ) {
 			$entry = isset( $raw[ $id ] ) && is_array( $raw[ $id ] ) ? $raw[ $id ] : array();
 
-			$icon_type = (string) ( $entry['icon_type'] ?? 'default' );
-			if ( ! in_array( $icon_type, self::ICON_TYPES, true ) ) {
-				$icon_type = 'default';
-			}
-
 			$color = $this->sanitize_hex_color( (string) ( $entry['color'] ?? '' ) );
 
 			$channels[ $id ] = array(
@@ -708,10 +808,10 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 				'value'            => sanitize_text_field( (string) ( $entry['value'] ?? '' ) ),
 				'label'            => sanitize_text_field( (string) ( $entry['label'] ?? '' ) ),
 				'color'            => $color,
-				'icon_type'        => $icon_type,
+				'icon_type'        => CustomIcon::sanitize_type( (string) ( $entry['icon_type'] ?? 'default' ) ),
 				'icon_media_id'    => absint( $entry['icon_media_id'] ?? 0 ),
-				'icon_svg'         => $this->sanitize_svg( (string) ( $entry['icon_svg'] ?? '' ) ),
-				'icon_dashicon'    => $this->sanitize_dashicon( (string) ( $entry['icon_dashicon'] ?? '' ) ),
+				'icon_svg'         => CustomIcon::sanitize_svg( (string) ( $entry['icon_svg'] ?? '' ) ),
+				'icon_dashicon'    => CustomIcon::sanitize_dashicon( (string) ( $entry['icon_dashicon'] ?? '' ) ),
 				'hello_message'    => sanitize_text_field( (string) ( $entry['hello_message'] ?? '' ) ),
 				'append_page_link' => ! empty( $entry['append_page_link'] ),
 			);

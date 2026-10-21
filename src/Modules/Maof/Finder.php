@@ -18,12 +18,15 @@ defined( 'ABSPATH' ) || exit;
  *  - single-identifier (email-only or phone-only) results are soft warnings;
  *    strong = same WooCommerce customer id, or both email AND phone match;
  *  - phones normalised country-aware so 07… ≡ +407… but unrelated foreign
- *    numbers do not collide — the coarse variant query is re-checked against the
- *    normalised value before a candidate counts as a match.
+ *    numbers do not collide. Lookup goes through PhoneIndex's normalised copy,
+ *    which matches any spelling; the exact-spelling variant queries stay as a
+ *    fallback for orders the index hasn't reached yet (backfill still running,
+ *    or written around WooCommerce's CRUD). Every candidate is re-checked
+ *    against the normalised value before it counts as a match.
  */
 final class Finder {
 
-	private const LOOKBACK_MONTHS = 12;
+	public const LOOKBACK_MONTHS = 12;
 
 	private const ACTIVE_STATUSES = array( 'pending', 'processing', 'on-hold' );
 
@@ -52,6 +55,10 @@ final class Finder {
 		}
 
 		if ( '' !== $phone ) {
+			foreach ( $this->query( PhoneIndex::query_args( $phone ) ) as $candidate ) {
+				$candidates[ $candidate->get_id() ] = $candidate;
+			}
+
 			foreach ( $this->phone_variants( $phone ) as $variant ) {
 				foreach ( $this->query( array( 'billing_phone' => $variant ) ) as $candidate ) {
 					$candidates[ $candidate->get_id() ] = $candidate;

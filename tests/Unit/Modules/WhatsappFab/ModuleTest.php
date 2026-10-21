@@ -20,68 +20,14 @@ final class ModuleTest extends TestCase {
 		Functions\stubTranslationFunctions();
 	}
 
-	public function test_sanitize_dashicon_auto_prefixes_a_bare_slug(): void {
-		Functions\when( 'sanitize_html_class' )->returnArg( 1 );
+	public function test_each_button_shape_sets_the_corners_of_every_fab_button(): void {
+		$module = new Module();
 
-		self::assertSame(
-			'dashicons-facebook',
-			$this->invokePrivate( new Module(), 'sanitize_dashicon', array( 'facebook' ) )
-		);
-	}
-
-	public function test_sanitize_dashicon_does_not_double_prefix(): void {
-		Functions\when( 'sanitize_html_class' )->returnArg( 1 );
-
-		self::assertSame(
-			'dashicons-facebook',
-			$this->invokePrivate( new Module(), 'sanitize_dashicon', array( 'dashicons-facebook' ) )
-		);
-	}
-
-	public function test_sanitize_dashicon_returns_empty_for_blank_slug(): void {
-		Functions\when( 'sanitize_html_class' )->returnArg( 1 );
-
-		self::assertSame( '', $this->invokePrivate( new Module(), 'sanitize_dashicon', array( '  ' ) ) );
-	}
-
-	/**
-	 * The allowlist exists specifically to keep a merchant-pasted SVG from
-	 * carrying a <script> tag or an event-handler attribute (onload, etc.) —
-	 * wp_kses() itself is WP's, not this module's, but the shape/paint-only
-	 * allowlist (Module::ALLOWED_SVG_TAGS) is, and this pins that a <script>
-	 * tag specifically never survives it.
-	 */
-	public function test_sanitize_svg_strips_disallowed_script_tags(): void {
-		Functions\when( 'wp_kses' )->alias(
-			static function ( string $string, array $allowed_html ): string {
-				// A minimal stand-in for wp_kses(): strip any tag whose name
-				// isn't in the allowlist — WP's own wp_kses() implementation
-				// is out of scope for a Brain Monkey unit test, only whether
-				// this module passes it the right allowlist is.
-				return (string) preg_replace_callback(
-					'/<\/?([a-zA-Z0-9]+)[^>]*>/',
-					static function ( array $matches ) use ( $allowed_html ): string {
-						return isset( $allowed_html[ strtolower( $matches[1] ) ] ) ? $matches[0] : '';
-					},
-					$string
-				);
-			}
-		);
-
-		$result = $this->invokePrivate(
-			new Module(),
-			'sanitize_svg',
-			array( '<svg viewBox="0 0 24 24"><script>alert(1)</script><path d="M0 0"/></svg>' )
-		);
-
-		self::assertStringNotContainsString( '<script', $result );
-		self::assertStringContainsString( '<svg', $result );
-	}
-
-	public function test_sanitize_svg_rejects_input_with_no_svg_tag(): void {
-		Functions\when( 'wp_kses' )->returnArg( 1 );
-
-		self::assertSame( '', $this->invokePrivate( new Module(), 'sanitize_svg', array( '<p>not an icon</p>' ) ) );
+		foreach ( array( 'circle' => '50%', 'rounded' => '25%', 'square' => '0' ) as $shape => $radius ) {
+			$css = $this->invokePrivate( $module, 'styles_css', array( '#303f9f', $shape ) );
+			self::assertStringContainsString( '#romcommerce-fab .romcommerce-fab-toggle{width:56px;height:56px;min-width:0;min-height:0;margin:0;padding:0;border-radius:' . $radius . ';', $css );
+			self::assertStringContainsString( '#romcommerce-fab .romcommerce-fab-channel{width:46px;height:46px;padding:0;border:0;border-radius:' . $radius . ';', $css );
+		}
 	}
 
 	/** @dataProvider buildHrefProvider */
@@ -243,6 +189,8 @@ final class ModuleTest extends TestCase {
 	}
 
 	public function test_resolve_icon_dashicon_type_renders_the_stored_slug(): void {
+		Functions\when( 'sanitize_html_class' )->returnArg( 1 );
+
 		$result = $this->invokePrivate(
 			new Module(),
 			'resolve_icon',

@@ -77,11 +77,9 @@ final class ModuleTest extends TestCase {
 	}
 
 	/**
-	 * These two rules hardcode $base rather than reusing WooCommerce's own
-	 * var(--wp-admin-theme-color) — a merchant on a non-default WP admin
-	 * colour scheme would otherwise see that scheme's colour win over ours,
-	 * since WP core sets the variable via body.admin-color-*, which
-	 * outranks a bare :root override. Asserting the literal hex here is
+	 * These rules hardcode $base rather than reusing WooCommerce's own
+	 * var(--wp-admin-theme-color): the frontend opt-in prints only these
+	 * rules and never sets the variable. Asserting the literal hex here is
 	 * what locks that choice in, not just an incidental detail.
 	 */
 	public function test_select2_highlight_css_hardcodes_the_dropdown_colour_instead_of_the_css_variable(): void {

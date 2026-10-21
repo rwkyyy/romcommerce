@@ -75,4 +75,34 @@ final class ModuleTest extends TestCase {
 			$errors
 		);
 	}
+
+	public function test_block_address_with_a_bad_ro_postcode_adds_an_error_for_its_group(): void {
+		$errors = Mockery::mock( WP_Error::class );
+		$errors->shouldReceive( 'add' )
+			->once()
+			->with( 'romcommerce_postcode_shipping', Mockery::type( 'string' ) );
+
+		( new Module() )->validate_block_address(
+			$errors,
+			array(
+				'country'  => 'RO',
+				'postcode' => '03003',
+			),
+			'shipping'
+		);
+	}
+
+	public function test_block_address_with_a_valid_ro_postcode_adds_no_error(): void {
+		$errors = Mockery::mock( WP_Error::class );
+		$errors->shouldNotReceive( 'add' );
+
+		( new Module() )->validate_block_address(
+			$errors,
+			array(
+				'country'  => 'RO',
+				'postcode' => ' 030031 ',
+			),
+			'billing'
+		);
+	}
 }

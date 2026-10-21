@@ -3,7 +3,7 @@
  * Plugin Name:       RomCommerce
  * Plugin URI:        https://romcommerce.ro
  * Description:       Romanian commerce layer for WooCommerce: modular tools for compliance, checkout localisation, and Romanian-market essentials.
- * Version:           0.6
+ * Version:           0.8
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -22,7 +22,7 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ROMCOMMERCE_VERSION', '0.6' );
+define( 'ROMCOMMERCE_VERSION', '0.8' );
 define( 'ROMCOMMERCE_FILE', __FILE__ );
 define( 'ROMCOMMERCE_DIR', __DIR__ );
 
@@ -35,6 +35,7 @@ add_action(
 	static function (): void {
 		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
 			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
 		}
 	}
 );

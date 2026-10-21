@@ -475,8 +475,11 @@
 }
 
 .romcommerce-admin .rc-card.is-locked {
-    background: var(--rc-surface-soft);
+    background:
+        repeating-linear-gradient(135deg, rgba(30, 30, 30, 0.05) 0 6px, transparent 6px 14px),
+        var(--rc-surface-soft);
     border-color: #b9b3aa;
+    border-style: dashed;
 }
 
 .romcommerce-admin .rc-card.is-current {
@@ -607,6 +610,107 @@
     padding: 3px 8px;
 }
 
+.romcommerce-admin .rc-pro-section {
+    margin-top: 32px;
+    padding: 16px 20px 14px;
+    border: 1.5px dashed var(--rc-ink);
+    background:
+        repeating-linear-gradient(135deg, rgba(30, 30, 30, 0.05) 0 6px, transparent 6px 14px),
+        var(--rc-surface-soft);
+}
+
+.romcommerce-admin .rc-pro-section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 4px;
+    font-family: var(--rc-font-head);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.romcommerce-admin .rc-pro-section-note {
+    margin: 0 0 12px;
+    font-size: 12px;
+    color: var(--rc-text-soft);
+}
+
+/* Greyed and inert, so a preview can't be mistaken for a working setting. */
+.romcommerce-admin .rc-pro-section-body {
+    opacity: 0.5;
+    filter: grayscale(1);
+    pointer-events: none;
+    user-select: none;
+}
+
+.romcommerce-admin .rc-pro-section-body .form-table th,
+.romcommerce-admin .rc-pro-section-body .form-table td {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.romcommerce-admin .rc-pro-section-cta {
+    margin: 12px 0 0;
+}
+
+.romcommerce-admin .rc-pro-section-cta a {
+    color: var(--rc-red-deep);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 2px solid var(--rc-red-deep);
+}
+
+.romcommerce-admin .rc-shortcode {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 2px;
+    padding: 1px 6px 1px 0;
+    border: 1.5px solid var(--rc-ink);
+    background: var(--rc-surface);
+    font: inherit;
+    color: var(--rc-ink);
+    cursor: copy;
+    vertical-align: baseline;
+}
+
+.romcommerce-admin .rc-shortcode code {
+    padding: 1px 6px;
+    background: var(--rc-surface-soft);
+    font-size: 12px;
+}
+
+.romcommerce-admin .rc-shortcode-state {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--rc-text-soft);
+}
+
+.romcommerce-admin .rc-shortcode:hover,
+.romcommerce-admin .rc-shortcode:focus-visible {
+    box-shadow: 2px 2px 0 var(--rc-ink);
+}
+
+.romcommerce-admin .rc-shortcode:hover .rc-shortcode-state,
+.romcommerce-admin .rc-shortcode:focus-visible .rc-shortcode-state {
+    color: var(--rc-red-deep);
+}
+
+.romcommerce-admin .rc-shortcode:focus-visible {
+    outline: 2px solid var(--rc-blue);
+    outline-offset: 2px;
+}
+
+.romcommerce-admin .rc-shortcode.is-copied {
+    border-color: #1e7e34;
+}
+
+.romcommerce-admin .rc-shortcode.is-copied .rc-shortcode-state {
+    color: #1e7e34;
+}
+
 .romcommerce-admin .rc-unlock {
     margin-left: auto;
     font-size: 11px;
@@ -714,6 +818,50 @@
     border: 1.5px solid var(--rc-ink);
     background: var(--rc-surface);
     padding: 16px 18px 18px;
+}
+
+.romcommerce-admin .rc-pane .rc-dashicon-picker {
+    margin-top: 10px;
+    border: 1.5px solid var(--rc-ink);
+    background: var(--rc-surface);
+    padding: 10px;
+}
+
+.romcommerce-admin .rc-pane .rc-dashicon-picker[hidden],
+.romcommerce-admin .rc-pane .rc-dashicon-pick[hidden] {
+    display: none;
+}
+
+.romcommerce-admin .rc-pane .rc-dashicon-search {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.romcommerce-admin .rc-pane .rc-dashicon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    gap: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.romcommerce-admin .rc-pane .rc-dashicon-pick {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--rc-ink);
+    cursor: pointer;
+}
+
+.romcommerce-admin .rc-pane .rc-dashicon-pick:hover,
+.romcommerce-admin .rc-pane .rc-dashicon-pick:focus-visible {
+    border-color: var(--rc-blue);
+    background: var(--rc-surface-soft);
+    color: var(--rc-blue);
 }
 
 .romcommerce-admin .rc-pane .rc-item.is-enabled {
@@ -1009,9 +1157,11 @@
     color: #fff;
 }
 
+/* The wireframe stops at 900px so it keeps page-like proportions on wide
+   screens; the sidebar sits right next to it rather than at the far edge. */
 .romcommerce-admin .rc-pm-body {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 280px;
+    grid-template-columns: minmax(0, 900px) 280px;
     gap: 24px;
     align-items: start;
 }
@@ -1140,6 +1290,9 @@
 }
 
 .romcommerce-admin .rc-pm-availlabel {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.4px;
@@ -1157,10 +1310,13 @@
     background: rgba(244, 54, 58, 0.09);
 }
 
-.romcommerce-admin .rc-pm-slot.is-collision {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
+.romcommerce-admin .rc-pm-slot.is-occupied {
+    flex-wrap: wrap;
+}
+
+.romcommerce-admin .rc-pm-sep {
+    color: rgba(30, 30, 30, 0.35);
+    font-weight: 400;
 }
 
 .romcommerce-admin .rc-pm-who {
@@ -1174,23 +1330,10 @@
 }
 
 .romcommerce-admin .rc-pm-rank {
-    flex: 0 0 auto;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--rc-red);
-    color: #fff;
-    font-size: 8px;
+    color: var(--rc-muted);
     font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.romcommerce-admin .rc-pm-footerstrip {
-    border-top: 1.5px dashed #A6A39A;
-    padding: 9px 16px 11px;
-}
 
 .romcommerce-admin .rc-pm-fab {
     position: absolute;
@@ -1207,6 +1350,408 @@
     font-size: 7px;
     font-weight: 700;
     color: var(--rc-red-deep);
+}
+
+.romcommerce-admin .rc-pm-layout {
+    margin: 0 0 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--rc-muted);
+}
+
+.romcommerce-admin .rc-pm-layout::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 7px;
+    background: var(--rc-ink);
+}
+
+.romcommerce-admin .rc-pm-layout.is-block::before {
+    background: var(--rc-blue);
+}
+
+.romcommerce-admin .rc-pm-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #6F6C64;
+    line-height: 1.2;
+}
+
+.romcommerce-admin .rc-pm-label.is-inline {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 10.5px;
+}
+
+.romcommerce-admin .rc-pm-cols.is-half .rc-pm-col:first-child {
+    flex: 1 1 0;
+}
+
+.romcommerce-admin .rc-pm-cols.is-main .rc-pm-col:first-child {
+    flex: 0 0 60%;
+}
+
+.romcommerce-admin .rc-pm-box {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 11px 12px;
+    background: #EFEDE9;
+    border: 1px solid #A6A39A;
+}
+
+.romcommerce-admin .rc-pm-box.is-soft {
+    background: #E5E2DC;
+}
+
+.romcommerce-admin .rc-pm-box.is-half {
+    width: 48%;
+    align-self: flex-end;
+}
+
+.romcommerce-admin .rc-pm-thead {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 5px 2px;
+    border-bottom: 1.5px solid #A6A39A;
+}
+
+.romcommerce-admin .rc-pm-thead span {
+    width: 44px;
+    height: 6px;
+    background: #A6A39A;
+}
+
+.romcommerce-admin .rc-pm-thead span:first-child {
+    width: 70px;
+}
+
+.romcommerce-admin .rc-pm-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 9px;
+    border-bottom: 1px solid #C4C1B9;
+}
+
+.romcommerce-admin .rc-pm-item.is-block {
+    align-items: flex-start;
+}
+
+.romcommerce-admin .rc-pm-item.is-mini {
+    gap: 9px;
+    padding-bottom: 7px;
+}
+
+.romcommerce-admin .rc-pm-remove {
+    flex: 0 0 auto;
+    font-size: 13px;
+    line-height: 1;
+    color: #918E85;
+}
+
+.romcommerce-admin .rc-pm-itemthumb {
+    flex: 0 0 38px;
+    height: 38px;
+}
+
+.romcommerce-admin .rc-pm-item.is-block .rc-pm-itemthumb {
+    flex-basis: 52px;
+    height: 52px;
+}
+
+.romcommerce-admin .rc-pm-item.is-mini .rc-pm-itemthumb {
+    flex-basis: 28px;
+    height: 28px;
+}
+
+.romcommerce-admin .rc-pm-itemtext {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.romcommerce-admin .rc-pm-itemcell {
+    flex: 0 0 44px;
+}
+
+.romcommerce-admin .rc-pm-input {
+    display: block;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 18px;
+    background: #F6F5F2;
+    border: 1px solid #A6A39A;
+}
+
+.romcommerce-admin .rc-pm-input.is-coupon {
+    flex: 0 0 110px;
+}
+
+.romcommerce-admin .rc-pm-input.is-textarea {
+    flex: none;
+    height: 54px;
+}
+
+.romcommerce-admin .rc-pm-qty {
+    flex: 0 0 30px;
+}
+
+.romcommerce-admin .rc-pm-stepper {
+    display: inline-flex;
+    align-self: flex-start;
+    border: 1px solid #A6A39A;
+    background: #F6F5F2;
+}
+
+.romcommerce-admin .rc-pm-stepper span {
+    width: 16px;
+    font-size: 9px;
+    line-height: 16px;
+    text-align: center;
+    color: #6F6C64;
+}
+
+.romcommerce-admin .rc-pm-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.romcommerce-admin .rc-pm-btn.is-ghost {
+    width: 70px;
+    height: 20px;
+    opacity: 0.3;
+}
+
+.romcommerce-admin .rc-pm-btn.is-push {
+    margin-left: auto;
+}
+
+.romcommerce-admin .rc-pm-totals {
+    display: flex;
+    flex-direction: column;
+}
+
+.romcommerce-admin .rc-pm-totalrow {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-top: 1px solid #C4C1B9;
+}
+
+.romcommerce-admin .rc-pm-totalrow span {
+    width: 52px;
+    height: 6px;
+    background: #A6A39A;
+}
+
+.romcommerce-admin .rc-pm-totalrow span:last-child {
+    width: 34px;
+}
+
+.romcommerce-admin .rc-pm-totalrow.is-grand span {
+    height: 8px;
+    background: #6F6C64;
+}
+
+.romcommerce-admin .rc-pm-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.romcommerce-admin .rc-pm-fieldrow {
+    display: flex;
+    gap: 7px;
+}
+
+.romcommerce-admin .rc-pm-check {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.romcommerce-admin .rc-pm-box-glyph {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid #918E85;
+    background: #F6F5F2;
+}
+
+.romcommerce-admin .rc-pm-radio.is-card {
+    border: 1px solid #A6A39A;
+    background: #F6F5F2;
+}
+
+.romcommerce-admin .rc-pm-radiohead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+}
+
+.romcommerce-admin .rc-pm-dot {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid #918E85;
+}
+
+.romcommerce-admin .rc-pm-radio.is-open .rc-pm-dot {
+    background: #6F6C64;
+    box-shadow: inset 0 0 0 2px #F6F5F2;
+}
+
+.romcommerce-admin .rc-pm-radiobody {
+    margin: 0 8px 8px;
+    padding: 8px;
+    background: #DAD7D0;
+}
+
+.romcommerce-admin .rc-pm-notice {
+    padding: 8px 10px;
+    border-top: 3px solid #918E85;
+    background: #EFEDE9;
+}
+
+.romcommerce-admin .rc-pm-disclosure {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-top: 1px solid #C4C1B9;
+}
+
+.romcommerce-admin .rc-pm-chevron {
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid #6F6C64;
+    border-bottom: 1.5px solid #6F6C64;
+    transform: rotate(45deg);
+}
+
+.romcommerce-admin .rc-pm-submitrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 4px;
+}
+
+/* Site-wide: the page split into its three landmarks, each captioned. */
+.romcommerce-admin .rc-pm-scene.is-site .rc-pm-stage {
+    padding: 0;
+    gap: 0;
+}
+
+.romcommerce-admin .rc-pm-zone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px 16px 14px;
+}
+
+.romcommerce-admin .rc-pm-zone + .rc-pm-zone {
+    border-top: 1.5px dashed #A6A39A;
+}
+
+.romcommerce-admin .rc-pm-zone:last-child {
+    background: #CFCCC4;
+    padding-bottom: 46px;
+}
+
+.romcommerce-admin .rc-pm-zonelabel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 2px 8px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #fff;
+    background: #6F6C64;
+}
+
+.romcommerce-admin .rc-pm-masthead {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.romcommerce-admin .rc-pm-logo {
+    width: 64px;
+    height: 20px;
+    background: #918E85;
+}
+
+.romcommerce-admin .rc-pm-nav {
+    display: flex;
+    gap: 12px;
+    flex: 1 1 auto;
+}
+
+.romcommerce-admin .rc-pm-nav span {
+    width: 38px;
+    height: 6px;
+    background: #A6A39A;
+}
+
+.romcommerce-admin .rc-pm-carticon {
+    width: 18px;
+    height: 16px;
+    border: 1.5px solid #6F6C64;
+    border-top-width: 4px;
+}
+
+.romcommerce-admin .rc-pm-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.romcommerce-admin .rc-pm-tiles .rc-pm-img {
+    height: 60px;
+}
+
+.romcommerce-admin .rc-pm-footcols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.romcommerce-admin .rc-pm-footcols > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.romcommerce-admin .rc-pm-tabstrip {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1.5px solid #A6A39A;
+}
+
+.romcommerce-admin .rc-pm-tabstrip span {
+    width: 64px;
+    height: 16px;
+    border: 1px solid #A6A39A;
+    border-bottom: none;
+    background: #EFEDE9;
+}
+
+.romcommerce-admin .rc-pm-tabstrip span:first-child {
+    background: #F6F5F2;
 }
 
 /* Sidebar: the module list for the active surface. */
@@ -1256,6 +1801,31 @@
     margin: 5px 0 0;
     font-size: 11.5px;
     color: var(--rc-muted);
+}
+
+.romcommerce-admin .rc-pm-areaform {
+    display: flex;
+    gap: 6px;
+    margin: 7px 0 0;
+}
+
+.romcommerce-admin .rc-pm-areaform select {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    font-size: 12px;
+}
+
+.romcommerce-admin .rc-area-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    margin: 0 0 8px;
+}
+
+.romcommerce-admin .rc-area-row label {
+    min-width: 160px;
 }
 
 .romcommerce-admin .rc-pm-gear {
@@ -1346,7 +1916,103 @@
         flex-direction: column;
     }
 
-    .romcommerce-admin .rc-pm-col:first-child {
+    .romcommerce-admin .rc-pm-col:first-child,
+    .romcommerce-admin .rc-pm-cols.is-main .rc-pm-col:first-child {
         flex: 1 1 auto;
     }
+
+    .romcommerce-admin .rc-pm-box.is-half {
+        width: 100%;
+    }
+
+    .romcommerce-admin .rc-pm-tiles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* MAOF phone-index backfill progress. */
+.romcommerce-admin .rc-progress {
+    width: 100%;
+    max-width: 360px;
+    height: 10px;
+    border: 1px solid var(--rc-ink);
+    border-radius: 0;
+    background: var(--rc-surface-soft);
+    appearance: none;
+}
+.romcommerce-admin .rc-progress::-webkit-progress-bar {
+    background: var(--rc-surface-soft);
+}
+.romcommerce-admin .rc-progress::-webkit-progress-value {
+    background: var(--rc-blue);
+}
+.romcommerce-admin .rc-progress::-moz-progress-bar {
+    background: var(--rc-blue);
+}
+
+/* Placements: quantity + button row in the product map's Add to Cart form,
+   the hook map link, and the Elementor asterisks with their explanations. */
+.romcommerce-admin .rc-pm-qtyrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.romcommerce-admin .rc-pm-qtyrow .rc-pm-btn {
+    flex: 0 0 auto;
+}
+
+.romcommerce-admin .rc-pm-hookmap {
+    align-self: center;
+    margin-left: auto;
+    padding: 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--rc-blue);
+    text-decoration: none;
+}
+
+.romcommerce-admin .rc-pm-hookmap:hover,
+.romcommerce-admin .rc-pm-hookmap:focus {
+    text-decoration: underline;
+}
+
+.romcommerce-admin .rc-pm-hookmap::after {
+    content: " \2197";
+}
+
+.romcommerce-admin .rc-pm-elementor {
+    max-width: 72ch;
+    margin: -8px 0 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--rc-muted);
+}
+
+.romcommerce-admin .rc-pm-mark {
+    margin-left: auto;
+    font-weight: 700;
+    color: var(--rc-red-deep);
+}
+
+.romcommerce-admin .rc-area-elementor {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 12px;
+    color: var(--rc-muted);
+}
+
+.romcommerce-admin .rc-area-elementor.is-warning {
+    font-weight: 600;
+    color: var(--rc-red-deep);
+}
+
+.romcommerce-admin .rc-pm-areaform:has(.rc-area-elementor) {
+    flex-wrap: wrap;
+}
+
+.romcommerce-admin .rc-pm-areaform .rc-area-elementor {
+    flex-basis: 100%;
+    order: 1;
+    margin: 4px 0 0;
 }

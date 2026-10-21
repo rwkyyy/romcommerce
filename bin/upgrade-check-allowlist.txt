@@ -1,0 +1,14 @@
+# Approved differences between the previous release and this build, as seen
+# by bin/upgrade-check.sh. One per line:
+#   <from-tag> <scenario> <area> <+|-><item>  # why this change is intended
+# area is "modules" or a page (home, product, cart, checkout). Entries for a
+# tag other than the previous release fail as stale, so clear them after each
+# release.
+
+# No module on by default (owner decision 2026-10-05, docs/decisions.md);
+# owner re-enables on existing installs by hand, no migration (2026-10-07).
+v0.6 untouched modules -legal-guarantee-notice
+v0.6 untouched modules -sal-pictogram
+v0.6 untouched home -romcommerce-sal-pictogram
+v0.6 untouched home -romcommerce-sal-pictogram-js-after
+v0.6 configured product +romcommerce-placement-inline-css  # shared rule giving every RomCommerce element inside the Add to Cart form its own full-width line (Elementor inline/auto layouts squeezed them beside the button), 2026-10-14

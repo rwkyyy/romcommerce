@@ -30,10 +30,9 @@ final class Settings {
 		update_option( self::option_key( $module_id ), $settings, false );
 	}
 
-	// Opt-in by default: a module a merchant has never touched must read as
-	// off, matching "you enable only the modules you need" (readme.txt). The
-	// two legal-floor modules (SAL Pictogram, Legal Guarantee Notice) pass
-	// $default = true explicitly to keep their deliberate default-on behaviour.
+	// Opt-in by default, with no exceptions: a fresh install activates nothing
+	// and the WelcomeNotice points the merchant at the panel instead. A module
+	// a merchant has never touched must read as off.
 	public static function is_enabled( string $module_id, bool $default = false ): bool {
 		$core = self::core();
 
@@ -45,6 +44,16 @@ final class Settings {
 		$core['enabled_modules'][ $module_id ] = $enabled;
 
 		self::update_core( $core );
+
+		/**
+		 * Fires after a module's enabled flag is written. A module being switched
+		 * off is still booted on that request, so it can clean up after itself
+		 * (MAOF purges its phone index here).
+		 *
+		 * @param string $module_id
+		 * @param bool   $enabled
+		 */
+		do_action( 'romcommerce/module_toggled', $module_id, $enabled );
 	}
 
 	/**

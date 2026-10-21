@@ -36,10 +36,8 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	}
 
 	public function boot(): void {
-		if ( 0 === $this->category_id() ) {
-			return;
-		}
-
+		// Hooked unconditionally: sync_product() and resync_all() each bail when
+		// no category is set, so a category chosen mid-request applies at once.
 		add_action( 'woocommerce_after_product_object_save', array( $this, 'sync_product' ) );
 
 		// Priority 20 so WooCommerce's own scheduled-sales handler (priority 10)

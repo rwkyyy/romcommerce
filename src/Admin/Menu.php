@@ -50,7 +50,7 @@ final class Menu {
 			ROMCOMMERCE_VERSION
 		);
 
-		// Needed for the WhatsApp/Contact FAB pane's "choose image" icon picker
+		// Needed for the Floating contact FAB pane's "choose image" icon picker
 		// (wp.media). Loaded here rather than per-module since it must be
 		// present before the AJAX-swapped canvas ever renders that pane.
 		wp_enqueue_media();
@@ -76,10 +76,14 @@ final class Menu {
 			'romcommerce-admin',
 			'romcommerceAdmin',
 			array(
-				'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
-				'action'     => 'romcommerce_pane',
-				'nonce'      => wp_create_nonce( Ajax::NONCE ),
-				'mediaTitle' => __( 'Choose image', 'romcommerce' ),
+				'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
+				'action'          => 'romcommerce_pane',
+				'nonce'           => wp_create_nonce( Ajax::NONCE ),
+				'mediaTitle'      => __( 'Choose image', 'romcommerce' ),
+				'copyLabel'       => __( 'Copy', 'romcommerce' ),
+				'copyHint'        => __( 'Click to copy the shortcode', 'romcommerce' ),
+				'copiedLabel'     => __( 'Copied', 'romcommerce' ),
+				'copyFailedLabel' => __( 'Copy failed, select it by hand', 'romcommerce' ),
 			)
 		);
 	}

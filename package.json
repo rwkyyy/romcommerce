@@ -1,0 +1,25 @@
+{
+	"name": "romcommerce-dev",
+	"private": true,
+	"description": "Dev-only QA tooling for RomCommerce Lite (wp-env, Plugin Check, Playwright). Never shipped: excluded by .distignore.",
+	"license": "GPL-2.0-or-later",
+	"scripts": {
+		"dist": "bash bin/build-dist.sh",
+		"env:start": "npm run dist && wp-env start",
+		"env:stop": "wp-env stop",
+		"env:destroy": "wp-env destroy",
+		"plugin-check": "bash bin/plugin-check.sh",
+		"upgrade-check": "bash bin/upgrade-check.sh",
+		"test:integration": "npm run dist && wp-env run tests-cli --env-cwd=wp-content/romcommerce-tests/Integration composer update --no-interaction --no-progress --quiet && wp-env run tests-cli --env-cwd=wp-content/romcommerce-tests/Integration vendor/bin/phpunit",
+		"test:integration:hpos": "npm run dist && wp-env run tests-cli --env-cwd=wp-content/romcommerce-tests/Integration composer update --no-interaction --no-progress --quiet && wp-env run tests-cli --env-cwd=wp-content/romcommerce-tests/Integration bash -c 'ROMCOMMERCE_TEST_HPOS=1 vendor/bin/phpunit'",
+		"test:e2e": "npm run dist && playwright test --grep-invert @visual",
+		"test:e2e:baselines": "docker run --rm --add-host=host.docker.internal:host-gateway --user \"$(id -u):$(id -g)\" -e HOME=/tmp -v \"$PWD\":/work -w /work -e PW_IN_DOCKER=1 -e CI mcr.microsoft.com/playwright:v1.63.0-noble npx playwright test --project=storefront --grep @visual --no-deps --update-snapshots",
+		"test:e2e:visual": "docker run --rm --add-host=host.docker.internal:host-gateway --user \"$(id -u):$(id -g)\" -e HOME=/tmp -v \"$PWD\":/work -w /work -e PW_IN_DOCKER=1 -e CI mcr.microsoft.com/playwright:v1.63.0-noble npx playwright test --project=storefront --grep @visual --no-deps",
+		"qa": "composer test && composer phpcs && composer phpstan && bash bin/check-i18n.sh && bash bin/plugin-check.sh && bash bin/upgrade-check.sh && npm run test:integration && npm run test:integration:hpos && npm run test:e2e && npm run test:e2e:visual"
+	},
+	"devDependencies": {
+		"@axe-core/playwright": "^4.13.0",
+		"@playwright/test": "^1.63.0",
+		"@wordpress/env": "^11.16.0"
+	}
+}

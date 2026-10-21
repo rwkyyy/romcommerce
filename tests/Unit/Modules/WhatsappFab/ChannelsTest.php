@@ -34,8 +34,8 @@ final class ChannelsTest extends TestCase {
 			self::assertArrayHasKey( 'icon', $channel, "channel {$key} missing icon" );
 			self::assertArrayHasKey( 'text', $channel, "channel {$key} missing text" );
 			self::assertArrayHasKey( 'supports_message', $channel, "channel {$key} missing supports_message" );
-			// Every channel needs either an icon glyph or a text monogram fallback.
-			self::assertTrue( '' !== $channel['icon'] || '' !== $channel['text'], "channel {$key} has neither icon nor text" );
+			self::assertStringStartsWith( '<svg viewBox="0 0 24 24"', $channel['icon'], "channel {$key} has no logo" );
+			self::assertStringContainsString( 'aria-hidden="true"', $channel['icon'], "channel {$key} logo is not hidden from screen readers" );
 		}
 	}
 

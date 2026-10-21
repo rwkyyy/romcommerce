@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RomCommerce\Modules\Maof;
 
+use RomCommerce\Admin\ProSection;
 use RomCommerce\Admin\SettingsForm;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
@@ -41,6 +42,10 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	}
 
 	public function boot(): void {
+		// Not admin-only: most orders are created at front-end checkout, and
+		// the backfill runs from cron.
+		( new PhoneIndex() )->register();
+
 		if ( is_admin() ) {
 			$this->admin->register();
 		}
@@ -61,7 +66,11 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo '<th scope="row">' . esc_html__( 'MAOF finder', 'romcommerce' ) . '</th>';
 		echo '<td><label><input type="checkbox" name="rc_enabled" value="1"' . checked( $this->is_enabled(), true, false ) . '> ';
 		echo esc_html__( 'Show the MAOF column and order review box', 'romcommerce' ) . '</label></td>';
-		echo '</tr></tbody></table>';
+		echo '</tr>';
+		if ( $this->is_enabled() ) {
+			$this->render_index_progress();
+		}
+		echo '</tbody></table>';
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
 
@@ -69,7 +78,47 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo '<h3>' . esc_html__( 'Privacy notice paragraph', 'romcommerce' ) . '</h3>';
 		echo '<p class="description">' . esc_html__( 'Add a paragraph like this to your checkout privacy information (GDPR Art. 13). Adjust the contact details and the period if you change them.', 'romcommerce' ) . '</p>';
 		echo '<textarea readonly rows="8" class="large-text code">' . esc_textarea( $this->privacy_paragraph() ) . '</textarea>';
-		echo '<p class="description">' . esc_html__( 'The Legitimate Interests Assessment, the Article 30 record and the DPIA screening are merchant obligations. RomCommerce Pro’s compliance checklist surfaces them as attestations.', 'romcommerce' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'The Legitimate Interests Assessment, the Article 30 record and the DPIA screening are merchant obligations.', 'romcommerce' ) . '</p>';
+
+		ProSection::line( __( 'Compliance checklist', 'romcommerce' ), __( 'Lists the Legitimate Interests Assessment, the Article 30 record and the DPIA screening as attestations you can tick off.', 'romcommerce' ) );
+	}
+
+	/**
+	 * Until the backfill finishes, older orders whose phone was typed with
+	 * spaces or dots can still be missed, so staff need to see it isn't done.
+	 */
+	private function render_index_progress(): void {
+		$progress = PhoneIndex::progress();
+
+		echo '<tr><th scope="row">' . esc_html__( 'Phone number index', 'romcommerce' ) . '</th><td>';
+
+		if ( $progress['complete'] ) {
+			echo '<p>' . esc_html__( 'Complete. Orders from the last 12 months are matched by phone number however it was typed.', 'romcommerce' ) . '</p>';
+			echo '</td></tr>';
+
+			return;
+		}
+
+		if ( null === $progress['total'] ) {
+			// No value attribute: the browser shows an indeterminate bar.
+			echo '<progress class="rc-progress" aria-label="' . esc_attr__( 'Phone number index progress', 'romcommerce' ) . '"></progress>';
+			echo '<p class="description">' . esc_html__( 'Starting. Orders from the last 12 months are indexed in the background.', 'romcommerce' ) . '</p>';
+		} else {
+			$percent = $progress['total'] > 0 ? (int) floor( 100 * $progress['done'] / $progress['total'] ) : 0;
+			echo '<progress class="rc-progress" max="100" value="' . esc_attr( (string) $percent ) . '" aria-label="' . esc_attr__( 'Phone number index progress', 'romcommerce' ) . '"></progress>';
+			echo '<p class="description">' . esc_html(
+				sprintf(
+					/* translators: 1: orders indexed so far, 2: orders in the last 12 months, 3: percentage. */
+					__( '%1$s of %2$s orders indexed (%3$s%%).', 'romcommerce' ),
+					number_format_i18n( $progress['done'] ),
+					number_format_i18n( $progress['total'] ),
+					number_format_i18n( $percent )
+				)
+			) . '</p>';
+		}
+
+		echo '<p class="description">' . esc_html__( 'Until this finishes, older orders whose phone number was typed with spaces or dots may not show up as related. Indexing runs in batches whenever WordPress runs its scheduled tasks; reload this page to see progress.', 'romcommerce' ) . '</p>';
+		echo '</td></tr>';
 	}
 
 	private function privacy_paragraph(): string {

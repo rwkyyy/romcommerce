@@ -17,10 +17,16 @@ defined( 'ABSPATH' ) || exit;
  * many columns, or hiding the block entirely. Everything is done through
  * WooCommerce's own related-products filters — no custom query, no template
  * override — so themes that already customise the block keep working.
+ *
+ * Block themes render the section as a Product Collection block ("related"
+ * collection), which overrides those filters with its own attributes, so the
+ * same settings are written into the block's attributes before it renders.
  */
 final class Module implements ModuleInterface, HasSettingsUi {
 
 	private const ID = 'related-products';
+
+	private const RELATED_COLLECTION = 'woocommerce/product-collection/related';
 
 	public function id(): string {
 		return self::ID;
@@ -39,8 +45,11 @@ final class Module implements ModuleInterface, HasSettingsUi {
 			// WooCommerce attaches the related-products output at priority 20;
 			// remove exactly that so the section (and its heading) disappears.
 			add_action( 'init', array( $this, 'remove_related_output' ) );
+			add_filter( 'pre_render_block', array( $this, 'hide_related_block' ), 10, 2 );
 			return;
 		}
+
+		add_filter( 'render_block_data', array( $this, 'apply_to_related_block' ) );
 
 		add_filter( 'woocommerce_product_related_posts_relate_by_category', array( $this, 'relate_by_category' ) );
 		add_filter( 'woocommerce_product_related_posts_relate_by_tag', array( $this, 'relate_by_tag' ) );
@@ -49,6 +58,71 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 	public function remove_related_output(): void {
 		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+	}
+
+	/**
+	 * @param string|null          $output
+	 * @param array<string, mixed> $parsed_block
+	 * @return string|null
+	 */
+	public function hide_related_block( $output, $parsed_block ) {
+		if ( is_array( $parsed_block ) && self::is_related_block( $parsed_block ) ) {
+			return '';
+		}
+
+		return $output;
+	}
+
+	/**
+	 * @param array<string, mixed> $parsed_block
+	 * @return array<string, mixed>
+	 */
+	public function apply_to_related_block( $parsed_block ) {
+		if ( ! is_array( $parsed_block ) || 'woocommerce/product-collection' !== ( $parsed_block['blockName'] ?? '' ) || ! self::is_related_block( $parsed_block ) ) {
+			return $parsed_block;
+		}
+
+		return self::with_rules( $parsed_block, $this->relate_category(), $this->relate_tag(), $this->count(), $this->columns() );
+	}
+
+	/**
+	 * The legacy Related Products block, or a Product Collection block showing
+	 * the "related" collection.
+	 *
+	 * @param array<string, mixed> $parsed_block
+	 */
+	public static function is_related_block( array $parsed_block ): bool {
+		$name = $parsed_block['blockName'] ?? '';
+
+		if ( 'woocommerce/related-products' === $name ) {
+			return true;
+		}
+
+		return 'woocommerce/product-collection' === $name && self::RELATED_COLLECTION === ( $parsed_block['attrs']['collection'] ?? '' );
+	}
+
+	/**
+	 * @param array<string, mixed> $parsed_block
+	 * @return array<string, mixed>
+	 */
+	public static function with_rules( array $parsed_block, bool $category, bool $tag, int $count, int $columns ): array {
+		$attrs = isset( $parsed_block['attrs'] ) && is_array( $parsed_block['attrs'] ) ? $parsed_block['attrs'] : array();
+		$query = isset( $attrs['query'] ) && is_array( $attrs['query'] ) ? $attrs['query'] : array();
+
+		$query['relatedBy'] = array(
+			'categories' => $category,
+			'tags'       => $tag,
+		);
+		$query['perPage']   = $count;
+		$attrs['query']     = $query;
+
+		$layout                 = isset( $attrs['displayLayout'] ) && is_array( $attrs['displayLayout'] ) ? $attrs['displayLayout'] : array();
+		$layout['columns']      = $columns;
+		$attrs['displayLayout'] = $layout;
+
+		$parsed_block['attrs'] = $attrs;
+
+		return $parsed_block;
 	}
 
 	/**

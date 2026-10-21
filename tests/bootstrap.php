@@ -44,3 +44,12 @@ require_once dirname( __DIR__ ) . '/src/autoload.php';
 if ( ! defined( 'ROMCOMMERCE_DIR' ) ) {
 	define( 'ROMCOMMERCE_DIR', dirname( __DIR__ ) );
 }
+
+if ( ! defined( 'ROMCOMMERCE_FILE' ) ) {
+	define( 'ROMCOMMERCE_FILE', dirname( __DIR__ ) . '/romcommerce.php' );
+}
+
+// Asset handles are versioned with it; a fixed value keeps enqueue assertions stable.
+if ( ! defined( 'ROMCOMMERCE_VERSION' ) ) {
+	define( 'ROMCOMMERCE_VERSION', 'test' );
+}

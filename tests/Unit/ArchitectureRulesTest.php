@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace RomCommerce\Tests\Unit;
 
+use Brain\Monkey\Functions;
+
 use RomCommerce\Admin\ModuleRegistry;
 use RomCommerce\ModuleLoader;
 use RomCommerce\ModuleRegistrar;
@@ -188,6 +190,90 @@ final class ArchitectureRulesTest extends TestCase {
 	}
 
 	/**
+	 * Incident 2026-10-05: PRP and Price History rendered on the product page
+	 * through a direct add_action() on a slot's hook, so the Placements map
+	 * never showed them. Any module rendering on a hook that backs a Placement
+	 * slot must go through Placement::hook() and declare it in placements().
+	 * The allowlist is for renders that are deliberately off the map; each
+	 * entry needs its reason.
+	 */
+	public function test_modules_render_on_slot_hooks_only_through_placements(): void {
+		$allowed = array(
+			// Product-meta-gated badge, not a merchant-placed widget; see LegalGuaranteeNotice::placements().
+			'LegalGuaranteeNotice/Module.php:render_garan_badge',
+		);
+
+		$slots = ( new \ReflectionClassConstant( \RomCommerce\Support\Placement::class, 'SLOTS' ) )->getValue();
+		$hooks = array_unique( array_column( $slots, 'hook' ) );
+
+		$violations = array();
+		foreach ( $this->phpFilesUnderSrc() as $file ) {
+			if ( false === strpos( $file, '/Modules/' ) ) {
+				continue;
+			}
+
+			$contents = (string) file_get_contents( $file );
+			$relative = substr( $file, strpos( $file, '/Modules/' ) + strlen( '/Modules/' ) );
+
+			foreach ( $hooks as $hook ) {
+				preg_match_all( "/add_action\\(\\s*'" . preg_quote( $hook, '/' ) . "'\\s*,\\s*array\\(\\s*\\\$this\\s*,\\s*'([a-z_]+)'/", $contents, $matches );
+				foreach ( $matches[1] as $callback ) {
+					if ( ! in_array( $relative . ':' . $callback, $allowed, true ) ) {
+						$violations[] = $relative . ' hooks ' . $callback . ' directly on ' . $hook;
+					}
+				}
+			}
+		}
+
+		self::assertSame( array(), $violations, implode( ', ', $violations ) );
+	}
+
+	/**
+	 * WordPress.org guideline 10: the footer credit may only appear when the
+	 * merchant switches it on in its own pane, so no other source file may
+	 * name its module id (and so enable it from activation, an update or
+	 * another module). The registrar refers to the class, not the id.
+	 */
+	public function test_only_the_footer_credit_pane_and_the_nav_mention_its_id(): void {
+		$allowed    = array( 'Modules/FooterCredit/Module.php', 'Admin/ModuleRegistry.php' );
+		$violations = array();
+
+		foreach ( $this->phpFilesUnderSrc() as $file ) {
+			$relative = substr( $file, strpos( $file, '/src/' ) + strlen( '/src/' ) );
+			if ( ! in_array( $relative, $allowed, true ) && false !== strpos( (string) file_get_contents( $file ), 'footer-credit' ) ) {
+				$violations[] = $relative;
+			}
+		}
+
+		self::assertSame( array(), $violations, implode( ', ', $violations ) );
+	}
+
+	/**
+	 * The Placements map draws every cart/checkout placement inside the block
+	 * cart and checkout too, so a module offering those positions must also
+	 * wire them there through Placement::hook_block().
+	 */
+	public function test_cart_and_checkout_placements_are_also_wired_for_blocks(): void {
+		$violations = array();
+		foreach ( $this->phpFilesUnderSrc() as $file ) {
+			if ( false === strpos( $file, '/Modules/' ) ) {
+				continue;
+			}
+
+			$contents = (string) file_get_contents( $file );
+			if ( ! preg_match( "/Placement::surface_slots\\(\\s*'(cart|checkout)'\\s*\\)/", $contents ) ) {
+				continue;
+			}
+
+			if ( false === strpos( $contents, 'Placement::hook_block(' ) ) {
+				$violations[] = substr( $file, strpos( $file, '/Modules/' ) + strlen( '/Modules/' ) );
+			}
+		}
+
+		self::assertSame( array(), $violations, 'Missing Placement::hook_block(): ' . implode( ', ', $violations ) );
+	}
+
+	/**
 	 * Every Lite-tier id in the admin nav (Admin\ModuleRegistry, the single
 	 * source of nav copy) must correspond to exactly one module actually
 	 * registered by ModuleRegistrar, and vice versa — otherwise a typo'd id
@@ -195,6 +281,8 @@ final class ArchitectureRulesTest extends TestCase {
 	 * placeholder, or an orphaned nav entry never resolves to anything.
 	 */
 	public function test_module_registry_and_module_registrar_agree_on_every_lite_module_id(): void {
+		Functions\stubTranslationFunctions();
+
 		$loader = new ModuleLoader();
 		( new ModuleRegistrar() )->register_modules( $loader );
 

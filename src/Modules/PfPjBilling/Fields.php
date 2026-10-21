@@ -21,6 +21,20 @@ final class Fields {
 	public const IBAN        = 'billing_romcommerce_iban';
 	public const CNP         = 'billing_romcommerce_cnp';
 
+	/**
+	 * Block checkout field ids (Additional Checkout Fields API; the CNP in the
+	 * "order" location, the rest in "contact", see BlockCheckout). A checkbox
+	 * rather than the classic PF/PJ select: unticked is PF, so nobody has to
+	 * pick before the form is usable.
+	 */
+	public const BLOCK_IS_COMPANY = 'romcommerce/is-company';
+	public const BLOCK_COMPANY    = 'romcommerce/company';
+	public const BLOCK_CUI        = 'romcommerce/cui';
+	public const BLOCK_REG_COM    = 'romcommerce/reg-com';
+	public const BLOCK_BANK       = 'romcommerce/bank';
+	public const BLOCK_IBAN       = 'romcommerce/iban';
+	public const BLOCK_CNP        = 'romcommerce/cnp';
+
 	/** Single consolidated order-meta entry holding all PF/PJ data (CRUD-only). */
 	public const META_KEY = '_romcommerce_billing';
 

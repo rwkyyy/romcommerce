@@ -1,0 +1,2780 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: RomCommerce 0.6.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/romcommerce\n"
+"Last-Translator: Uprise Team\n"
+"Language-Team: Romanian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-03T19:24:10+00:00\n"
+"PO-Revision-Date: 2026-10-03T19:24:10+00:00\n"
+"Language: ro_RO\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: romcommerce\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
+
+#. Plugin Name of the plugin
+msgid "RomCommerce"
+msgstr "RomCommerce"
+
+#. Plugin URI of the plugin
+msgid "https://romcommerce.ro"
+msgstr "https://romcommerce.ro"
+
+#. Description of the plugin
+msgid "Romanian commerce layer for WooCommerce: modular tools for compliance, checkout localisation, and Romanian-market essentials."
+msgstr "Strat de comerț românesc pentru WooCommerce: instrumente modulare pentru conformitate, localizarea finalizării comenzii și elemente esențiale pentru piața din România."
+
+#. Author of the plugin
+msgid "Uprise Team"
+msgstr "Uprise Team"
+
+#. Author URI of the plugin
+msgid "https://uprise.ro"
+msgstr "https://uprise.ro"
+
+msgid "RomCommerce requires WooCommerce to be installed and active."
+msgstr "RomCommerce necesită ca WooCommerce să fie instalat și activ."
+
+msgid "Your session expired. The page will reload."
+msgstr "Sesiunea a expirat. Pagina se va reîncărca."
+
+msgid "You do not have permission to do that."
+msgstr "Nu ai permisiunea să faci asta."
+
+msgid "Choose image"
+msgstr "Alege imaginea"
+
+msgid "Dashboard"
+msgstr "Panou de control"
+
+msgid "Module enabled."
+msgstr "Modul activat."
+
+msgid "Module disabled."
+msgstr "Modul dezactivat."
+
+msgid "General"
+msgstr "General"
+
+msgid "Modules"
+msgstr "Module"
+
+msgid "Placements"
+msgstr "Amplasări"
+
+msgid "License"
+msgstr "Licență"
+
+msgid "Status & Tools"
+msgstr "Stare și unelte"
+
+#. translators: %s: plugin version number
+#, php-format
+msgid "RomCommerce Lite %s"
+msgstr "RomCommerce Lite %s"
+
+msgid "for WooCommerce"
+msgstr "pentru WooCommerce"
+
+msgid "enabled"
+msgstr "activat"
+
+msgid "disabled"
+msgstr "dezactivat"
+
+msgid "Lite: complete & free"
+msgstr "Lite: complet și gratuit"
+
+msgid "Reliable, scalable commerce for the Romanian market."
+msgstr "Comerț fiabil și scalabil pentru piața din România."
+
+msgid "Enable only what your shop needs. Every module is fully functional in Lite: no trial, no usage limit, no upsell logic hidden in the code."
+msgstr "Activează doar ce are nevoie magazinul tău. Fiecare modul este complet funcțional în Lite: fără perioadă de probă, fără limite de utilizare, fără logică de upsell ascunsă în cod."
+
+msgid "Modules enabled"
+msgstr "Module activate"
+
+#. translators: %d: total number of Lite modules
+#, php-format
+msgid "/ %d Lite modules"
+msgstr "/ %d module Lite"
+
+msgid "Legal & compliance"
+msgstr "Legal și conformitate"
+
+msgid "active"
+msgstr "activ"
+
+msgid "RomCommerce Pro"
+msgstr "RomCommerce Pro"
+
+msgid "VIES lookup, address autocomplete, order confirmation and more. One licence, no per-module unlocks."
+msgstr "Verificare VIES, completare automată a adresei, confirmarea comenzii și multe altele. O singură licență, fără deblocări per modul."
+
+msgid "See what's included"
+msgstr "Vezi ce este inclus"
+
+msgid "Manage modules"
+msgstr "Gestionează modulele"
+
+msgid "Settings saved."
+msgstr "Setările au fost salvate."
+
+msgid "Data on uninstall"
+msgstr "Date la dezinstalare"
+
+msgid "Delete all RomCommerce data when the plugin is deleted"
+msgstr "Șterge toate datele RomCommerce când pluginul este șters"
+
+msgid "Off by default. When enabled, deleting RomCommerce (not merely deactivating it) also removes its settings, the price-history log, and saved delivery addresses. Product reviews are left in place. They are standard WooCommerce reviews. This cannot be undone."
+msgstr "Dezactivat implicit. Când este activat, ștergerea RomCommerce (nu doar dezactivarea) elimină și setările, jurnalul istoricului de prețuri și adresele de livrare salvate. Recenziile produselor rămân, fiind recenzii WooCommerce standard. Această acțiune este ireversibilă."
+
+msgid "Save changes"
+msgstr "Salvează modificările"
+
+msgid "Where your active modules render on the storefront. Pick a surface to redraw the map; open a module to change where it shows."
+msgstr "Unde apar modulele active în magazin. Alege o zonă pentru a redesena harta; deschide un modul pentru a schimba unde apare."
+
+#. translators: %d: number of modules in this category
+#, php-format
+msgid "%d module"
+msgid_plural "%d modules"
+msgstr[0] "%d modul"
+msgstr[1] "%d module"
+msgstr[2] "%d de module"
+
+msgid "Settings"
+msgstr "Setări"
+
+msgid "Pro"
+msgstr "Pro"
+
+msgid "Unlock"
+msgstr "Deblochează"
+
+msgid "Not built yet"
+msgstr "În dezvoltare"
+
+msgid "Disable module"
+msgstr "Dezactivează modulul"
+
+msgid "Enable module"
+msgstr "Activează modulul"
+
+msgid "Unknown module."
+msgstr "Modul necunoscut."
+
+msgid "All modules"
+msgstr "Toate modulele"
+
+msgid "Unlock with RomCommerce Pro"
+msgstr "Deblochează cu RomCommerce Pro"
+
+msgid "This module is not built yet."
+msgstr "Acest modul este încă în dezvoltare."
+
+msgid "Activate your RomCommerce Pro license here once RomCommerce Pro is installed and active."
+msgstr "Activează aici licența RomCommerce Pro după ce RomCommerce Pro este instalat și activ."
+
+msgid "Learn about RomCommerce Pro"
+msgstr "Află mai multe despre RomCommerce Pro"
+
+msgid "RomCommerce version"
+msgstr "Versiune RomCommerce"
+
+msgid "PHP version"
+msgstr "Versiune PHP"
+
+msgid "WooCommerce active"
+msgstr "WooCommerce activ"
+
+msgid "Yes"
+msgstr "Da"
+
+msgid "No"
+msgstr "Nu"
+
+msgid "HPOS enabled"
+msgstr "HPOS activat"
+
+msgid "FAB"
+msgstr "FAB"
+
+msgid "Footer — open"
+msgstr "Subsol — liber"
+
+#. translators: %d: number of modules rendering on this surface
+#, php-format
+msgid "%d module here"
+msgid_plural "%d modules here"
+msgstr[0] "%d modul aici"
+msgstr[1] "%d module aici"
+msgstr[2] "%d de module aici"
+
+msgid "No active module renders on this surface yet."
+msgstr "Niciun modul activ nu apare încă în această zonă."
+
+msgid "On"
+msgstr "Activ"
+
+msgid "Open settings →"
+msgstr "Deschide setările →"
+
+msgid "Footer — 2+ modules share this spot"
+msgstr "Subsol — 2+ module ocupă acest loc"
+
+msgid "Both relocate into your theme footer. Set who sits on top — otherwise their order is undefined."
+msgstr "Ambele sunt mutate în subsolul temei. Stabilește care apare primul — altfel ordinea lor este nedefinită."
+
+#. translators: 1: settings link opening tag, 2: settings link closing tag, 3: dismiss link opening tag, 4: dismiss link closing tag
+#, php-format
+msgid "RomCommerce is active. %1$sClick here%2$s to choose which modules to enable. %3$sDismiss%4$s"
+msgstr "RomCommerce este activ. %1$sDă clic aici%2$s pentru a alege ce module activezi. %3$sÎnchide%4$s"
+
+msgid "Admin & Login Branding"
+msgstr "Branding admin și autentificare"
+
+msgid "Replaces the WordPress logo on the login screen with your site logo (Appearance → Customize → Site Identity, or the Site Logo block in the Site Editor) and applies one brand colour across wp-admin and the login screen."
+msgstr "Înlocuiește logoul WordPress de pe ecranul de autentificare cu logoul site-ului (Aspect → Personalizează → Identitate site sau blocul Logo site din Editorul de site) și aplică o singură culoare de brand în wp-admin și pe ecranul de autentificare."
+
+msgid "Module"
+msgstr "Modul"
+
+msgid "Enable"
+msgstr "Activează"
+
+msgid "Custom login logo"
+msgstr "Logo personalizat la autentificare"
+
+msgid "Use an uploaded image instead of the site logo"
+msgstr "Folosește o imagine încărcată în locul logoului site-ului"
+
+msgid "For themes that don't support a site logo, so there is no Logo field to set in Appearance → Customize → Site Identity."
+msgstr "Pentru temele care nu acceptă un logo de site, deci nu există câmpul Logo în Aspect → Personalizează → Identitate site."
+
+msgid "Brand colour"
+msgstr "Culoarea brandului"
+
+msgid "Used for the login button, the wp-admin menu highlight, and admin bar accents. Darker and lighter shades are derived automatically."
+msgstr "Folosită pentru butonul de autentificare, evidențierea din meniul wp-admin și accentele din bara de administrare. Nuanțele mai închise și mai deschise sunt generate automat."
+
+msgid "Login style"
+msgstr "Stil autentificare"
+
+msgid "Rounded corners"
+msgstr "Colțuri rotunjite"
+
+msgid "Sharp corners"
+msgstr "Colțuri drepte"
+
+msgid "Underline only"
+msgstr "Doar subliniere"
+
+msgid "Shape of the username/password fields on the login screen."
+msgstr "Forma câmpurilor de utilizator/parolă de pe ecranul de autentificare."
+
+msgid "Button shape"
+msgstr "Forma butonului"
+
+msgid "Rounded"
+msgstr "Rotunjit"
+
+msgid "Square"
+msgstr "Pătrat"
+
+msgid "Shape of the login button, chosen independently of the login style above."
+msgstr "Forma butonului de autentificare, aleasă independent de stilul de autentificare de mai sus."
+
+msgid "Frontend dropdowns"
+msgstr "Liste derulante în magazin"
+
+msgid "Also brand WooCommerce's select2 dropdowns on the frontend (e.g. checkout country/state fields)"
+msgstr "Aplică brandul și listelor derulante select2 ale WooCommerce din magazin (de ex. câmpurile țară/județ de la finalizarea comenzii)"
+
+msgid "Login background"
+msgstr "Fundal autentificare"
+
+msgid "Background image"
+msgstr "Imagine de fundal"
+
+msgid "Overlay colour"
+msgstr "Culoare suprapunere"
+
+msgid "Overlay opacity"
+msgstr "Opacitate suprapunere"
+
+msgid "A custom background image with a gradient overlay for the login screen."
+msgstr "O imagine de fundal personalizată, cu suprapunere în degrade, pentru ecranul de autentificare."
+
+msgid "Clear Cart"
+msgstr "Golire coș"
+
+msgid "Sigur doriți să goliți coșul?"
+msgstr "Sigur doriți să goliți coșul?"
+
+msgid "Golește coșul"
+msgstr "Golește coșul"
+
+msgid "Adds a one-click button that empties the whole cart. Also available anywhere via the [romcommerce_clear_cart] shortcode."
+msgstr "Adaugă un buton care golește tot coșul dintr-un clic. Disponibil și oriunde prin shortcode-ul [romcommerce_clear_cart]."
+
+msgid "Cart page button"
+msgstr "Buton pe pagina coșului"
+
+msgid "Confirmation"
+msgstr "Confirmare"
+
+msgid "Ask the customer to confirm before emptying the cart"
+msgstr "Cere clientului confirmarea înainte de golirea coșului"
+
+msgid "Counties & Postcodes"
+msgstr "Județe și coduri poștale"
+
+msgid "Codul poștal din România trebuie să conțină exact 6 cifre."
+msgstr "Codul poștal din România trebuie să conțină exact 6 cifre."
+
+msgid "Validates Romanian postal codes (6 digits) at checkout. County data comes from WooCommerce core, so nothing is duplicated."
+msgstr "Validează codurile poștale românești (6 cifre) la finalizarea comenzii. Datele despre județe provin din WooCommerce, deci nimic nu este duplicat."
+
+msgid "Postcode validation"
+msgstr "Validare cod poștal"
+
+msgid "Require a valid 6-digit Romanian postcode at checkout"
+msgstr "Solicită un cod poștal românesc valid, de 6 cifre, la finalizarea comenzii"
+
+msgid "Coupon Cleanup"
+msgstr "Curățare cupoane"
+
+msgid "Keeps your coupon list tidy without manual upkeep: expired coupons are moved to the trash automatically, and can optionally be deleted for good after they have sat there a while."
+msgstr "Păstrează lista de cupoane ordonată fără întreținere manuală: cupoanele expirate sunt mutate automat la gunoi și, opțional, pot fi șterse definitiv după ce au stat acolo o vreme."
+
+msgid "Trash expired coupons"
+msgstr "Mută la gunoi cupoanele expirate"
+
+msgid "Every day, move published coupons past their expiry date to the trash"
+msgstr "Zilnic, mută la gunoi cupoanele publicate a căror dată de expirare a trecut"
+
+msgid "Empty coupon trash"
+msgstr "Golește gunoiul de cupoane"
+
+msgid "Permanently delete coupons after they have been in the trash for"
+msgstr "Șterge definitiv cupoanele după ce au stat la gunoi timp de"
+
+msgid "days"
+msgstr "zile"
+
+msgid "This is separate from your site's general trash setting — it only affects coupons, and applies even if that site-wide auto-empty is disabled."
+msgstr "Este separat de setarea generală a site-ului pentru gunoi — afectează doar cupoanele și se aplică chiar dacă golirea automată la nivelul site-ului este dezactivată."
+
+msgid "Free Shipping Bar"
+msgstr "Bară livrare gratuită"
+
+msgid "Felicitări! Beneficiați de livrare gratuită."
+msgstr "Felicitări! Beneficiați de livrare gratuită."
+
+#. translators: %s: formatted remaining amount
+#, php-format
+msgid "Mai adăugați %s pentru livrare gratuită."
+msgstr "Mai adăugați %s pentru livrare gratuită."
+
+msgid "Shows how much more the customer needs to spend to qualify for free shipping. The threshold is read from your WooCommerce free-shipping method automatically."
+msgstr "Arată cât mai trebuie să cheltuiască clientul pentru a beneficia de livrare gratuită. Pragul este citit automat din metoda de livrare gratuită WooCommerce."
+
+msgid "Toggle off any placement your theme already provides to avoid a double indicator."
+msgstr "Dezactivează orice amplasare pe care tema ta o oferă deja, pentru a evita un indicator dublu."
+
+msgid "Colours"
+msgstr "Culori"
+
+msgid "Active (filled)"
+msgstr "Activă (umplută)"
+
+msgid "Inactive (track)"
+msgstr "Inactivă (fundal)"
+
+msgid "Manual thresholds"
+msgstr "Praguri manuale"
+
+msgid "One per line as COUNTRY:AMOUNT (e.g. RO:200). Overrides the auto-detected threshold for that country. Use it when free shipping is not a WooCommerce core method."
+msgstr "Câte unul pe linie, sub forma ȚARĂ:SUMĂ (de ex. RO:200). Înlocuiește pragul detectat automat pentru acea țară. Folosește-l când livrarea gratuită nu este o metodă WooCommerce standard."
+
+msgid "Hide Voucher at Checkout"
+msgstr "Ascundere voucher la finalizarea comenzii"
+
+msgid "Hides the coupon field so customers do not leave checkout to search for a code."
+msgstr "Ascunde câmpul pentru cupon, ca clienții să nu părăsească finalizarea comenzii pentru a căuta un cod."
+
+msgid "Hide on checkout"
+msgstr "Ascunde la finalizarea comenzii"
+
+msgid "Remove the coupon field from the checkout page"
+msgstr "Elimină câmpul pentru cupon de pe pagina de finalizare a comenzii"
+
+msgid "Hide on cart"
+msgstr "Ascunde în coș"
+
+msgid "Also remove the coupon field from the cart page"
+msgstr "Elimină câmpul pentru cupon și de pe pagina coșului"
+
+msgid "Legal Guarantee Notice"
+msgstr "Notificare garanție legală"
+
+msgid "Drepturile tale privind garanția legală"
+msgstr "Drepturile tale privind garanția legală"
+
+msgid "Legal guarantee notice"
+msgstr "Notificare garanție legală"
+
+msgid "Exclude this product from the notice link on its product page, even if its categories/tags aren't excluded in the module's settings."
+msgstr "Exclude acest produs de la linkul notificării de pe pagina sa, chiar dacă categoriile/etichetele lui nu sunt excluse în setările modulului."
+
+msgid "Notificarea armonizată UE privind garanția legală de conformitate"
+msgstr "Notificarea armonizată UE privind garanția legală de conformitate"
+
+msgid "Vezi informațiile complete pe portalul Your Europe"
+msgstr "Vezi informațiile complete pe portalul Your Europe"
+
+#. translators: %s: guarantee duration in years, e.g. "3" or "2,5"
+#, php-format
+msgid "Garanție de producător (EU GARAN): %s ani — vezi eticheta completă"
+msgstr "Garanție de producător (EU GARAN): %s ani — vezi eticheta completă"
+
+msgid "Detalii despre garanția de durabilitate"
+msgstr "Detalii despre garanția de durabilitate"
+
+msgid "Eticheta EU GARAN"
+msgstr "Eticheta EU GARAN"
+
+msgid "EU GARAN"
+msgstr "EU GARAN"
+
+msgid "Guarantee duration (years)"
+msgstr "Durata garanției (ani)"
+
+msgid "Only for a voluntary producer durability guarantee that is free of charge and covers the entire product. The EU GARAN label shows automatically on this product's page once this is 2.5 years or more; leave blank or below 2.5 to not show it. Half-year values (2.5, 3.5…) are allowed; anything else is rounded to the nearest half. RomCommerce does not verify eligibility."
+msgstr "Doar pentru o garanție de durabilitate voluntară a producătorului, gratuită și care acoperă întregul produs. Eticheta EU GARAN apare automat pe pagina acestui produs când valoarea este 2.5 ani sau mai mult; lasă gol sau sub 2.5 pentru a nu o afișa. Sunt permise valori cu jumătăți de an (2.5, 3.5…); orice altă valoare este rotunjită la cea mai apropiată jumătate. RomCommerce nu verifică eligibilitatea."
+
+msgid "Use WooCommerce brand"
+msgstr "Folosește brandul WooCommerce"
+
+msgid "Use this product's assigned WooCommerce Brand instead of the field below."
+msgstr "Folosește brandul WooCommerce atribuit acestui produs în locul câmpului de mai jos."
+
+msgid "Brand / Trademark (optional)"
+msgstr "Brand / Marcă (opțional)"
+
+msgid "Filled in directly on the official label graphic in place of this field's caption. Ignored if \"Use WooCommerce brand\" above is checked, or if a full label image is uploaded below."
+msgstr "Completat direct pe grafica oficială a etichetei, în locul legendei acestui câmp. Ignorat dacă „Folosește brandul WooCommerce” de mai sus este bifat sau dacă mai jos este încărcată o imagine completă a etichetei."
+
+msgid "Model identifier (optional)"
+msgstr "Identificator model (opțional)"
+
+msgid "Filled in directly on the official label graphic in place of this field's caption. Ignored if a full label image is uploaded below."
+msgstr "Completat direct pe grafica oficială a etichetei, în locul legendei acestui câmp. Ignorat dacă mai jos este încărcată o imagine completă a etichetei."
+
+msgid "Full label image (optional)"
+msgstr "Imagine completă a etichetei (opțional)"
+
+msgid "Select image"
+msgstr "Selectează imaginea"
+
+msgid "Remove"
+msgstr "Elimină"
+
+msgid "A producer-supplied, already-compliant full EU GARAN label image (brand/model/duration already filled in). When set, this is shown instead of our auto-generated version when a shopper expands the badge."
+msgstr "O imagine completă a etichetei EU GARAN, furnizată de producător și deja conformă (brand/model/durată deja completate). Când este setată, aceasta este afișată în locul versiunii generate automat atunci când un cumpărător extinde insigna."
+
+msgid "Select GARAN label image"
+msgstr "Selectează imaginea etichetei GARAN"
+
+msgid "Beneficiați de o garanție legală de conformitate de minimum 2 ani pentru bunurile achiziționate în Uniunea Europeană."
+msgstr "Beneficiați de o garanție legală de conformitate de minimum 2 ani pentru bunurile achiziționate în Uniunea Europeană."
+
+msgid "Garanția legală de conformitate"
+msgstr "Garanția legală de conformitate"
+
+msgid "Detalii"
+msgstr "Detalii"
+
+#. translators: 1: product name, 2: guarantee duration in years, e.g. "3" or "2,5"
+#, php-format
+msgid "%1$s beneficiază de eticheta EU GARAN — garanție de producător pe durabilitate, gratuită, %2$s ani."
+msgstr "%1$s beneficiază de eticheta EU GARAN — garanție de producător pe durabilitate, gratuită, %2$s ani."
+
+#. translators: %s: brand or trademark name
+#, php-format
+msgid "Brand/Marcă: %s."
+msgstr "Brand/Marcă: %s."
+
+#. translators: %s: model identifier
+#, php-format
+msgid "Model: %s."
+msgstr "Model: %s."
+
+msgid "More info"
+msgstr "Mai multe informații"
+
+msgid "Show notice"
+msgstr "Afișează notificarea"
+
+msgid "Show the EU legal-guarantee notice sitewide. Mandatory EU-wide from 27 September 2026."
+msgstr "Afișează pe tot site-ul notificarea UE privind garanția legală. Obligatorie în întreaga UE din 27 septembrie 2026."
+
+msgid "Directive (EU) 2024/825"
+msgstr "Directiva (UE) 2024/825"
+
+msgid "Notice page"
+msgstr "Pagina notificării"
+
+msgid "— none —"
+msgstr "— niciuna —"
+
+msgid "Create notice page"
+msgstr "Creează pagina notificării"
+
+#. translators: %s: the [romcommerce_legal_guarantee_notice] shortcode
+#, php-format
+msgid "Every notice link points here. Picking a page (new or existing) adds the %s shortcode to it automatically if it's missing."
+msgstr "Toate linkurile notificării duc aici. Alegerea unei pagini (nouă sau existentă) îi adaugă automat shortcode-ul %s dacă lipsește."
+
+msgid "Link text"
+msgstr "Textul linkului"
+
+msgid "Shown on the footer, checkout, and product-page links."
+msgstr "Afișat în linkurile din subsol, de la finalizarea comenzii și de pe pagina produsului."
+
+msgid "Extra placements"
+msgstr "Amplasări suplimentare"
+
+msgid "Single product pages"
+msgstr "Paginile de produs"
+
+msgid "The notice already appears in the footer and order emails. These add it to extra spots."
+msgstr "Notificarea apare deja în subsol și în e-mailurile comenzilor. Acestea o adaugă în locuri suplimentare."
+
+msgid "Exclude products"
+msgstr "Exclude produse"
+
+msgid "Search categories, tags, brands…"
+msgstr "Caută categorii, etichete, branduri…"
+
+msgid "Products in these terms skip the product-page link (any taxonomy, not just categories). The footer reminder is unaffected. To exclude a single product without excluding its whole category, use the checkbox on that product's General tab."
+msgstr "Produsele din acești termeni nu primesc linkul pe pagina produsului (orice taxonomie, nu doar categorii). Mementoul din subsol nu este afectat. Pentru a exclude un singur produs fără a-i exclude întreaga categorie, folosește caseta de bifare din fila General a produsului."
+
+msgid "Alignment"
+msgstr "Aliniere"
+
+msgid "Left"
+msgstr "Stânga"
+
+msgid "Center"
+msgstr "Centru"
+
+msgid "Right"
+msgstr "Dreapta"
+
+msgid "None — I'll add the link myself"
+msgstr "Niciuna — adaug eu linkul"
+
+msgid "Where the footer link sits. \"None\" skips the automatic footer link; other placements still work."
+msgstr "Unde se află linkul din subsol. „Niciuna” omite linkul automat din subsol; celelalte amplasări funcționează în continuare."
+
+msgid "Link color"
+msgstr "Culoarea linkului"
+
+msgid "Use recommended color"
+msgstr "Folosește culoarea recomandată"
+
+msgid "Unchecked, the link inherits your theme's own link color."
+msgstr "Nebifat, linkul preia culoarea linkurilor din tema ta."
+
+msgid "EU GARAN label"
+msgstr "Eticheta EU GARAN"
+
+msgid "Enable for products with a qualifying producer durability guarantee"
+msgstr "Activează pentru produsele cu o garanție de durabilitate a producătorului care se califică"
+
+msgid "Reg. (EU) 2025/1960"
+msgstr "Reg. (UE) 2025/1960"
+
+msgid "Adds an EU GARAN tab to each product's edit screen. The label shows once that product's guarantee duration is 2.5 years or more. Separate from the notice above, and optional."
+msgstr "Adaugă o filă EU GARAN în ecranul de editare al fiecărui produs. Eticheta apare când durata garanției produsului este 2.5 ani sau mai mult. Separată de notificarea de mai sus și opțională."
+
+msgid "A notice page is already linked."
+msgstr "O pagină de notificare este deja asociată."
+
+msgid "The notice page could not be created."
+msgstr "Pagina notificării nu a putut fi creată."
+
+msgid "Notice page created and linked."
+msgstr "Pagina notificării a fost creată și asociată."
+
+msgid "MAOF"
+msgstr "MAOF"
+
+msgid "Posibile comenzi asociate: verificare manuală necesară"
+msgstr "Posibile comenzi asociate: verificare manuală necesară"
+
+#. translators: %d: number of other active orders
+#, php-format
+msgid "%d activă"
+msgid_plural "%d active"
+msgstr[0] "%d activă"
+msgstr[1] "%d active"
+msgstr[2] "%d de active"
+
+msgid "MAOF: posibile comenzi asociate"
+msgstr "MAOF: posibile comenzi asociate"
+
+msgid "Nicio comandă asociată în ultimele 12 luni."
+msgstr "Nicio comandă asociată în ultimele 12 luni."
+
+msgid "Posibile comenzi asociate: verificare manuală, nu o confirmare."
+msgstr "Posibile comenzi asociate: verificare manuală, nu o confirmare."
+
+msgid "Comandă"
+msgstr "Comandă"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Potrivire"
+msgstr "Potrivire"
+
+msgid "Potrivirile slabe (un singur identificator) nu sunt o dovadă."
+msgstr "Potrivirile slabe (un singur identificator) nu sunt o dovadă."
+
+msgid "puternică"
+msgstr "puternică"
+
+msgid "slabă"
+msgstr "slabă"
+
+msgid "e-mail + telefon"
+msgstr "e-mail + telefon"
+
+msgid "e-mail"
+msgstr "e-mail"
+
+msgid "telefon"
+msgstr "telefon"
+
+msgid "Shows authorised staff possible related orders (by e-mail or phone, over a 12-month window) and warns about active duplicate orders. It is decision support only. It never cancels, blocks or refuses an order automatically, and no risk score is stored."
+msgstr "Arată personalului autorizat posibilele comenzi asociate (după e-mail sau telefon, pe o perioadă de 12 luni) și avertizează despre comenzi active duplicate. Este doar un sprijin pentru decizie. Nu anulează, nu blochează și nu refuză niciodată automat o comandă și nu stochează niciun scor de risc."
+
+msgid "MAOF finder"
+msgstr "Căutare MAOF"
+
+msgid "Show the MAOF column and order review box"
+msgstr "Afișează coloana MAOF și caseta de verificare din comandă"
+
+msgid "Privacy notice paragraph"
+msgstr "Paragraf pentru informarea privind confidențialitatea"
+
+msgid "Add a paragraph like this to your checkout privacy information (GDPR Art. 13). Adjust the contact details and the period if you change them."
+msgstr "Adaugă un paragraf ca acesta în informațiile privind confidențialitatea de la finalizarea comenzii (art. 13 RGPD). Ajustează datele de contact și perioada dacă le modifici."
+
+msgid "Pentru prevenirea erorilor de procesare și livrare, a comenzilor duplicate și, după caz, a utilizării abuzive a serviciului, comparăm adresa de e-mail și/sau numărul de telefon furnizate la plasarea comenzii cu datele comenzilor din ultimele 12 luni. Prelucrarea se întemeiază pe interesul nostru legitim de a asigura procesarea corectă și sigură a comenzilor și de a preveni pierderile operaționale, conform art. 6 alin. (1) lit. f) din RGPD. Rezultatul este un indicator intern destinat personalului autorizat și nu determină automat anularea sau refuzarea unei comenzi. În cazul identificării unor posibile comenzi asociate, situația este verificată manual. Puteți solicita accesul sau rectificarea datelor și vă puteți opune prelucrării, în condițiile art. 21 din RGPD, contactându-ne la [adresă de contact]."
+msgstr "Pentru prevenirea erorilor de procesare și livrare, a comenzilor duplicate și, după caz, a utilizării abuzive a serviciului, comparăm adresa de e-mail și/sau numărul de telefon furnizate la plasarea comenzii cu datele comenzilor din ultimele 12 luni. Prelucrarea se întemeiază pe interesul nostru legitim de a asigura procesarea corectă și sigură a comenzilor și de a preveni pierderile operaționale, conform art. 6 alin. (1) lit. f) din RGPD. Rezultatul este un indicator intern destinat personalului autorizat și nu determină automat anularea sau refuzarea unei comenzi. În cazul identificării unor posibile comenzi asociate, situația este verificată manual. Puteți solicita accesul sau rectificarea datelor și vă puteți opune prelucrării, în condițiile art. 21 din RGPD, contactându-ne la [adresă de contact]."
+
+msgid "Etichetă (ex. Acasă, Birou)"
+msgstr "Etichetă (ex. Acasă, Birou)"
+
+msgid "Prenume"
+msgstr "Prenume"
+
+msgid "Nume"
+msgstr "Nume"
+
+msgid "Firmă (opțional)"
+msgstr "Firmă (opțional)"
+
+msgid "Țară"
+msgstr "Țară"
+
+msgid "Județ"
+msgstr "Județ"
+
+msgid "Oraș"
+msgstr "Oraș"
+
+msgid "Cod poștal"
+msgstr "Cod poștal"
+
+msgid "Adresă"
+msgstr "Adresă"
+
+msgid "Adresă (rând 2, opțional)"
+msgstr "Adresă (rând 2, opțional)"
+
+msgid "Telefon (opțional)"
+msgstr "Telefon (opțional)"
+
+msgid "Alegeți o adresă salvată"
+msgstr "Alegeți o adresă salvată"
+
+msgid "— adresă nouă —"
+msgstr "— adresă nouă —"
+
+msgid "Selectarea unei adrese salvate completează adresa de livrare și activează automat \"Livrare la altă adresă\" dacă nu era deja bifată."
+msgstr "Selectarea unei adrese salvate completează adresa de livrare și activează automat \"Livrare la altă adresă\" dacă nu era deja bifată."
+
+msgid "Multiple Delivery Addresses"
+msgstr "Adrese de livrare multiple"
+
+msgid "Lets logged-in customers save several delivery addresses under “Adrese de livrare” in their account and pick one at checkout."
+msgstr "Permite clienților autentificați să salveze mai multe adrese de livrare în secțiunea „Adrese de livrare” din contul lor și să aleagă una la finalizarea comenzii."
+
+msgid "Multiple addresses"
+msgstr "Adrese multiple"
+
+msgid "Enable the saved delivery address book"
+msgstr "Activează agenda de adrese de livrare salvate"
+
+msgid "Adrese de livrare"
+msgstr "Adrese de livrare"
+
+msgid "Sesiunea a expirat. Încercați din nou."
+msgstr "Sesiunea a expirat. Încercați din nou."
+
+msgid "Completați toate câmpurile obligatorii (marcate cu *)."
+msgstr "Completați toate câmpurile obligatorii (marcate cu *)."
+
+msgid "Ați atins numărul maxim de adrese salvate."
+msgstr "Ați atins numărul maxim de adrese salvate."
+
+msgid "Adresa a fost salvată."
+msgstr "Adresa a fost salvată."
+
+msgid "Acțiune invalidă."
+msgstr "Acțiune invalidă."
+
+msgid "Adresa a fost ștearsă."
+msgstr "Adresa a fost ștearsă."
+
+msgid "Adaugă o adresă"
+msgstr "Adaugă o adresă"
+
+msgid "Nu aveți adrese de livrare salvate."
+msgstr "Nu aveți adrese de livrare salvate."
+
+msgid "Etichetă"
+msgstr "Etichetă"
+
+msgid "Editează"
+msgstr "Editează"
+
+msgid "Ștergeți această adresă?"
+msgstr "Ștergeți această adresă?"
+
+msgid "Șterge"
+msgstr "Șterge"
+
+msgid "obligatoriu"
+msgstr "obligatoriu"
+
+msgid "Salvează adresa"
+msgstr "Salvează adresa"
+
+msgid "Tip client"
+msgstr "Tip client"
+
+msgid "Persoană fizică"
+msgstr "Persoană fizică"
+
+msgid "Persoană juridică"
+msgstr "Persoană juridică"
+
+msgid "Denumire firmă"
+msgstr "Denumire firmă"
+
+msgid "CUI / CIF"
+msgstr "CUI / CIF"
+
+msgid "Nr. Reg. Com. (opțional)"
+msgstr "Nr. Reg. Com. (opțional)"
+
+msgid "Bancă (opțional)"
+msgstr "Bancă (opțional)"
+
+msgid "IBAN (opțional)"
+msgstr "IBAN (opțional)"
+
+msgid "CNP"
+msgstr "CNP"
+
+msgid "Vă rugăm să introduceți CUI / CIF pentru persoană juridică."
+msgstr "Vă rugăm să introduceți CUI / CIF pentru persoană juridică."
+
+msgid "Vă rugăm să introduceți denumirea firmei."
+msgstr "Vă rugăm să introduceți denumirea firmei."
+
+msgid "IBAN-ul introdus nu este valid."
+msgstr "IBAN-ul introdus nu este valid."
+
+msgid "CNP-ul introdus nu este valid."
+msgstr "CNP-ul introdus nu este valid."
+
+msgid "PF/PJ Billing Fields"
+msgstr "Câmpuri de facturare PF/PJ"
+
+msgid "Adds individual (PF) vs company (PJ) billing fields at checkout and writes the data where Romanian invoicing plugins (SmartBill, Oblio, EasySales) read it."
+msgstr "Adaugă la finalizarea comenzii câmpuri de facturare pentru persoană fizică (PF) și persoană juridică (PJ) și salvează datele acolo unde le citesc pluginurile românești de facturare (SmartBill, Oblio, EasySales)."
+
+msgid "Enable PF/PJ billing fields"
+msgstr "Activează câmpurile de facturare PF/PJ"
+
+msgid "CNP field"
+msgstr "Câmp CNP"
+
+msgid "Show the CNP field for individuals at checkout"
+msgstr "Afișează câmpul CNP pentru persoanele fizice la finalizarea comenzii"
+
+msgid "Off by default: a legal derogation lets the 13-zero placeholder stand in for the CNP, so the field stays hidden and the placeholder is stored under the hood. Enable only if you truly need to collect the real CNP."
+msgstr "Dezactivat implicit: o derogare legală permite folosirea valorii formate din 13 zerouri în locul CNP-ului, așa că acest câmp rămâne ascuns, iar valoarea respectivă este salvată automat. Activează-l doar dacă ai cu adevărat nevoie să colectezi CNP-ul real."
+
+msgid "The CNP is a national ID number with elevated protection under Law 190/2018 art. 4. Collect it only when necessary and state the purpose in your privacy notice."
+msgstr "CNP-ul este un număr național de identificare cu protecție sporită conform art. 4 din Legea 190/2018. Colectează-l doar când este necesar și menționează scopul în informarea privind confidențialitatea."
+
+msgid "Price History"
+msgstr "Istoric prețuri"
+
+msgid "Istoric preț"
+msgstr "Istoric preț"
+
+msgid "Ultimele 30 de zile"
+msgstr "Ultimele 30 de zile"
+
+msgid "Nu există încă modificări de preț înregistrate."
+msgstr "Nu există încă modificări de preț înregistrate."
+
+msgid "Data"
+msgstr "Data"
+
+msgid "Preț efectiv"
+msgstr "Preț efectiv"
+
+msgid "Price history"
+msgstr "Istoric prețuri"
+
+msgid "Emphasis"
+msgstr "Evidențiere"
+
+msgid "None"
+msgstr "Niciuna"
+
+msgid "Bold"
+msgstr "Îngroșat"
+
+msgid "Underline"
+msgstr "Subliniat"
+
+msgid "Floor text"
+msgstr "Textul prețului minim"
+
+msgid "Text shown before the price. The price itself is always appended right after it. Leave blank to use the default."
+msgstr "Textul afișat înaintea prețului. Prețul este adăugat întotdeauna imediat după el. Lasă gol pentru a folosi textul implicit."
+
+msgid "Related Products"
+msgstr "Produse similare"
+
+msgid "Controls the related-products block on single-product pages: which relation rules apply, how many products show, and in how many columns."
+msgstr "Controlează blocul de produse similare de pe paginile de produs: ce reguli de asociere se aplică, câte produse apar și pe câte coloane."
+
+msgid "Hide related products"
+msgstr "Ascunde produsele similare"
+
+msgid "Remove the related-products block entirely"
+msgstr "Elimină complet blocul de produse similare"
+
+msgid "When enabled, the options below are ignored."
+msgstr "Când este activată, opțiunile de mai jos sunt ignorate."
+
+msgid "Relate by"
+msgstr "Asociază după"
+
+msgid "Shared category"
+msgstr "Categorie comună"
+
+msgid "Shared tag"
+msgstr "Etichetă comună"
+
+msgid "If neither is selected, WooCommerce falls back to random products."
+msgstr "Dacă nu este selectată niciuna, WooCommerce afișează produse aleatorii."
+
+msgid "Number of products"
+msgstr "Număr de produse"
+
+msgid "Columns"
+msgstr "Coloane"
+
+msgid "Multi-Product Review Page"
+msgstr "Pagină de recenzii pentru mai multe produse"
+
+msgid "Recenziile la produse sunt dezactivate în acest magazin."
+msgstr "Recenziile la produse sunt dezactivate în acest magazin."
+
+msgid "Această comandă nu este încă disponibilă pentru evaluare."
+msgstr "Această comandă nu este încă disponibilă pentru evaluare."
+
+#. translators: %d: number of reviews saved
+#, php-format
+msgid "%d recenzie a fost trimisă. Mulțumim!"
+msgid_plural "%d recenzii au fost trimise. Mulțumim!"
+msgstr[0] "%d recenzie a fost trimisă. Mulțumim!"
+msgstr[1] "%d recenzii au fost trimise. Mulțumim!"
+msgstr[2] "%d de recenzii au fost trimise. Mulțumim!"
+
+msgid "Selectați o notă și scrieți o recenzie pentru a trimite."
+msgstr "Selectați o notă și scrieți o recenzie pentru a trimite."
+
+msgid "Această comandă nu conține produse care pot fi evaluate."
+msgstr "Această comandă nu conține produse care pot fi evaluate."
+
+#. translators: %s: order number
+#, php-format
+msgid "Evaluați produsele din comanda #%s"
+msgstr "Evaluați produsele din comanda #%s"
+
+msgid "Ați evaluat deja acest produs. Vă mulțumim!"
+msgstr "Ați evaluat deja acest produs. Vă mulțumim!"
+
+msgid "Notă"
+msgstr "Notă"
+
+msgid "— alegeți —"
+msgstr "— alegeți —"
+
+#. translators: %d: star rating value
+#, php-format
+msgid "%d stea"
+msgid_plural "%d stele"
+msgstr[0] "%d stea"
+msgstr[1] "%d stele"
+msgstr[2] "%d de stele"
+
+msgid "Recenzia dumneavoastră"
+msgstr "Recenzia dumneavoastră"
+
+msgid "Trimiteți recenzia"
+msgstr "Trimiteți recenzia"
+
+msgid "Ați evaluat toate produsele din această comandă."
+msgstr "Ați evaluat toate produsele din această comandă."
+
+msgid "Trimiteți toate recenziile"
+msgstr "Trimiteți toate recenziile"
+
+msgid "Perioada de evaluare a expirat"
+msgstr "Perioada de evaluare a expirat"
+
+#. translators: %d: review window in days
+#, php-format
+msgid "Produsele pot fi evaluate în %d de zile de la finalizarea comenzii. Această perioadă a expirat."
+msgstr "Produsele pot fi evaluate în %d de zile de la finalizarea comenzii. Această perioadă a expirat."
+
+msgid "Evaluați produsele"
+msgstr "Evaluați produsele"
+
+msgid "Alegeți o comandă pentru a evalua produsele:"
+msgstr "Alegeți o comandă pentru a evalua produsele:"
+
+#. translators: 1: order number, 2: order completed date
+#, php-format
+msgid "Comanda #%1$s (%2$s)"
+msgstr "Comanda #%1$s (%2$s)"
+
+msgid "Această pagină se deschide dintr-un link de evaluare primit pentru comanda dumneavoastră. Verificați e-mailul comenzii pentru linkul de evaluare."
+msgstr "Această pagină se deschide dintr-un link de evaluare primit pentru comanda dumneavoastră. Verificați e-mailul comenzii pentru linkul de evaluare."
+
+msgid "A single page where customers review every product from a past order at once. Reviews are saved into WooCommerce's native review system."
+msgstr "O singură pagină în care clienții evaluează deodată toate produsele dintr-o comandă anterioară. Recenziile sunt salvate în sistemul nativ de recenzii WooCommerce."
+
+msgid "Review page"
+msgstr "Pagina de recenzii"
+
+msgid "The page containing the [romcommerce_review_page] shortcode. Review links point here."
+msgstr "Pagina care conține shortcode-ul [romcommerce_review_page]. Linkurile de evaluare duc aici."
+
+msgid "Create review page"
+msgstr "Creează pagina de recenzii"
+
+msgid "Eligibility window"
+msgstr "Perioadă de eligibilitate"
+
+#. translators: %d: number of days
+#, php-format
+msgid "%d days after the order is completed."
+msgstr "Zile după finalizarea comenzii: %d."
+
+msgid "A review page is already linked."
+msgstr "O pagină de recenzii este deja asociată."
+
+msgid "The review page could not be created."
+msgstr "Pagina de recenzii nu a putut fi creată."
+
+msgid "Review page created and linked."
+msgstr "Pagina de recenzii a fost creată și asociată."
+
+msgid "Sale Category Sync"
+msgstr "Sincronizare categorie reduceri"
+
+msgid "Keeps the category below in sync automatically: whenever a product is saved, and once a day when WooCommerce starts/ends scheduled sales, products currently on sale are added to it and products no longer on sale are removed from it. You never need to tag products by hand."
+msgstr "Menține automat sincronizată categoria de mai jos: la fiecare salvare a unui produs și o dată pe zi, când WooCommerce pornește/încheie reducerile programate, produsele aflate la reducere sunt adăugate în ea, iar cele care nu mai sunt la reducere sunt eliminate. Nu trebuie să etichetezi niciodată produsele manual."
+
+msgid "Sale category"
+msgstr "Categoria de reduceri"
+
+msgid "No product categories exist yet."
+msgstr "Nu există încă nicio categorie de produse."
+
+msgid "Products on sale are added to this category; products no longer on sale are removed from it."
+msgstr "Produsele la reducere sunt adăugate în această categorie; produsele care nu mai sunt la reducere sunt eliminate din ea."
+
+msgid "Create a \"Reduceri\" category"
+msgstr "Creează o categorie „Reduceri”"
+
+msgid "Resync all products now"
+msgstr "Resincronizează acum toate produsele"
+
+msgid "Only needed for a one-off fix: for example, you just picked this category, or you imported/changed products in a way that skipped the automatic sync. It walks every published product and re-checks its sale state right now; the automatic sync above keeps handling everything afterwards."
+msgstr "Necesar doar pentru o corecție punctuală: de exemplu, tocmai ai ales această categorie sau ai importat/modificat produse într-un mod care a ocolit sincronizarea automată. Verifică fiecare produs publicat și îi reevaluează imediat starea de reducere; sincronizarea automată de mai sus se ocupă apoi de tot."
+
+msgid "The category could not be created."
+msgstr "Categoria nu a putut fi creată."
+
+msgid "Sale category created and selected."
+msgstr "Categoria de reduceri a fost creată și selectată."
+
+msgid "All products resynced."
+msgstr "Toate produsele au fost resincronizate."
+
+msgid "SAL Pictogram"
+msgstr "Pictogramă SAL"
+
+msgid "Soluționarea Alternativă a Litigiilor (ANPC)"
+msgstr "Soluționarea Alternativă a Litigiilor (ANPC)"
+
+msgid "Show pictogram"
+msgstr "Afișează pictograma"
+
+msgid "Display the official SAL pictogram on the homepage"
+msgstr "Afișează pictograma oficială SAL pe prima pagină"
+
+msgid "None — I'll place it myself"
+msgstr "Niciuna — o plasez eu"
+
+#. translators: %s: the [romcommerce_sal_pictogram] shortcode
+#, php-format
+msgid "Where the pictogram sits inside your site's footer. \"None\" skips the automatic footer placement; use the %s shortcode to place it yourself, e.g. in a legal/contact page or a widget."
+msgstr "Unde se află pictograma în subsolul site-ului. „Niciuna” omite amplasarea automată în subsol; folosește shortcode-ul %s pentru a o plasa singur, de ex. într-o pagină legală/de contact sau într-un widget."
+
+msgid "VAT ID Validation"
+msgstr "Validare cod TVA"
+
+msgid "CUI / CIF-ul introdus nu are un format valid."
+msgstr "CUI / CIF-ul introdus nu are un format valid."
+
+msgid "Validates the CUI/CIF format and checksum at checkout for company (PJ) orders. Works alongside the PF/PJ billing fields."
+msgstr "Validează formatul și cifra de control a CUI/CIF la finalizarea comenzii, pentru comenzile persoanelor juridice (PJ). Funcționează împreună cu câmpurile de facturare PF/PJ."
+
+msgid "VAT ID validation"
+msgstr "Validare cod TVA"
+
+msgid "Reject invalid CUI/CIF at checkout"
+msgstr "Respinge CUI/CIF invalid la finalizarea comenzii"
+
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+msgid "Phone in international format, digits only (e.g. 40712345678)"
+msgstr "Telefon în format internațional, doar cifre (de ex. 40712345678)"
+
+msgid "Telefon"
+msgstr "Telefon"
+
+msgid "Phone number"
+msgstr "Număr de telefon"
+
+msgid "E-mail"
+msgstr "E-mail"
+
+msgid "E-mail address"
+msgstr "Adresă de e-mail"
+
+msgid "Messenger"
+msgstr "Messenger"
+
+msgid "Messenger link (m.me/…)"
+msgstr "Link Messenger (m.me/…)"
+
+msgid "Facebook"
+msgstr "Facebook"
+
+msgid "Facebook Page URL"
+msgstr "URL-ul paginii de Facebook"
+
+msgid "Grup Facebook"
+msgstr "Grup Facebook"
+
+msgid "Facebook Group URL"
+msgstr "URL-ul grupului de Facebook"
+
+msgid "Instagram"
+msgstr "Instagram"
+
+msgid "Instagram profile URL"
+msgstr "URL-ul profilului de Instagram"
+
+msgid "YouTube"
+msgstr "YouTube"
+
+msgid "YouTube channel URL"
+msgstr "URL-ul canalului de YouTube"
+
+msgid "TikTok"
+msgstr "TikTok"
+
+msgid "TikTok profile URL"
+msgstr "URL-ul profilului de TikTok"
+
+msgid "Telegram"
+msgstr "Telegram"
+
+msgid "Telegram link (t.me/…)"
+msgstr "Link Telegram (t.me/…)"
+
+msgid "Deschideți canalele de contact"
+msgstr "Deschideți canalele de contact"
+
+msgid "A floating multi-channel contact button. Enable the channels you use and enter each one's link or number. WhatsApp, Telegram, and E-mail can also prefill a message to the person who opens the link."
+msgstr "Un buton de contact flotant, cu mai multe canale. Activează canalele pe care le folosești și introdu linkul sau numărul fiecăruia. WhatsApp, Telegram și E-mail pot precompleta un mesaj pentru vizitatorul care deschide linkul."
+
+msgid "General settings"
+msgstr "Setări generale"
+
+msgid "Position"
+msgstr "Poziție"
+
+msgid "Bottom left"
+msgstr "Stânga jos"
+
+msgid "Bottom right"
+msgstr "Dreapta jos"
+
+msgid "Bottom left avoids colliding with the cart widget and most live-chat plugins."
+msgstr "Stânga jos evită suprapunerea cu widgetul coșului și cu majoritatea pluginurilor de chat live."
+
+msgid "Toggle button colour"
+msgstr "Culoarea butonului principal"
+
+msgid "Cycle animation"
+msgstr "Animație ciclică"
+
+msgid "Cycle through the active channel icons on the closed toggle button"
+msgstr "Afișează pe rând pictogramele canalelor active pe butonul închis"
+
+msgid "Shows each enabled channel's icon in turn, then pauses for a few seconds before cycling again. Only applies with 2 or more channels enabled."
+msgstr "Afișează pe rând pictograma fiecărui canal activat, apoi face o pauză de câteva secunde înainte de a relua. Se aplică doar când sunt activate cel puțin 2 canale."
+
+msgid "Channels"
+msgstr "Canale"
+
+#. translators: 1: number of enabled channels, 2: total available channels.
+#, php-format
+msgid "%1$d/%2$d enabled"
+msgstr "%1$d/%2$d activate"
+
+msgid "Each channel can use its own colour and icon: the default brand icon, an image from your media library, a custom SVG, or a dashicon (WordPress' built-in icon set)."
+msgstr "Fiecare canal poate avea propria culoare și pictogramă: pictograma implicită a brandului, o imagine din biblioteca media, un SVG personalizat sau un dashicon (setul de pictograme integrat în WordPress)."
+
+msgid "Enabled"
+msgstr "Activat"
+
+msgid "Hello message"
+msgstr "Mesaj de salut"
+
+msgid "e.g. Hello, I have a question about:"
+msgstr "de ex. Bună ziua, am o întrebare despre:"
+
+msgid "Leave blank to keep the automatic message (product name and page link)."
+msgstr "Lasă gol pentru a păstra mesajul automat (numele produsului și linkul paginii)."
+
+msgid "Leave blank to use a plain link with no message."
+msgstr "Lasă gol pentru a folosi un link simplu, fără mesaj."
+
+msgid "Add a link to the current page after the hello message"
+msgstr "Adaugă un link către pagina curentă după mesajul de salut"
+
+msgid "Colour"
+msgstr "Culoare"
+
+msgid "Icon"
+msgstr "Pictogramă"
+
+msgid "Default"
+msgstr "Implicit"
+
+msgid "Image (media library)"
+msgstr "Imagine (bibliotecă media)"
+
+msgid "Custom SVG"
+msgstr "SVG personalizat"
+
+msgid "Dashicon"
+msgstr "Dashicon"
+
+msgid "Product page"
+msgstr "Pagina produsului"
+
+msgid "Cart"
+msgstr "Coș"
+
+msgid "Checkout"
+msgstr "Finalizare comandă"
+
+msgid "Site-wide"
+msgstr "Tot site-ul"
+
+msgid "Site footer"
+msgstr "Subsolul site-ului"
+
+msgid "Fixed corner"
+msgstr "Colț fix"
+
+msgid "After the price"
+msgstr "După preț"
+
+msgid "Below the cart table"
+msgstr "Sub tabelul coșului"
+
+msgid "Before the order review"
+msgstr "Înaintea rezumatului comenzii"
+
+msgid "Above the Place Order button"
+msgstr "Deasupra butonului Plasează comanda"
+
+msgid "Compliance & Legal"
+msgstr "Conformitate și legal"
+
+msgid "Checkout & Billing"
+msgstr "Finalizare comandă și facturare"
+
+msgid "Orders & Fulfilment"
+msgstr "Comenzi și livrare"
+
+msgid "Storefront & Merchandising"
+msgstr "Magazin și prezentare"
+
+msgid "Admin & Branding"
+msgstr "Administrare și branding"
+
+msgid "Displays the official ANPC SAL pictogram on the homepage, linking to the SAL dispute-resolution platform."
+msgstr "Afișează pe prima pagină pictograma oficială ANPC SAL, cu link către platforma de soluționare a litigiilor SAL."
+
+msgid "Displays the EU-mandated harmonised notice on the legal guarantee of conformity, plus the optional EU GARAN durability label. Required EU-wide from 27 September 2026."
+msgstr "Afișează notificarea armonizată impusă de UE privind garanția legală de conformitate, plus eticheta opțională de durabilitate EU GARAN. Obligatorie în întreaga UE din 27 septembrie 2026."
+
+msgid "Logs every price change and, next to any sale price, shows the lowest price from the 30 days before the reduction started (Omnibus reference price)."
+msgstr "Înregistrează fiecare modificare de preț și, lângă orice preț redus, afișează cel mai mic preț din cele 30 de zile dinaintea începerii reducerii (prețul de referință Omnibus)."
+
+msgid "Individual vs. company checkout billing fields, compatible with the Romanian invoicing-plugin ecosystem."
+msgstr "Câmpuri de facturare pentru persoană fizică sau juridică la finalizarea comenzii, compatibile cu pluginurile românești de facturare."
+
+msgid "CUI/CIF format and checksum validation at checkout."
+msgstr "Validarea formatului și a cifrei de control CUI/CIF la finalizarea comenzii."
+
+msgid "Flags possible related orders and duplicate active orders for staff review."
+msgstr "Semnalează posibile comenzi asociate și comenzi active duplicate, pentru verificare de către personal."
+
+msgid "Compliance Checklist"
+msgstr "Listă de verificare a conformității"
+
+msgid "A guided audit of your shop's legal and trust readiness, with auto-checks and links to fix failing items."
+msgstr "O verificare ghidată a pregătirii magazinului din punct de vedere legal și al încrederii, cu verificări automate și linkuri pentru remedierea punctelor neîndeplinite."
+
+msgid "SEAP Badge"
+msgstr "Insignă SEAP"
+
+msgid "Displays the SEAP registration badge where required."
+msgstr "Afișează insigna de înregistrare SEAP acolo unde este necesar."
+
+msgid "Romanian county and postcode base data for checkout address fields."
+msgstr "Date de bază despre județele și codurile poștale din România pentru câmpurile de adresă de la finalizarea comenzii."
+
+msgid "Address Autocomplete"
+msgstr "Completare automată adresă"
+
+msgid "Bidirectional postcode/street autocomplete at checkout, sourced from a RomCommerce-operated Romanian address dataset."
+msgstr "Completare automată bidirecțională cod poștal/stradă la finalizarea comenzii, dintr-o bază de date de adrese din România administrată de RomCommerce."
+
+msgid "Phone Validation"
+msgstr "Validare telefon"
+
+msgid "International phone number validation with a country-selector UI at checkout."
+msgstr "Validarea numerelor de telefon internaționale, cu selector de țară, la finalizarea comenzii."
+
+msgid "Email Verification"
+msgstr "Verificare e-mail"
+
+msgid "Checks whether a checkout email address is deliverable, without blocking submission."
+msgstr "Verifică dacă adresa de e-mail introdusă la finalizarea comenzii poate primi mesaje, fără a bloca trimiterea comenzii."
+
+msgid "Hides the coupon/voucher field from the checkout page."
+msgstr "Ascunde câmpul pentru cupon/voucher de pe pagina de finalizare a comenzii."
+
+msgid "Automatically trashes expired coupons daily, with an option to permanently empty the coupon trash after a set number of days."
+msgstr "Mută zilnic la gunoi cupoanele expirate, cu opțiunea de a goli definitiv gunoiul de cupoane după un număr stabilit de zile."
+
+msgid "Emergency Delivery Fees"
+msgstr "Taxe de livrare urgentă"
+
+msgid "Surcharges for expedited or out-of-schedule delivery."
+msgstr "Taxe suplimentare pentru livrare urgentă sau în afara programului."
+
+msgid "Deposits & Custom Pricing"
+msgstr "Avansuri și prețuri personalizate"
+
+msgid "Partial-payment deposits and custom per-order pricing."
+msgstr "Plăți parțiale în avans și prețuri personalizate pe comandă."
+
+msgid "Gift Wrap"
+msgstr "Ambalare cadou"
+
+msgid "An add-on gift-wrap option at checkout."
+msgstr "O opțiune suplimentară de ambalare cadou la finalizarea comenzii."
+
+msgid "Order Confirmation"
+msgstr "Confirmare comandă"
+
+msgid "One-click order confirmation by email and QR code, so customers confirm orders without a phone call."
+msgstr "Confirmarea comenzii dintr-un clic, prin e-mail și cod QR, astfel încât clienții confirmă comenzile fără un apel telefonic."
+
+msgid "QR Payments / POS"
+msgstr "Plăți QR / POS"
+
+msgid "QR codes for in-store, POS-created order confirmation and payment."
+msgstr "Coduri QR pentru confirmarea și plata în magazin a comenzilor create la POS."
+
+msgid "Courier Nomenclature"
+msgstr "Nomenclator curierat"
+
+msgid "Standardised courier/locality naming for shipping labels."
+msgstr "Denumiri standardizate de curier/localitate pentru etichetele de expediere."
+
+msgid "Pickup Store Locations"
+msgstr "Puncte de ridicare"
+
+msgid "Defines physical pickup locations for orders."
+msgstr "Definește locațiile fizice de ridicare a comenzilor."
+
+msgid "Reserve for Pickup"
+msgstr "Rezervare pentru ridicare"
+
+msgid "A lightweight reservation flow for customers to hold a product for in-store pickup."
+msgstr "Un flux simplu de rezervare prin care clienții pot rezerva un produs pentru ridicare din magazin."
+
+msgid "Lets customers save more than one delivery address on their account."
+msgstr "Permite clienților să salveze mai multe adrese de livrare în contul lor."
+
+msgid "A progress indicator showing how much more to spend for free shipping."
+msgstr "Un indicator de progres care arată cât mai trebuie cheltuit pentru livrare gratuită."
+
+msgid "Keeps a \"Sale\" product category in sync with products currently on sale."
+msgstr "Menține sincronizată o categorie de produse „Reduceri” cu produsele aflate în prezent la reducere."
+
+msgid "Rule-based control over which related products are shown."
+msgstr "Control pe bază de reguli asupra produselor similare afișate."
+
+msgid "Lets a customer review every product from a past order on one page."
+msgstr "Permite unui client să evalueze pe o singură pagină toate produsele dintr-o comandă anterioară."
+
+msgid "A one-click \"empty cart\" action."
+msgstr "O acțiune de „golire a coșului” dintr-un clic."
+
+msgid "Perks Shop"
+msgstr "Avantaje magazin"
+
+msgid "Cel mai mic preț din cele 30 de zile dinaintea acestei reduceri:"
+msgstr "Cel mai mic preț din cele 30 de zile dinaintea acestei reduceri:"
+
+msgid "Records every effective price change and, next to a reduced price, shows the lowest price applied in the 30 days before that reduction started (the Omnibus reference price)."
+msgstr "Înregistrează fiecare modificare efectivă de preț și, lângă un preț redus, afișează cel mai mic preț aplicat în cele 30 de zile dinaintea începerii acelei reduceri (prețul de referință Omnibus)."
+
+msgid "Log price changes and display the pre-reduction lowest price"
+msgstr "Înregistrează modificările de preț și afișează cel mai mic preț dinaintea reducerii"
+
+msgid "A small visual emphasis on the \"lowest price in the 30 days before this reduction\" line shown on the product page."
+msgstr "O mică evidențiere vizuală a rândului „cel mai mic preț din cele 30 de zile dinaintea acestei reduceri” afișat pe pagina produsului."
+
+msgid "Phone number index"
+msgstr "Index numere de telefon"
+
+msgid "Complete. Orders from the last 12 months are matched by phone number however it was typed."
+msgstr "Finalizat. Comenzile din ultimele 12 luni sunt asociate după numărul de telefon, indiferent cum a fost scris."
+
+msgid "Phone number index progress"
+msgstr "Progresul indexării numerelor de telefon"
+
+msgid "Starting. Orders from the last 12 months are indexed in the background."
+msgstr "Se pornește. Comenzile din ultimele 12 luni sunt indexate în fundal."
+
+#. translators: 1: orders indexed so far, 2: orders in the last 12 months, 3: percentage.
+#, php-format
+msgid "%1$s of %2$s orders indexed (%3$s%%)."
+msgstr "%1$s din %2$s comenzi indexate (%3$s%%)."
+
+msgid "Until this finishes, older orders whose phone number was typed with spaces or dots may not show up as related. Indexing runs in batches whenever WordPress runs its scheduled tasks; reload this page to see progress."
+msgstr "Până la finalizare, comenzile mai vechi al căror număr de telefon a fost scris cu spații sau puncte pot să nu apară ca asociate. Indexarea rulează în loturi, ori de câte ori WordPress își execută sarcinile programate; reîncărcați pagina pentru a vedea progresul."
+
+msgid "Moves out-of-stock products to the end of catalog listings, keeping your sort order within each group."
+msgstr "Mută produsele fără stoc la finalul listelor din catalog, păstrând ordinea de sortare în fiecare grup."
+
+msgid "Moves out-of-stock products to the end of the shop, category, tag and product search listings. Your sort order still applies: in-stock products come first in that order, then out-of-stock products in the same order."
+msgstr "Mută produsele fără stoc la finalul listelor din magazin, categorii, etichete și căutarea de produse. Ordinea de sortare rămâne valabilă: întâi produsele în stoc, în acea ordine, apoi produsele fără stoc, în aceeași ordine."
+
+msgid "WooCommerce is set to hide out-of-stock products from the catalog (WooCommerce → Settings → Products → Inventory), so there are none to move. Only the \"on backorder\" option below has an effect."
+msgstr "WooCommerce este setat să ascundă produsele fără stoc din catalog (WooCommerce → Setări → Produse → Inventar), deci nu există niciunul de mutat. Doar opțiunea „În precomandă” de mai jos are efect."
+
+msgid "On backorder"
+msgstr "În precomandă"
+
+msgid "Also move products on backorder to the end"
+msgstr "Mută la final și produsele în precomandă"
+
+msgid "Shortcodes"
+msgstr "Shortcode-uri"
+
+msgid "Also apply to product lists from the [products] shortcode and its variants ([sale_products], [best_selling_products]…)"
+msgstr "Se aplică și listelor de produse din shortcode-ul [products] și variantele sale ([sale_products], [best_selling_products]…)"
+
+msgid "Recommended Retail Price"
+msgstr "Preț recomandat de producător"
+
+msgid "Crossed-out price"
+msgstr "Preț tăiat"
+
+msgid "Cross out the lowest price from the 30 days before the reduction, instead of the regular price"
+msgstr "Afișează tăiat cel mai mic preț din cele 30 de zile dinaintea reducerii, în locul prețului obișnuit"
+
+msgid "On product pages, shop and category pages. An announced reduction is measured against this price, not the regular price. When it isn't higher than the current price, the price is shown without a crossed-out price or sale badge. The regular and sale prices you enter are not changed."
+msgstr "Pe paginile de produs, de magazin și de categorie. O reducere anunțată se raportează la acest preț, nu la prețul obișnuit. Când nu este mai mare decât prețul curent, prețul se afișează fără preț tăiat și fără eticheta de reducere. Prețul obișnuit și prețul redus pe care le introduci nu se modifică."
+
+msgid "Also show the reduction as a percentage next to the price (e.g. −20%)"
+msgstr "Afișează și reducerea în procente lângă preț (de ex. −20%)"
+
+msgid "Recommended retail price"
+msgstr "Preț recomandat de producător"
+
+msgid "RRP"
+msgstr "PRP"
+
+#. translators: %s: currency symbol, e.g. lei.
+#, php-format
+msgid "RRP (%s)"
+msgstr "PRP (%s)"
+
+msgid "Recommended retail price set by the manufacturer. Shown on the product page as a separate line when it is above the current price. Leave blank if the manufacturer hasn't set one."
+msgstr "Prețul de vânzare recomandat de producător. Apare pe pagina produsului ca rând separat atunci când este mai mare decât prețul curent. Lasă gol dacă producătorul nu a stabilit unul."
+
+msgid "Adds a recommended retail price field to products and variations. When it is above the current price, the product page shows it as a separate line, e.g. \"RRP: 150 lei\". It is never crossed out and no percentage is calculated from it, so it can't be mistaken for a reduction."
+msgstr "Adaugă un câmp pentru prețul recomandat de producător la produse și variații. Când este mai mare decât prețul curent, pagina produsului îl afișează pe un rând separat, de ex. „PRP: 150 lei”. Nu este afișat niciodată tăiat și nu se calculează niciun procent din el, ca să nu poată fi confundat cu o reducere."
+
+msgid "Only enter a price the manufacturer actually recommends and that is in use on the market. An invented recommended price can mislead customers."
+msgstr "Introdu doar un preț pe care producătorul îl recomandă efectiv și care este folosit pe piață. Un preț recomandat inventat poate induce clienții în eroare."
+
+msgid "Add the field to products and show it on the product page"
+msgstr "Adaugă câmpul la produse și afișează-l pe pagina produsului"
+
+msgid "Label"
+msgstr "Etichetă"
+
+msgid "Text shown before the price. Leave blank to use the default, which also explains the abbreviation when hovered."
+msgstr "Textul afișat înaintea prețului. Lasă gol pentru textul implicit, care explică și abrevierea la trecerea cu mouse-ul."
+
+msgid "Optional manufacturer's recommended retail price (RRP) per product and variation, shown on the product page as a separate labelled line, never crossed out."
+msgstr "Prețul recomandat de producător (PRP), opțional, pe produs și pe variație, afișat pe pagina produsului ca rând separat, cu etichetă, niciodată tăiat."
+
+msgid "Availability Sorting"
+msgstr "Sortare catalog după disponibilitate"
+
+msgid "Shopper sorting"
+msgstr "Sortarea cumpărătorului"
+
+msgid "Follow the shopper's choice"
+msgstr "Respectă alegerea cumpărătorului"
+
+msgid "Keep out-of-stock products last"
+msgstr "Păstrează produsele fără stoc la final"
+
+msgid "Applies when a shopper sorts the catalog, e.g. by price."
+msgstr "Se aplică atunci când cumpărătorul sortează catalogul, de ex. după preț."
+
+#. translators: 1: entered guarantee duration in years, 2: minimum duration in years.
+#, php-format
+msgid "EU GARAN: %1$s years is below the %2$s-year minimum, so the label will not be shown on this product."
+msgstr "EU GARAN: %1$s ani este sub minimul de %2$s ani, așa că eticheta nu va fi afișată pe acest produs."
+
+msgid "Cart totals"
+msgstr "Totaluri coș"
+
+msgid "Billing details"
+msgstr "Detalii facturare"
+
+msgid "Ship to a different address?"
+msgstr "Livrezi la o adresă diferită?"
+
+msgid "Order notes"
+msgstr "Note comandă"
+
+msgid "Your order"
+msgstr "Comanda ta"
+
+msgid "Contact information"
+msgstr "Informații de contact"
+
+msgid "Shipping address"
+msgstr "Adresă de livrare"
+
+msgid "Shipping options"
+msgstr "Opțiuni de livrare"
+
+msgid "Payment options"
+msgstr "Opțiuni de plată"
+
+msgid "Order summary"
+msgstr "Sumar comandă"
+
+msgid "Header"
+msgstr "Antet"
+
+msgid "Content"
+msgstr "Conținut"
+
+msgid "Footer"
+msgstr "Subsol"
+
+msgid "Your cart page uses the classic cart (shortcode)"
+msgstr "Pagina de coș folosește coșul clasic (shortcode)"
+
+msgid "Your cart page uses the Cart block"
+msgstr "Pagina de coș folosește blocul Coș"
+
+msgid "Your checkout page uses the classic checkout (shortcode)"
+msgstr "Pagina de finalizare folosește finalizarea clasică (shortcode)"
+
+msgid "Your checkout page uses the Checkout block"
+msgstr "Pagina de finalizare folosește blocul Finalizare comandă"
+
+msgid "Move"
+msgstr "Mută"
+
+msgid "Position saved."
+msgstr "Poziția a fost salvată."
+
+msgid "Cart page"
+msgstr "Pagina coșului"
+
+msgid "Checkout page"
+msgstr "Pagina de finalizare a comenzii"
+
+msgid "Where the line appears in the product summary. Only spots next to the price are offered."
+msgstr "Unde apare rândul în rezumatul produsului. Sunt oferite doar poziții de lângă preț."
+
+msgid "Before the title"
+msgstr "Înaintea titlului"
+
+msgid "After the title"
+msgstr "După titlu"
+
+msgid "After the short description"
+msgstr "După descrierea scurtă"
+
+msgid "Below the summary, above the tabs"
+msgstr "Sub rezumat, deasupra filelor"
+
+msgid "Top of the cart page"
+msgstr "Sus pe pagina coșului"
+
+msgid "Above the cart table"
+msgstr "Deasupra tabelului coșului"
+
+msgid "Above Cart totals"
+msgstr "Deasupra Totalurilor coșului"
+
+msgid "Above the Proceed to checkout button"
+msgstr "Deasupra butonului Finalizează comanda"
+
+msgid "Bottom of the cart page"
+msgstr "Jos pe pagina coșului"
+
+msgid "Top of the checkout page"
+msgstr "Sus pe pagina de finalizare a comenzii"
+
+msgid "Above the billing details"
+msgstr "Deasupra detaliilor de facturare"
+
+msgid "Below the billing and shipping details"
+msgstr "Sub detaliile de facturare și livrare"
+
+msgid "Above the payment methods"
+msgstr "Deasupra metodelor de plată"
+
+msgid "Below the Place Order button"
+msgstr "Sub butonul Plasează comanda"
+
+msgid "Bottom of the checkout page"
+msgstr "Jos pe pagina de finalizare a comenzii"
+
+msgid "A floating multi-channel contact button with contextual WhatsApp deep-links, plus an optional WhatsApp button under Add to Cart."
+msgstr "Un buton de contact flotant, cu mai multe canale și linkuri WhatsApp contextuale, plus un buton WhatsApp opțional sub Adaugă în coș."
+
+msgid "Ask on WhatsApp"
+msgstr "Întreabă pe WhatsApp"
+
+msgid "Add to Cart button"
+msgstr "Butonul de sub Adaugă în coș"
+
+msgid "A WhatsApp button on the product page, with the product name and link already in the message. It uses the WhatsApp number from the channels below; the WhatsApp channel does not have to be enabled in the floating button."
+msgstr "Un buton WhatsApp pe pagina produsului, cu numele și linkul produsului deja în mesaj. Folosește numărul WhatsApp din canalele de mai jos; canalul WhatsApp nu trebuie să fie activat în butonul flotant."
+
+msgid "The button is on but will not show until you enter a WhatsApp number below."
+msgstr "Butonul este activat, dar nu va apărea până nu introduci un număr WhatsApp mai jos."
+
+msgid "Button"
+msgstr "Buton"
+
+msgid "Show a WhatsApp button on product pages"
+msgstr "Afișează un buton WhatsApp pe paginile de produs"
+
+msgid "Button text"
+msgstr "Textul butonului"
+
+msgid "Leave blank to use the default text, which follows the site language."
+msgstr "Lasă gol pentru textul implicit, care urmează limba site-ului."
+
+msgid "Button colour"
+msgstr "Culoarea butonului"
+
+msgid "The text is white, so pick a dark colour that keeps it readable."
+msgstr "Textul este alb, așa că alege o culoare închisă, ca să rămână lizibil."
+
+msgid "Location"
+msgstr "Locație"
+
+msgid "The button shows only where the Add to Cart form shows, except \"After the Add to Cart form\", which also shows on out-of-stock products in classic themes."
+msgstr "Butonul apare doar acolo unde apare formularul Adaugă în coș, cu excepția opțiunii \"După formularul Adaugă în coș\", care apare și la produsele epuizate în temele clasice."
+
+msgid "Google Merchant Center Widget"
+msgstr "Widget Google Merchant Center"
+
+msgid "Google's store widget with your Merchant Center store rating, as a badge in a corner of every page."
+msgstr "Widgetul de magazin Google, cu evaluarea magazinului tău din Merchant Center, ca insignă într-un colț al fiecărei pagini."
+
+msgid "Shows Google's store widget, with your Merchant Center store rating, as a badge in a corner of every page."
+msgstr "Afișează widgetul de magazin Google, cu evaluarea magazinului tău din Merchant Center, ca insignă într-un colț al fiecărei pagini."
+
+msgid "Before you turn it on: this website must already be claimed and verified in your Google Merchant Center account. This module does not create, claim or verify anything in Merchant Center, and the badge only shows what Google has for your store."
+msgstr "Înainte să-l activezi: acest site trebuie să fie deja revendicat și verificat în contul tău Google Merchant Center. Modulul nu creează, nu revendică și nu verifică nimic în Merchant Center, iar insigna arată doar ce are Google despre magazinul tău."
+
+msgid "Advanced"
+msgstr "Avansat"
+
+msgid "Distances from the edge of the screen, in pixels. Leave a field blank to use Google's default."
+msgstr "Distanțe față de marginea ecranului, în pixeli. Lasă un câmp gol pentru valoarea implicită Google."
+
+msgid "Region"
+msgstr "Regiune"
+
+msgid "Side margin"
+msgstr "Margine laterală"
+
+msgid "Bottom margin"
+msgstr "Margine de jos"
+
+msgid "Side margin on phones"
+msgstr "Margine laterală pe telefoane"
+
+msgid "Bottom margin on phones"
+msgstr "Margine de jos pe telefoane"
+
+msgid "The widget loads a script from Google's servers for every visitor. Mention it in your privacy policy and, if you use one, your cookie banner."
+msgstr "Widgetul încarcă un script de pe serverele Google pentru fiecare vizitator. Menționează-l în politica de confidențialitate și, dacă folosești unul, în bannerul de cookie-uri."
+
+msgid "The contact button is also in the bottom-right corner, so the two may overlap. Move one of them to the bottom left."
+msgstr "Butonul de contact este tot în colțul din dreapta jos, așa că cele două se pot suprapune. Mută unul dintre ele în stânga jos."
+
+msgid "Bottom right is Google's default. Pick the corner that live-chat or contact buttons don't use. On phones, Google always centres the widget."
+msgstr "Dreapta jos este poziția implicită Google. Alege colțul pe care nu-l folosesc butoanele de chat sau de contact. Pe telefoane, Google centrează întotdeauna widgetul."
+
+msgid "Cumpăr ca persoană juridică (firmă)"
+msgstr "Cumpăr ca persoană juridică (firmă)"
+
+msgid "Nr. Reg. Com."
+msgstr "Nr. Reg. Com."
+
+msgid "Bancă"
+msgstr "Bancă"
+
+msgid "IBAN"
+msgstr "IBAN"
+
+msgid "Your checkout page uses the Checkout block, which needs WooCommerce 8.9 or newer for these fields. Update WooCommerce, or switch the checkout page to the classic checkout shortcode."
+msgstr "Pagina de finalizare a comenzii folosește blocul Checkout, care are nevoie de WooCommerce 8.9 sau mai nou pentru aceste câmpuri. Actualizează WooCommerce sau treci pagina de finalizare a comenzii pe shortcode-ul clasic."
+
+msgid "WooCommerce's own Company field is also shown on the block checkout. To avoid asking for the company name twice, hide it in the Checkout block settings (Company name: Hidden)."
+msgstr "Câmpul Companie al WooCommerce apare și el în checkout-ul pe blocuri. Ca să nu ceri denumirea firmei de două ori, ascunde-l din setările blocului Checkout (Company name: Hidden)."
+
+msgid "Show the button on the cart page"
+msgstr "Afișează butonul pe pagina coșului"
+
+msgid "Numărul de telefon introdus nu este valid."
+msgstr "Numărul de telefon introdus nu este valid."
+
+msgid "Checks billing and shipping phone numbers at checkout against international numbering data, with a country picker on the classic checkout. On the block checkout the number is checked against the country of the address."
+msgstr "Verifică numerele de telefon de facturare și de livrare la finalizarea comenzii, pe baza datelor internaționale de numerotare, cu selector de țară în checkout-ul clasic. În checkout-ul pe blocuri, numărul este verificat după țara din adresă."
+
+#. translators: %s: bundled intl-tel-input version
+#, php-format
+msgid "Numbering data: intl-tel-input %s, bundled with the plugin and updated with RomCommerce releases. Nothing is sent to an external service."
+msgstr "Date de numerotare: intl-tel-input %s, incluse în plugin și actualizate odată cu versiunile RomCommerce. Nu se trimite nimic către un serviciu extern."
+
+msgid "Validate phone numbers at checkout"
+msgstr "Validează numerele de telefon la finalizarea comenzii"
+
+msgid "EU VAT Rates Import"
+msgstr "Import cote TVA UE"
+
+msgid "Imports EU member states' VAT rates into WooCommerce's tax tables, for cross-border sales under OSS."
+msgstr "Importă cotele de TVA ale statelor membre UE în tabelele de taxe WooCommerce, pentru vânzările transfrontaliere prin OSS."
+
+msgid "RomCommerce has newer EU VAT rates than the ones you imported."
+msgstr "RomCommerce are cote de TVA UE mai noi decât cele pe care le-ai importat."
+
+msgid "Review and refresh them"
+msgstr "Verifică-le și actualizează-le"
+
+msgid "Imports the VAT rates of the EU member states you sell to under OSS into WooCommerce's tax tables: the standard rate, the reduced rate (the lowest one, for countries with several), and super-reduced and parking rates where a country has them. Only rows created here are ever updated; your own tax rates are never changed."
+msgstr "Importă în tabelele de taxe WooCommerce cotele de TVA ale statelor membre UE în care vinzi prin OSS: cota standard, cota redusă (cea mai mică, pentru țările cu mai multe) și cotele super-reduse și intermediare (parking) acolo unde există. Sunt actualizate doar rândurile create aici; cotele tale nu sunt modificate niciodată."
+
+msgid "The bundled VAT rate file is missing or damaged. Reinstall RomCommerce."
+msgstr "Fișierul cu cote de TVA inclus lipsește sau este deteriorat. Reinstalează RomCommerce."
+
+#. translators: %s: date the bundled rates were fetched
+#, php-format
+msgid "Rates bundled with this version of RomCommerce, as of %s (source: EU TEDB via vatcomply.com). RomCommerce does not contact any service; new rates arrive with plugin updates."
+msgstr "Cote incluse în această versiune RomCommerce, valabile la %s (sursa: EU TEDB prin vatcomply.com). RomCommerce nu contactează niciun serviciu; cotele noi vin odată cu actualizările pluginului."
+
+msgid "Taxes are turned off in WooCommerce → Settings → General. Imported rates are saved but won't apply at checkout until you turn taxes on."
+msgstr "Taxele sunt dezactivate în WooCommerce → Setări → General. Cotele importate sunt salvate, dar nu se aplică la finalizarea comenzii până nu activezi taxele."
+
+msgid "Enable EU VAT rates import"
+msgstr "Activează importul cotelor de TVA UE"
+
+msgid "The bundled rates differ from rates you imported earlier."
+msgstr "Cotele incluse diferă de cele pe care le-ai importat anterior."
+
+msgid "Refresh imported rates"
+msgstr "Actualizează cotele importate"
+
+msgid "Pick at least one country to import."
+msgstr "Alege cel puțin o țară pentru import."
+
+msgid "VAT"
+msgstr "TVA"
+
+msgid "Reduced rate"
+msgstr "Cotă redusă"
+
+msgid "Super reduced rate"
+msgstr "Cotă super-redusă"
+
+msgid "Parking rate"
+msgstr "Cotă intermediară (parking)"
+
+#. translators: 1: rates added, 2: rates updated, 3: rates left alone because the store already had its own
+#, php-format
+msgid "VAT rates imported: %1$d added, %2$d updated, %3$d left as they were (your own rates)."
+msgstr "Cote de TVA importate: %1$d adăugate, %2$d actualizate, %3$d lăsate neschimbate (cotele tale)."
+
+msgid "Import rates"
+msgstr "Importă cote"
+
+msgid "All 27 EU member states"
+msgstr "Toate cele 27 de state membre UE"
+
+msgid "Country"
+msgstr "Țară"
+
+msgid "Standard"
+msgstr "Standard"
+
+msgid "Reduced"
+msgstr "Redusă"
+
+msgid "Super reduced"
+msgstr "Super-redusă"
+
+msgid "Parking"
+msgstr "Intermediară (parking)"
+
+msgid "(imported)"
+msgstr "(importată)"
+
+msgid "Import selected rates"
+msgstr "Importă cotele selectate"
+
+msgid "Trust and service badges near the Add to Cart button, and a payment-methods widget."
+msgstr "Insigne de încredere și servicii lângă butonul Adaugă în coș, plus un widget cu metodele de plată."
+
+msgid "Delivery truck"
+msgstr "Camion de livrare"
+
+msgid "Returns"
+msgstr "Retururi"
+
+msgid "Padlock"
+msgstr "Lacăt"
+
+msgid "Shield"
+msgstr "Scut"
+
+msgid "Clock"
+msgstr "Ceas"
+
+msgid "Gift"
+msgstr "Cadou"
+
+msgid "Customer support"
+msgstr "Asistență clienți"
+
+msgid "Card payment"
+msgstr "Plată cu cardul"
+
+msgid "Star"
+msgstr "Stea"
+
+msgid "Check mark"
+msgstr "Bifă"
+
+msgid "Livrare rapidă"
+msgstr "Livrare rapidă"
+
+msgid "În 1–3 zile lucrătoare"
+msgstr "În 1–3 zile lucrătoare"
+
+msgid "Retur în 14 zile"
+msgstr "Retur în 14 zile"
+
+msgid "Simplu, fără explicații"
+msgstr "Simplu, fără explicații"
+
+msgid "Plată securizată"
+msgstr "Plată securizată"
+
+msgid "Date protejate"
+msgstr "Date protejate"
+
+msgid "Metode de plată"
+msgstr "Metode de plată"
+
+msgid "Trust and service badges under Add to Cart, plus a payment-methods widget for the site footer. Use [romcommerce_perks] and [romcommerce_payment_methods] to show them anywhere else."
+msgstr "Insigne de încredere și servicii sub Adaugă în coș, plus un widget cu metodele de plată pentru subsolul site-ului. Folosește [romcommerce_perks] și [romcommerce_payment_methods] ca să le afișezi oriunde altundeva."
+
+msgid "Badges"
+msgstr "Insigne"
+
+msgid "Title"
+msgstr "Titlu"
+
+msgid "Text"
+msgstr "Text"
+
+#. translators: %d: badge number
+#, php-format
+msgid "Badge %d"
+msgstr "Insigna %d"
+
+msgid "No icon"
+msgstr "Fără pictogramă"
+
+msgid "Show the badges on product pages"
+msgstr "Afișează insignele pe paginile de produs"
+
+msgid "Icon colour"
+msgstr "Culoarea pictogramelor"
+
+msgid "A hex colour such as #303f9f. Leave blank to use the theme's text colour."
+msgstr "O culoare hex, de exemplu #303f9f. Lasă gol pentru culoarea textului din temă."
+
+msgid "Payment methods"
+msgstr "Metode de plată"
+
+msgid "Heading"
+msgstr "Titlu"
+
+msgid "An image of the payment methods you accept, such as your card processor's logo banner. Use only logos you are allowed to display."
+msgstr "O imagine cu metodele de plată acceptate, de exemplu bannerul cu logo-uri al procesatorului de carduri. Folosește doar logo-uri pe care ai dreptul să le afișezi."
+
+msgid "Show it in the site footer"
+msgstr "Afișează-l în subsolul site-ului"
+
+msgid "Reviews Showcase"
+msgstr "Vitrină de recenzii"
+
+msgid "Recent product reviews from across your store, as a grid on the shop page."
+msgstr "Recenzii recente ale produselor din tot magazinul, ca grilă pe pagina magazinului."
+
+msgid "Ce spun clienții noștri"
+msgstr "Ce spun clienții noștri"
+
+msgid "Shows recent product reviews from across your store as a grid on the shop page. Use [romcommerce_reviews] to show it anywhere else, such as the homepage."
+msgstr "Afișează recenzii recente ale produselor din tot magazinul, ca grilă pe pagina magazinului. Folosește [romcommerce_reviews] ca s-o afișezi oriunde altundeva, de exemplu pe prima pagină."
+
+msgid "Shop page"
+msgstr "Pagina magazinului"
+
+msgid "Below the products"
+msgstr "Sub produse"
+
+msgid "Above the products"
+msgstr "Deasupra produselor"
+
+msgid "Not on the shop page (shortcode only)"
+msgstr "Nu pe pagina magazinului (doar shortcode)"
+
+msgid "Shown on the first page of the main shop page only."
+msgstr "Apare doar pe prima pagină a paginii principale a magazinului."
+
+msgid "Minimum rating"
+msgstr "Evaluare minimă"
+
+#. translators: %d: number of stars
+#, php-format
+msgid "%d star or more"
+msgid_plural "%d stars or more"
+msgstr[0] "%d stea sau mai mult"
+msgstr[1] "%d stele sau mai mult"
+msgstr[2] "%d de stele sau mai mult"
+
+msgid "Number of reviews"
+msgstr "Număr de recenzii"
+
+msgid "Verified buyers"
+msgstr "Cumpărători verificați"
+
+msgid "Only show reviews from customers who bought the product"
+msgstr "Afișează doar recenziile clienților care au cumpărat produsul"
+
+msgid "Layout"
+msgstr "Aspect"
+
+msgid "Show Some Love"
+msgstr "Arată-ne aprecierea"
+
+msgid "An optional \"Magazin realizat cu RomCommerce\" credit in your site footer. Off unless you switch it on."
+msgstr "O mențiune opțională „Magazin realizat cu RomCommerce” în subsolul site-ului. Dezactivată până o activezi tu."
+
+#. translators: %s: link to romcommerce.ro
+#, php-format
+msgid "Magazin realizat cu %s"
+msgstr "Magazin realizat cu %s"
+
+msgid "If you like RomCommerce, you can add a small \"Magazin realizat cu RomCommerce\" line to the bottom of your site footer, linking to romcommerce.ro. It is entirely optional, off unless you switch it on, and nothing in RomCommerce depends on it."
+msgstr "Dacă îți place RomCommerce, poți adăuga un rând mic „Magazin realizat cu RomCommerce” în partea de jos a subsolului site-ului, cu link către romcommerce.ro. Este complet opțional, dezactivat până îl activezi tu, și nimic din RomCommerce nu depinde de el."
+
+msgid "Footer credit"
+msgstr "Mențiune în subsol"
+
+msgid "Show the RomCommerce credit in my site footer"
+msgstr "Afișează mențiunea RomCommerce în subsolul site-ului meu"
+
+msgid "RomCommerce Lite: Romanian commerce tools for WooCommerce."
+msgstr "RomCommerce Lite: instrumente de comerț românesc pentru WooCommerce."
+
+msgid "Get RomCommerce status"
+msgstr "Starea RomCommerce"
+
+msgid "Returns the RomCommerce and WooCommerce versions, whether orders use HPOS, whether the cart and checkout are blocks, and the enabled modules."
+msgstr "Returnează versiunile RomCommerce și WooCommerce, dacă comenzile folosesc HPOS, dacă coșul și finalizarea comenzii sunt pe blocuri și modulele active."
+
+msgid "List RomCommerce modules"
+msgstr "Listează modulele RomCommerce"
+
+msgid "Lists every RomCommerce Lite module with its id, title, category and whether it is enabled."
+msgstr "Listează fiecare modul RomCommerce Lite cu id-ul, titlul, categoria și dacă este activ."
+
+msgid "Enable or disable a RomCommerce module"
+msgstr "Activează sau dezactivează un modul RomCommerce"
+
+msgid "Switches one RomCommerce Lite module on or off by its id (see list-modules). Some modules can only be switched on from their own settings pane."
+msgstr "Activează sau dezactivează un modul RomCommerce Lite după id (vezi list-modules). Unele module pot fi activate doar din panoul lor de setări."
+
+msgid "Run a RomCommerce background job now"
+msgstr "Rulează acum o sarcină RomCommerce din fundal"
+
+msgid "Import EU VAT rates"
+msgstr "Importă cotele de TVA UE"
+
+msgid "Writes the bundled VAT rates of the given EU countries into WooCommerce's tax tables. Rows RomCommerce created earlier are updated; rows the merchant made are never changed."
+msgstr "Scrie cotele de TVA incluse ale țărilor UE indicate în tabelele de taxe WooCommerce. Rândurile create anterior de RomCommerce sunt actualizate; rândurile comerciantului nu sunt modificate niciodată."
+
+#. translators: %s: module id
+#, php-format
+msgid "Unknown module: %s"
+msgstr "Modul necunoscut: %s"
+
+#. translators: %s: module id
+#, php-format
+msgid "The %s module can only be switched on from its settings pane."
+msgstr "Modulul %s poate fi activat doar din panoul lui de setări."
+
+#. translators: 1: job id, 2: comma-separated list of job ids
+#, php-format
+msgid "Unknown job: %1$s. Available: %2$s"
+msgstr "Sarcină necunoscută: %1$s. Disponibile: %2$s"
+
+#. translators: %s: module id
+#, php-format
+msgid "Switch on the %s module first."
+msgstr "Activează mai întâi modulul %s."
+
+msgid "Switch on the vat-rates module first."
+msgstr "Activează mai întâi modulul vat-rates."
+
+msgid "Give at least one EU country code, or --all."
+msgstr "Indică cel puțin un cod de țară UE sau --all."
+
+msgid "Weekly Store Report"
+msgstr "Raport săptămânal al magazinului"
+
+msgid "A weekly email with your orders by status, average order value, top products and categories, payment methods and order sources, compared with an earlier week."
+msgstr "Un email săptămânal cu comenzile pe statusuri, valoarea medie a comenzii, top produse și categorii, metodele de plată și sursele comenzilor, comparat cu o săptămână anterioară."
+
+msgid "Frequently Bought Together"
+msgstr "Cumpărate des împreună"
+
+msgid "Products you pick shown with each product as a bundle, with the combined price and one button to add them all to the cart."
+msgstr "Produsele alese de tine, afișate ca pachet lângă fiecare produs, cu prețul total și un singur buton care le adaugă pe toate în coș."
+
+msgid "Frequently bought together"
+msgstr "Cumpărate des împreună"
+
+msgid "Search for a product…"
+msgstr "Căutați un produs…"
+
+msgid "Up to four products or variations shown with this one as a bundle on the product page, with one button to add them all to the cart. Pick a specific variation for variable products."
+msgstr "Până la patru produse sau variante, afișate împreună cu acesta ca pachet pe pagina produsului, cu un singur buton care le adaugă pe toate în coș. Pentru produsele variabile alegeți o variantă anume."
+
+msgid "Cumpărate des împreună"
+msgstr "Cumpărate des împreună"
+
+msgid "Adaugă-le pe toate în coș"
+msgstr "Adaugă-le pe toate în coș"
+
+msgid "Total:"
+msgstr "Total:"
+
+msgid "Alegeți o variantă mai sus"
+msgstr "Alegeți o variantă mai sus"
+
+msgid "Shows products that go well together as a bundle on the product page: each with a checkbox, the combined price, and one button that adds them all to the cart. Pick them per product under Product data → Linked Products → Frequently bought together."
+msgstr "Afișează pe pagina produsului, ca pachet, produse care merg bine împreună: fiecare cu o căsuță de bifat, prețul total și un singur buton care le adaugă pe toate în coș. Le alegeți pentru fiecare produs în Date produs → Produse asociate → Cumpărate des împreună."
+
+msgid "Images"
+msgstr "Imagini"
+
+msgid "Show the product images above the list"
+msgstr "Afișează imaginile produselor deasupra listei"
+
+msgid "Products"
+msgstr "Produse"
+
+msgid "Picked by hand on each product"
+msgstr "Alese manual pentru fiecare produs"
+
+msgid "Worked out from your orders, daily, weekly or monthly"
+msgstr "Calculate din comenzile tale, zilnic, săptămânal sau lunar"
+
+#. translators: %s: date range
+#, php-format
+msgid "Weekly report: %s"
+msgstr "Raport săptămânal: %s"
+
+#. translators: 1: site name, 2: date range
+#, php-format
+msgid "[%1$s] Weekly store report: %2$s"
+msgstr "[%1$s] Raportul săptămânal al magazinului: %2$s"
+
+msgid "Total orders"
+msgstr "Total comenzi"
+
+msgid "Completed orders"
+msgstr "Comenzi finalizate"
+
+msgid "Processing orders"
+msgstr "Comenzi în procesare"
+
+msgid "On hold / waiting orders (on hold, pending payment and custom statuses)"
+msgstr "Comenzi în așteptare (în așteptare, plată în așteptare și statusuri personalizate)"
+
+msgid "Average order value"
+msgstr "Valoarea medie a comenzii"
+
+msgid "Top 5 products"
+msgstr "Top 5 produse"
+
+msgid "Top 5 categories"
+msgstr "Top 5 categorii"
+
+msgid "Payment methods share"
+msgstr "Ponderea metodelor de plată"
+
+msgid "Order sources: top 5 channels and top 5 campaigns"
+msgstr "Sursele comenzilor: top 5 canale și top 5 campanii"
+
+msgid "Test report sent for the last full week."
+msgstr "Raportul de test a fost trimis pentru ultima săptămână completă."
+
+msgid "The report could not be sent. Check that your site can send email."
+msgstr "Raportul nu a putut fi trimis. Verificați că site-ul poate trimite emailuri."
+
+msgid "A weekly email summing up your store: orders by status, average order value, best-selling products and categories, payment methods and where your orders come from. It covers the seven full days before the day it is sent and contains totals only, never customer details."
+msgstr "Un email săptămânal care rezumă activitatea magazinului: comenzile pe statusuri, valoarea medie a comenzii, cele mai vândute produse și categorii, metodele de plată și de unde vin comenzile. Acoperă cele șapte zile complete dinaintea zilei trimiterii și conține doar totaluri, niciodată date ale clienților."
+
+msgid "Email me a weekly store report"
+msgstr "Trimite-mi pe email un raport săptămânal al magazinului"
+
+msgid "Send to"
+msgstr "Trimite către"
+
+msgid "One or more email addresses, separated by commas. Empty: the site admin email."
+msgstr "Una sau mai multe adrese de email, separate prin virgulă. Gol: emailul administratorului site-ului."
+
+msgid "Day"
+msgstr "Ziua"
+
+msgid "Time"
+msgstr "Ora"
+
+#. translators: %s: timezone name, e.g. Europe/Bucharest
+#, php-format
+msgid "In your site's timezone (%s). WordPress sends scheduled emails on the first visit after this time, so on a quiet site it can be a little later."
+msgstr "În fusul orar al site-ului (%s). WordPress trimite emailurile programate la prima vizită de după această oră, așa că pe un site cu trafic redus poate ajunge puțin mai târziu."
+
+msgid "Compare with"
+msgstr "Compară cu"
+
+msgid "The previous week"
+msgstr "Săptămâna precedentă"
+
+msgid "The same week of the previous month (4 weeks earlier)"
+msgstr "Aceeași săptămână din luna precedentă (cu 4 săptămâni înainte)"
+
+msgid "The same week of the previous year (52 weeks earlier)"
+msgstr "Aceeași săptămână din anul precedent (cu 52 de săptămâni înainte)"
+
+msgid "No comparison"
+msgstr "Fără comparație"
+
+msgid "Comparisons keep the weekdays lined up, so a weekend is compared with a weekend."
+msgstr "Comparațiile păstrează zilele săptămânii aliniate, astfel încât un weekend se compară cu un weekend."
+
+msgid "Include"
+msgstr "Include"
+
+msgid "Order sources need WooCommerce's Order Attribution (WooCommerce 8.5 or newer, WooCommerce → Settings → Advanced → Features). It is off or unavailable here, so the email leaves that section out."
+msgstr "Sursele comenzilor au nevoie de funcția Order Attribution din WooCommerce (WooCommerce 8.5 sau mai nou, WooCommerce → Setări → Avansat → Funcționalități). Aici este oprită sau indisponibilă, așa că emailul omite această secțiune."
+
+msgid "Weekly"
+msgstr "Săptămânal"
+
+msgid "Next report"
+msgstr "Următorul raport"
+
+msgid "Send a test report now"
+msgstr "Trimite acum un raport de test"
+
+msgid "Emails the report for the last full week to the addresses above, with the saved settings."
+msgstr "Trimite raportul pentru ultima săptămână completă la adresele de mai sus, cu setările salvate."
+
+#. translators: %s: date range compared with, e.g. 28 Sep – 4 Oct 2026
+#, php-format
+msgid "Changes are against %s."
+msgstr "Variațiile sunt față de %s."
+
+msgid "Channel"
+msgstr "Canal"
+
+msgid "No orders came from a tagged campaign (utm_campaign)."
+msgstr "Nicio comandă nu a venit dintr-o campanie etichetată (utm_campaign)."
+
+msgid "Campaign"
+msgstr "Campanie"
+
+msgid "Completed"
+msgstr "Finalizate"
+
+msgid "Processing"
+msgstr "În procesare"
+
+msgid "On hold / waiting"
+msgstr "În așteptare"
+
+msgid "Orders"
+msgstr "Comenzi"
+
+msgid "No paid orders in this period."
+msgstr "Nicio comandă plătită în această perioadă."
+
+msgid "Units"
+msgstr "Bucăți"
+
+msgid "Sales"
+msgstr "Vânzări"
+
+msgid "No orders in this period."
+msgstr "Nicio comandă în această perioadă."
+
+msgid "Share"
+msgstr "Pondere"
+
+msgid "No payment method"
+msgstr "Fără metodă de plată"
+
+#. translators: %s: traffic source, e.g. google
+#, php-format
+msgid "Source: %s"
+msgstr "Sursă: %s"
+
+#. translators: %s: search engine, e.g. Google
+#, php-format
+msgid "Organic: %s"
+msgstr "Organic: %s"
+
+#. translators: %s: referring site, e.g. facebook.com
+#, php-format
+msgid "Referral: %s"
+msgstr "Recomandare: %s"
+
+msgid "Direct"
+msgstr "Direct"
+
+msgid "Web admin"
+msgstr "Administrare web"
+
+msgid "Mobile app"
+msgstr "Aplicație mobilă"
+
+msgid "Point of sale"
+msgstr "Punct de vânzare"
+
+msgid "Unknown"
+msgstr "Necunoscut"
+
+msgid "Runs one of RomCommerce Lite's background jobs now: maof-phone-index, price-history-baseline, sale-category-resync, coupon-cleanup or store-report (emails the weekly report for the last full week). The first two work in batches for up to 20 seconds per call; call again until \"complete\" is true. Coupon cleanup permanently deletes trashed coupons when that option is switched on."
+msgstr "Rulează acum una dintre sarcinile de fundal ale RomCommerce Lite: maof-phone-index, price-history-baseline, sale-category-resync, coupon-cleanup sau store-report (trimite pe email raportul săptămânal pentru ultima săptămână completă). Primele două lucrează în loturi, până la 20 de secunde per apel; apelați din nou până când „complete” este true. Curățarea cupoanelor șterge definitiv cupoanele din coș dacă această opțiune este activată."
+
+msgid "Payment Method Filter"
+msgstr "Filtru metodă de plată"
+
+msgid "A payment method dropdown on the WooCommerce orders list, next to the date and customer filters."
+msgstr "O listă de metode de plată în lista de comenzi WooCommerce, lângă filtrele de dată și client."
+
+msgid "Filter by payment method"
+msgstr "Filtrează după metoda de plată"
+
+msgid "All payment methods"
+msgstr "Toate metodele de plată"
+
+msgid "Adds a payment method dropdown to the WooCommerce orders list, next to the date and customer filters, so you can see only the orders paid by card, cash on delivery, bank transfer and so on. It lists every payment method installed, including switched-off ones, because older orders keep the method they were paid with."
+msgstr "Adaugă o listă de metode de plată în lista de comenzi WooCommerce, lângă filtrele de dată și client, ca să vedeți doar comenzile plătite cu cardul, ramburs, prin transfer bancar și așa mai departe. Apar toate metodele de plată instalate, inclusiv cele dezactivate, pentru că comenzile mai vechi păstrează metoda cu care au fost plătite."
+
+#. translators: %d: number of payment methods grouped together
+#, php-format
+msgid "Other (%d method)"
+msgid_plural "Other (%d methods)"
+msgstr[0] "Altele (%d metodă)"
+msgstr[1] "Altele (%d metode)"
+msgstr[2] "Altele (%d de metode)"
+
+msgid "Circle"
+msgstr "Cerc"
+
+msgid "For the main button and every channel button."
+msgstr "Pentru butonul principal și pentru fiecare buton de canal."
+
+msgid "Browse icons"
+msgstr "Răsfoiți pictogramele"
+
+msgid "Pick an icon from the list, or type its name."
+msgstr "Alegeți o pictogramă din listă sau scrieți-i numele."
+
+msgid "All Dashicons on WordPress.org"
+msgstr "Toate pictogramele Dashicons pe WordPress.org"
+
+msgid "Search icons"
+msgstr "Căutați pictograme"
+
+msgid "Search icons, e.g. cart"
+msgstr "Căutați pictograme, de ex. cart"
+
+msgid "Pill"
+msgstr "Pastilă"
+
+msgid "Bar shape"
+msgstr "Forma barei"
+
+msgid "Bar thickness"
+msgstr "Grosimea barei"
+
+msgid "Copy"
+msgstr "Copiază"
+
+msgid "Click to copy the shortcode"
+msgstr "Clic pentru a copia shortcode-ul"
+
+msgid "Copied"
+msgstr "Copiat"
+
+msgid "Copy failed, select it by hand"
+msgstr "Copierea a eșuat, selectează-l manual"
+
+msgid "Reviewer Name Privacy"
+msgstr "Confidențialitatea numelor din recenzii"
+
+msgid "Shows product reviewers on your shop by first name and initials (Ion Popescu becomes Ion P.), leaving the full name out of the page."
+msgstr "Afișează autorii recenziilor din magazin după prenume și inițiale (Ion Popescu devine Ion P.), fără ca numele complet să ajungă în pagină."
+
+msgid "Floating contact FAB"
+msgstr "Buton flotant de contact"
+
+msgid "Your site logo on the login screen and one brand colour across wp-admin, the login screen, and buttons."
+msgstr "Logo-ul site-ului pe ecranul de autentificare și o culoare de brand în wp-admin, pe ecranul de autentificare și pe butoane."
+
+msgid "Your product pages use an Elementor Pro template. Its widgets don't run most of WooCommerce's product page hooks, so positions marked * show nothing there. Pick an unmarked position (the Add to Cart ones need Elementor's Add to Cart widget in the template), or use the module's shortcode in an Elementor Shortcode widget where it has one."
+msgstr "Paginile tale de produs folosesc un șablon Elementor Pro. Widgeturile lui nu rulează majoritatea hook-urilor WooCommerce de pe pagina de produs, așa că pozițiile marcate cu * nu afișează nimic acolo. Alege o poziție nemarcată (cele de la Adaugă în coș au nevoie de widgetul Add to Cart al Elementor în șablon) sau folosește shortcode-ul modulului într-un widget Shortcode din Elementor, dacă are unul."
+
+msgid "Elementor is active. If your product pages are built with an Elementor Pro template, positions marked * show nothing there: its widgets don't run those WooCommerce hooks. Pick an unmarked position, or use the module's shortcode in an Elementor Shortcode widget where it has one."
+msgstr "Elementor este activ. Dacă paginile de produs sunt construite cu un șablon Elementor Pro, pozițiile marcate cu * nu afișează nimic acolo: widgeturile lui nu rulează acele hook-uri WooCommerce. Alege o poziție nemarcată sau folosește shortcode-ul modulului într-un widget Shortcode din Elementor, dacă are unul."
+
+msgid "Hook map"
+msgstr "Harta hook-urilor"
+
+msgid "Related products"
+msgstr "Produse similare"
+
+msgid "* Not shown on product pages built with Elementor Pro: its product templates don't run these WooCommerce hooks. The Add to Cart, meta and tabs spots need the matching Elementor widget in the template."
+msgstr "* Nu apare pe paginile de produs construite cu Elementor Pro: șabloanele lui de produs nu rulează aceste hook-uri WooCommerce. Pozițiile de la Adaugă în coș, meta și file au nevoie de widgetul Elementor corespunzător în șablon."
+
+msgid "Not included in this plugin. Shown as a preview only; nothing here can be changed or saved."
+msgstr "Nu este inclus în acest plugin. Afișat doar ca previzualizare; nimic de aici nu poate fi modificat sau salvat."
+
+msgid "Not included in this plugin."
+msgstr "Nu este inclus în acest plugin."
+
+msgid "Get RomCommerce Pro"
+msgstr "Obține RomCommerce Pro"
+
+msgid "Address autocomplete"
+msgstr "Completare automată a adresei"
+
+msgid "Postcode and street autocomplete in both directions, from a Romanian address dataset, for a faster checkout."
+msgstr "Completare automată a codului poștal și a străzii, în ambele sensuri, dintr-o bază de date cu adrese din România, pentru o finalizare mai rapidă a comenzii."
+
+msgid "No product has bundle products picked yet, so nothing shows on the storefront. Open a product, then Product data → Linked Products → Frequently bought together."
+msgstr "Niciun produs nu are încă produse alese pentru pachet, așa că nu apare nimic în magazin. Deschide un produs, apoi Date produs → Produse legate → Cumpărate des împreună."
+
+msgid "Product pages built with Elementor Pro: choose Below the Add to Cart form (needs Elementor's Add to Cart widget in the template), or add an Elementor Shortcode widget with [romcommerce_bought_together] where you want the bundle."
+msgstr "Pagini de produs construite cu Elementor Pro: alege Sub formularul Adaugă în coș (are nevoie de widgetul Add to Cart al Elementor în șablon) sau adaugă un widget Shortcode din Elementor cu [romcommerce_bought_together] acolo unde vrei pachetul."
+
+msgid "The Legitimate Interests Assessment, the Article 30 record and the DPIA screening are merchant obligations."
+msgstr "Evaluarea interesului legitim, registrul de la articolul 30 și evaluarea preliminară DPIA sunt obligații ale comerciantului."
+
+msgid "Compliance checklist"
+msgstr "Listă de verificare a conformității"
+
+msgid "Lists the Legitimate Interests Assessment, the Article 30 record and the DPIA screening as attestations you can tick off."
+msgstr "Afișează evaluarea interesului legitim, registrul de la articolul 30 și evaluarea preliminară DPIA ca declarații pe care le poți bifa."
+
+msgid "Merchant Center ID"
+msgstr "ID Merchant Center"
+
+msgid "Text colour"
+msgstr "Culoarea textului"
+
+msgid "For the badge titles, texts and the payment-methods heading. Set it when the badges sit on a dark or coloured section; leave blank to use the theme's text colour."
+msgstr "Pentru titlurile și textele insignelor și pentru titlul metodelor de plată. Seteaz-o când insignele stau pe o secțiune întunecată sau colorată; lasă gol pentru culoarea textului din temă."
+
+msgid "Up to six. A badge without a title is not shown. Each badge can use an icon from the built-in set, an image from your media library, a custom SVG, or a dashicon (WordPress' built-in icon set)."
+msgstr "Până la șase. O insignă fără titlu nu este afișată. Fiecare insignă poate folosi o pictogramă din setul inclus, o imagine din biblioteca media, un SVG personalizat sau un dashicon (setul de pictograme inclus în WordPress)."
+
+msgid "Built-in icon"
+msgstr "Pictogramă inclusă"
+
+msgid "Numbering data updates"
+msgstr "Actualizarea datelor de numerotare"
+
+msgid "Keeps the phone numbering data current between plugin releases."
+msgstr "Ține la zi datele de numerotare telefonică între versiunile pluginului."
+
+msgid "Price history report"
+msgstr "Raport cu istoricul prețurilor"
+
+msgid "A dedicated report of every product's price history, with sparklines."
+msgstr "Un raport dedicat cu istoricul prețurilor fiecărui produs, cu minigrafice."
+
+msgid "Shows the people who review your products by their first name and initials (Ion Popescu becomes Ion P., Maria Elena Ionescu becomes Maria E. I.). The full name is left out of the page itself, not just hidden with CSS. A name that is an email address shows as \"Anonymous\"."
+msgstr "Afișează persoanele care îți recenzează produsele după prenume și inițiale (Ion Popescu devine Ion P., Maria Elena Ionescu devine Maria E. I.). Numele complet lipsește din pagina propriu-zisă, nu este doar ascuns prin CSS. Un nume care este o adresă de e-mail apare ca „Anonim”."
+
+msgid "Applies to the review list on product pages (classic and block themes), the review data WooCommerce adds for search engines, the Recent Reviews widget, WooCommerce's review blocks, and review plugins that read names through WordPress, such as TWB WooCommerce Reviews. Replies from your shop staff keep their name."
+msgstr "Se aplică listei de recenzii de pe paginile de produs (teme clasice și bloc), datelor despre recenzii pe care WooCommerce le adaugă pentru motoarele de căutare, widgetului Recenzii recente, blocurilor de recenzii WooCommerce și pluginurilor de recenzii care citesc numele prin WordPress, cum ar fi TWB WooCommerce Reviews. Răspunsurile echipei magazinului își păstrează numele."
+
+msgid "Full names stay in wp-admin and in the emails WordPress sends you about new reviews. A plugin that prints names straight from the database is not changed. A name written surname first, such as Popescu Ion, shows as Popescu I."
+msgstr "Numele complete rămân în wp-admin și în e-mailurile pe care WordPress ți le trimite despre recenziile noi. Un plugin care afișează numele direct din baza de date nu este modificat. Un nume scris cu numele de familie întâi, cum ar fi Popescu Ion, apare ca Popescu I."
+
+msgid "Review page templates and reminders"
+msgstr "Șabloane pentru pagina de recenzii și mementouri"
+
+msgid "Customise the review page template and send review reminders on a schedule."
+msgstr "Personalizează șablonul paginii de recenzii și trimite mementouri pentru recenzii după un program."
+
+msgid "Review length"
+msgstr "Lungimea recenziei"
+
+msgid "words at most"
+msgstr "cuvinte cel mult"
+
+msgid "Longer reviews stop after the last whole word and end with \"…\". 0 shows every review in full."
+msgstr "Recenziile mai lungi se opresc după ultimul cuvânt întreg și se termină cu „…”. 0 afișează fiecare recenzie integral."
+
+msgid "Reviewer names"
+msgstr "Numele autorilor"
+
+msgid "Show the first name and initials only (Ion Popescu becomes Ion P.)"
+msgstr "Afișează doar prenumele și inițialele (Ion Popescu devine Ion P.)"
+
+msgid "The full name is left out of the page itself, not just hidden. A name that is an email address always shows as \"Anonymous\". With the Reviewer Name Privacy module on, names here are shortened either way."
+msgstr "Numele complet lipsește din pagina propriu-zisă, nu este doar ascuns. Un nume care este o adresă de e-mail apare întotdeauna ca „Anonim”. Cu modulul Confidențialitatea numelor din recenzii pornit, numele de aici sunt scurtate oricum."
+
+msgid "Card content"
+msgstr "Conținutul cardului"
+
+msgid "Heading colour"
+msgstr "Culoarea titlului"
+
+msgid "The heading sits on your page's own background, so pick a colour that reads on it (white on a dark section)."
+msgstr "Titlul stă pe fundalul paginii tale, așa că alege o culoare care se citește pe el (alb pe o secțiune întunecată)."
+
+msgid "Card background"
+msgstr "Fundalul cardului"
+
+msgid "Drop shadow"
+msgstr "Umbră"
+
+msgid "Add a soft shadow under each card"
+msgstr "Adaugă o umbră discretă sub fiecare card"
+
+msgid "Corner radius"
+msgstr "Rotunjirea colțurilor"
+
+msgid "Space between cards"
+msgstr "Spațiu între carduri"
+
+msgid "Carousel and product images"
+msgstr "Carusel și imagini de produs"
+
+msgid "Show the reviews as a sliding carousel instead of a grid"
+msgstr "Afișează recenziile într-un carusel glisant în loc de grilă"
+
+msgid "Product image"
+msgstr "Imaginea produsului"
+
+msgid "Show the product image in each card, when the product has one"
+msgstr "Afișează imaginea produsului în fiecare card, când produsul are una"
+
+msgid "Star rating"
+msgstr "Evaluare cu stele"
+
+msgid "Review text"
+msgstr "Textul recenziei"
+
+msgid "Reviewer name"
+msgstr "Numele autorului"
+
+msgid "Product name, linked to the product"
+msgstr "Numele produsului, cu link către produs"
+
+msgid "Review date"
+msgstr "Data recenziei"
+
+#. translators: %s: card part, such as "Reviewer name"
+#, php-format
+msgid "Move up: %s"
+msgstr "Mută în sus: %s"
+
+#. translators: %s: card part, such as "Reviewer name"
+#, php-format
+msgid "Move down: %s"
+msgstr "Mută în jos: %s"
+
+msgid "Each ticked item gets its own line in the card, top to bottom in this order. Use the arrows to move an item, then save. The review text is always shown."
+msgstr "Fiecare element bifat are propriul rând în card, de sus în jos, în această ordine. Folosește săgețile ca să muți un element, apoi salvează. Textul recenziei este afișat întotdeauna."
+
+msgid "Sales and average order value"
+msgstr "Vânzări și valoarea medie a comenzii"
+
+msgid "Report interval"
+msgstr "Intervalul raportului"
+
+msgid "Daily"
+msgstr "Zilnic"
+
+msgid "Monthly"
+msgstr "Lunar"
+
+msgid "Quarterly"
+msgstr "Trimestrial"
+
+msgid "Yearly"
+msgstr "Anual"
+
+#. translators: %s: date range compared with, e.g. 28 Sep – 4 Oct 2026
+#, php-format
+msgid "No orders in %s to compare with."
+msgstr "Nicio comandă în %s cu care să se compare."
+
+msgid "Sales after refunds"
+msgstr "Vânzări după rambursări"
+
+msgid "Top products"
+msgstr "Top produse"
+
+msgid "Top categories"
+msgstr "Top categorii"
+
+msgid "Order sources"
+msgstr "Sursele comenzilor"
+
+msgid "Cancelled, refunded or failed"
+msgstr "Anulate, rambursate sau eșuate"
+
+msgid "Units before"
+msgstr "Bucăți înainte"
+
+msgid "Sales before"
+msgstr "Vânzări înainte"
+
+msgid "Change"
+msgstr "Variație"
+
+msgid "no change"
+msgstr "fără schimbare"
+
+#. translators: %s: a change in percentage points, e.g. 2.1
+#, php-format
+msgid "%s pp"
+msgstr "%s p.p."
+
+#. translators: %d: how many rows the list shows, e.g. 5
+#, php-format
+msgid "New in the top %d"
+msgstr "Nou în top %d"
+
+#. translators: 1: product, category, channel or campaign name, 2: its rank in the earlier period
+#, php-format
+msgid "%1$s (was #%2$d)"
+msgstr "%1$s (era nr. %2$d)"
+
+#. translators: 1: how many rows the list shows, e.g. 5, 2: comma-separated names
+#, php-format
+msgid "Dropped out of the top %1$d: %2$s."
+msgstr "Ieșite din top %1$d: %2$s."
+
+msgid "Live VIES lookup"
+msgstr "Verificare VIES în timp real"
+
+msgid "Confirms the VAT ID is registered and can fill in the company name and address from it."
+msgstr "Confirmă că codul de TVA este înregistrat și poate completa din el denumirea și adresa firmei."
+
+msgid "Monthly rate refresh"
+msgstr "Actualizare lunară a cotelor"
+
+msgid "Refreshes the imported rates every month, between plugin releases."
+msgstr "Actualizează în fiecare lună cotele importate, între versiunile pluginului."
+
+msgid "Top of the product page"
+msgstr "Sus pe pagina produsului"
+
+msgid "Before the Add to Cart area"
+msgstr "Înaintea zonei Adaugă în coș"
+
+msgid "Above the Add to Cart form"
+msgstr "Deasupra formularului Adaugă în coș"
+
+msgid "Above the quantity and button"
+msgstr "Deasupra cantității și a butonului"
+
+msgid "Below the Add to Cart button"
+msgstr "Sub butonul Adaugă în coș"
+
+msgid "Below the Add to Cart form"
+msgstr "Sub formularul Adaugă în coș"
+
+msgid "After the Add to Cart area"
+msgstr "După zona Adaugă în coș"
+
+msgid "Start of SKU, categories and tags"
+msgstr "La începutul zonei SKU, categorii și etichete"
+
+msgid "End of SKU, categories and tags"
+msgstr "La sfârșitul zonei SKU, categorii și etichete"
+
+msgid "After SKU, categories and tags"
+msgstr "După zona SKU, categorii și etichete"
+
+msgid "Sharing area"
+msgstr "Zona de distribuire"
+
+msgid "Below the tabs"
+msgstr "Sub file"
+
+msgid "Above related products"
+msgstr "Deasupra produselor similare"
+
+msgid "Bottom of the product page"
+msgstr "Jos pe pagina produsului"
+
+msgid "Below the Proceed to checkout button"
+msgstr "Sub butonul de finalizare a comenzii"
+
+msgid "Below the billing fields"
+msgstr "Sub câmpurile de facturare"
+
+msgid "Above the order notes"
+msgstr "Deasupra notelor comenzii"
+
+msgid "Below the order notes"
+msgstr "Sub notele comenzii"
+
+msgid "Below the payment methods"
+msgstr "Sub metodele de plată"
+
+msgid "Above the product"
+msgstr "Deasupra produsului"
+
+msgid "Product summary"
+msgstr "Rezumatul produsului"
+
+msgid "Add to Cart"
+msgstr "Adaugă în coș"
+
+msgid "Meta and sharing"
+msgstr "Meta și distribuire"
+
+msgid "Below the summary"
+msgstr "Sub rezumat"
+
+msgid "* Your current choice doesn't show on product pages built with Elementor Pro."
+msgstr "* Alegerea ta actuală nu apare pe paginile de produs construite cu Elementor Pro."
+
+msgid "* Doesn't show on product pages built with Elementor Pro."
+msgstr "* Nu apare pe paginile de produs construite cu Elementor Pro."
+
+msgid "Anonymous"
+msgstr "Anonim"
+
+msgid "If a product page never reaches this position, show the bundle at the bottom of the product page instead"
+msgstr "Dacă o pagină de produs nu ajunge niciodată la această poziție, afișează pachetul jos pe pagina produsului"
+
+msgid "To put it anywhere else, use the shortcode [romcommerce_bought_together]."
+msgstr "Ca să-l pui în altă parte, folosește shortcode-ul [romcommerce_bought_together]."
+
+msgid "Bundles from your orders, with variations and options"
+msgstr "Pachete din comenzile tale, cu variații și opțiuni"
+
+msgid "Options in the bundle"
+msgstr "Opțiuni în pachet"
+
+msgid "Shoppers pick each bundled product's variation and required options in the bundle itself"
+msgstr "Cumpărătorii aleg variația și opțiunile obligatorii ale fiecărui produs direct în pachet"
+
+msgid "Store badge"
+msgstr "Insigna magazinului"
+
+msgid "Show the store widget with your rating on every page"
+msgstr "Afișează widgetul magazinului cu evaluarea ta pe fiecare pagină"
+
+msgid "Optional for the badge, required for the review survey below. Paste the ID, or the whole widget code from Merchant Center and the ID is taken from it. Left blank, Google finds your account from this site's address. If you fill it in, it must be the account that claimed this site's domain, or the badge does not show. An account can't show its rating on another domain."
+msgstr "Opțional pentru insignă, obligatoriu pentru sondajul de recenzii de mai jos. Lipește ID-ul sau tot codul widgetului din Merchant Center, iar ID-ul este preluat din el. Dacă rămâne gol, Google îți găsește contul după adresa acestui site. Dacă îl completezi, trebuie să fie contul care a revendicat domeniul acestui site, altfel insigna nu apare. Un cont nu își poate afișa evaluarea pe alt domeniu."
+
+msgid "A two-letter country code. RO shows your Romanian rating to every visitor. Left blank, Google uses the visitor's location instead, so visitors from a country where your store has no rating see no widget."
+msgstr "Un cod de țară din două litere. RO le arată tuturor vizitatorilor evaluarea din România. Dacă rămâne gol, Google folosește în schimb locația vizitatorului, așa că vizitatorii dintr-o țară în care magazinul nu are evaluare nu văd widgetul."
+
+msgid "Google Customer Reviews survey"
+msgstr "Sondajul Google Customer Reviews"
+
+msgid "After an order, Google's own dialog on the order confirmation page asks the customer whether they want a short survey by e-mail after delivery. Google Customer Reviews must be switched on in your Merchant Center account, and the Merchant Center ID above is required. It only shows on HTTPS pages."
+msgstr "După o comandă, dialogul Google de pe pagina de confirmare a comenzii îl întreabă pe client dacă vrea un scurt sondaj pe e-mail după livrare. Google Customer Reviews trebuie să fie activat în contul tău Merchant Center, iar ID-ul Merchant Center de mai sus este obligatoriu. Apare doar pe pagini HTTPS."
+
+msgid "Google runs Customer Reviews only in some countries, and its list (October 2026) doesn't include Romania. Check that your Merchant Center offers it before relying on it."
+msgstr "Google oferă Customer Reviews doar în unele țări, iar lista sa (octombrie 2026) nu include România. Verifică dacă Merchant Center ți-l oferă înainte să te bazezi pe el."
+
+msgid "Google's country list"
+msgstr "Lista de țări Google"
+
+msgid "When the dialog shows, the customer's browser sends Google the order number, the customer's e-mail address, the delivery country, the estimated delivery date and the products' GTINs (when set). Mention it in your privacy policy. Google asks that every customer sees the dialog."
+msgstr "Când apare dialogul, browserul clientului îi trimite Google numărul comenzii, adresa de e-mail a clientului, țara de livrare, data estimată a livrării și codurile GTIN ale produselor (când sunt setate). Menționează acest lucru în politica de confidențialitate. Google cere ca fiecare client să vadă dialogul."
+
+msgid "The survey needs your Merchant Center ID, so it doesn't show yet."
+msgstr "Sondajul are nevoie de ID-ul Merchant Center, așa că încă nu apare."
+
+msgid "Survey"
+msgstr "Sondaj"
+
+msgid "Show Google's survey opt-in on the order confirmation page"
+msgstr "Afișează pe pagina de confirmare a comenzii invitația Google la sondaj"
+
+msgid "Days until delivery"
+msgstr "Zile până la livrare"
+
+msgid "Days after the order. Google sends the survey after this date, so set it to when most of your orders have arrived."
+msgstr "Zile după comandă. Google trimite sondajul după această dată, așa că alege momentul în care majoritatea comenzilor au ajuns."
+
+msgid "Centre of the screen (Google's default)"
+msgstr "Centrul ecranului (implicit la Google)"
+
+msgid "Top right"
+msgstr "Dreapta sus"
+
+msgid "Top left"
+msgstr "Stânga sus"
+
+msgid "Bar along the bottom"
+msgstr "Bară în partea de jos"
+
+msgid "Dialog position"
+msgstr "Poziția dialogului"
+
+msgid "Product pages built with a page builder (Elementor, Divi and others) often skip these spots. Put the shortcode [romcommerce_lowest_price] next to the price instead, e.g. in an Elementor Shortcode widget."
+msgstr "Paginile de produs construite cu un page builder (Elementor, Divi și altele) sar adesea peste aceste poziții. Pune în schimb shortcode-ul [romcommerce_lowest_price] lângă preț, de exemplu într-un widget Shortcode din Elementor."
+
+msgid "Product pages built with a page builder (Elementor, Divi and others) often skip these spots. Put the shortcode [romcommerce_recommended_price] next to the price instead, e.g. in an Elementor Shortcode widget."
+msgstr "Paginile de produs construite cu un page builder (Elementor, Divi și altele) sar adesea peste aceste poziții. Pune în schimb shortcode-ul [romcommerce_recommended_price] lângă preț, de exemplu într-un widget Shortcode din Elementor."
+
+msgid "Review text colour"
+msgstr "Culoarea textului recenziei"
+
+msgid "Also used, lighter, for the card border."
+msgstr "Folosită, mai deschisă, și pentru chenarul cardului."
+
+msgid "Reviewer name colour"
+msgstr "Culoarea numelui autorului"
+
+msgid "Product name colour"
+msgstr "Culoarea numelui produsului"
+
+msgid "The stars use your store's own star rating style."
+msgstr "Stelele folosesc stilul de evaluare cu stele al magazinului tău."

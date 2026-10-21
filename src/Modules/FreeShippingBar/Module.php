@@ -26,6 +26,11 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 	private const ID = 'free-shipping-bar';
 
+	private const SHAPES = array( 'rounded', 'square' );
+
+	/** The thickest choice, nearest the 10px bar stores had before thickness was a setting. */
+	private const DEFAULT_THICKNESS = 5;
+
 	public function id(): string {
 		return self::ID;
 	}
@@ -41,31 +46,42 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	public function boot(): void {
 		// Placement hooks wire on init, not here — see HasPlacements.
 		add_action( 'init', array( $this, 'register_placements' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_block_script' ) );
 	}
 
 	public function register_placements(): void {
 		foreach ( $this->placements() as $placement ) {
 			if ( $placement['active'] ) {
 				Placement::hook( $placement['slot'], array( $this, 'render' ) );
+				Placement::hook_block( $placement['slot'], array( $this, 'render' ) );
 			}
 		}
 	}
 
-	/** @return array<int, array{slot: string, active: bool}> */
+	/** @return array<int, array{key: string, slot: string, active: bool, choices: array<int, string>}> */
 	public function placements(): array {
-		return array(
+		return Placement::resolve(
+			self::ID,
 			array(
-				'slot'   => 'add_to_cart',
-				'active' => $this->placement( 'product' ),
-			),
-			array(
-				'slot'   => 'cart',
-				'active' => $this->placement( 'cart' ),
-			),
-			array(
-				'slot'   => 'checkout_review',
-				'active' => $this->placement( 'checkout' ),
-			),
+				array(
+					'key'     => 'product',
+					'slot'    => 'add_to_cart',
+					'active'  => $this->placement( 'product' ),
+					'choices' => Placement::surface_slots( 'product' ),
+				),
+				array(
+					'key'     => 'cart',
+					'slot'    => 'cart',
+					'active'  => $this->placement( 'cart' ),
+					'choices' => Placement::surface_slots( 'cart' ),
+				),
+				array(
+					'key'     => 'checkout',
+					'slot'    => 'checkout_review',
+					'active'  => $this->placement( 'checkout' ),
+					'choices' => Placement::surface_slots( 'checkout' ),
+				),
+			)
 		);
 	}
 
@@ -84,7 +100,10 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		$total   = $this->cart_total();
 		$percent = min( 100, (int) floor( ( $total / $threshold ) * 100 ) );
 
-		echo '<div class="romcommerce-fsb">';
+		// The threshold rides along in minor units so block_script_js() can
+		// redraw the bar from the block cart's own totals.
+		$minor = (int) round( $threshold * pow( 10, wc_get_price_decimals() ) );
+		echo '<div class="romcommerce-fsb" data-rc-threshold="' . esc_attr( (string) $minor ) . '">';
 
 		if ( $total >= $threshold ) {
 			echo '<p class="romcommerce-fsb-message">' . esc_html__( 'Felicitări! Beneficiați de livrare gratuită.', 'romcommerce' ) . '</p>';
@@ -99,12 +118,44 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			) . '</p>';
 		}
 
-		$radius = (string) $this->border_radius() . 'px';
+		$radius = 'square' === $this->shape() ? '0' : '999px';
+		$height = (string) $this->thickness() . 'px';
 
-		echo '<div class="romcommerce-fsb-track" style="background:' . esc_attr( $this->inactive_color() ) . ';border-radius:' . esc_attr( $radius ) . ';height:10px;overflow:hidden;">';
-		echo '<div class="romcommerce-fsb-fill" style="height:10px;border-radius:' . esc_attr( $radius ) . ';background:' . esc_attr( $this->active_color() ) . ';width:' . esc_attr( (string) $percent ) . '%;"></div>';
+		echo '<div class="romcommerce-fsb-track" style="background:' . esc_attr( $this->inactive_color() ) . ';border-radius:' . esc_attr( $radius ) . ';height:' . esc_attr( $height ) . ';overflow:hidden;">';
+		echo '<div class="romcommerce-fsb-fill" style="height:' . esc_attr( $height ) . ';border-radius:' . esc_attr( $radius ) . ';background:' . esc_attr( $this->active_color() ) . ';width:' . esc_attr( (string) $percent ) . '%;"></div>';
 		echo '</div>';
 		echo '</div>';
+	}
+
+	/**
+	 * On the block cart and checkout the bar is server-rendered once, then the
+	 * cart changes in the browser without a page load; this keeps it current
+	 * from WooCommerce's cart data store.
+	 */
+	public function enqueue_block_script(): void {
+		if ( ! has_block( 'woocommerce/cart' ) && ! has_block( 'woocommerce/checkout' ) ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'romcommerce-free-shipping-bar',
+			plugins_url( 'assets/free-shipping-bar-blocks.js', ROMCOMMERCE_FILE ),
+			array( 'wp-data', 'wc-blocks-data-store', 'wc-settings', 'wc-price-format' ),
+			ROMCOMMERCE_VERSION,
+			true
+		);
+		wp_add_inline_script(
+			'romcommerce-free-shipping-bar',
+			'window.romcommerceFreeShippingBar=' . wp_json_encode(
+				array(
+					'inclTax' => 'incl' === get_option( 'woocommerce_tax_display_cart' ),
+					/* translators: %s: formatted remaining amount */
+					'left'    => __( 'Mai adăugați %s pentru livrare gratuită.', 'romcommerce' ),
+					'done'    => __( 'Felicitări! Beneficiați de livrare gratuită.', 'romcommerce' ),
+				)
+			) . ';',
+			'before'
+		);
 	}
 
 	/** The amount the free-shipping threshold is compared against, mirroring WC's own calculation closely enough for an indicator. */
@@ -198,11 +249,25 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		return '' !== $color ? $color : '#eceff1';
 	}
 
-	/** Clamped 0-30px, square through fully rounded. */
-	private function border_radius(): int {
-		$radius = (int) ( Settings::get( self::ID )['border_radius'] ?? 6 );
+	/**
+	 * Square or fully rounded: a radius in between barely shows on a bar a
+	 * few pixels thick. Stores saved before this setting existed keep square
+	 * corners if they had set the old corner radius to 0.
+	 */
+	private function shape(): string {
+		$settings = Settings::get( self::ID );
+		$shape    = (string) ( $settings['shape'] ?? '' );
+		if ( in_array( $shape, self::SHAPES, true ) ) {
+			return $shape;
+		}
 
-		return max( 0, min( 30, $radius ) );
+		return isset( $settings['border_radius'] ) && 0 === (int) $settings['border_radius'] ? 'square' : 'rounded';
+	}
+
+	private function thickness(): int {
+		$thickness = (int) ( Settings::get( self::ID )['thickness'] ?? self::DEFAULT_THICKNESS );
+
+		return max( 1, min( 5, $thickness ) );
 	}
 
 	public function render_settings(): void {
@@ -211,6 +276,7 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			// capability on the line above; the $_POST reads live here inside that guard
 			// (not in the handlers) so the authorization check is local to the input.
 			// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified above via SettingsForm::verify().
+			$shape = sanitize_key( wp_unslash( $_POST['rc_shape'] ?? '' ) );
 			$this->handle_save(
 				isset( $_POST['rc_enabled'] ),
 				array(
@@ -219,10 +285,12 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 					'placement_checkout' => isset( $_POST['rc_placement_checkout'] ),
 					'active_color'       => $this->sanitize_color( sanitize_text_field( wp_unslash( $_POST['rc_active_color'] ?? '' ) ), '#303f9f' ),
 					'inactive_color'     => $this->sanitize_color( sanitize_text_field( wp_unslash( $_POST['rc_inactive_color'] ?? '' ) ), '#eceff1' ),
-					'border_radius'      => max( 0, min( 30, absint( wp_unslash( $_POST['rc_border_radius'] ?? 6 ) ) ) ),
+					'shape'              => in_array( $shape, self::SHAPES, true ) ? $shape : 'rounded',
+					'thickness'          => max( 1, min( 5, absint( wp_unslash( $_POST['rc_thickness'] ?? self::DEFAULT_THICKNESS ) ) ) ),
 					'overrides'          => $this->parse_overrides( sanitize_textarea_field( wp_unslash( $_POST['rc_overrides'] ?? '' ) ) ),
 				)
 			);
+			Placement::save_choices( self::ID, $this->placements(), isset( $_POST['rc_area'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['rc_area'] ) ) : array() );
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
 		}
 
@@ -237,12 +305,17 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		echo esc_html__( 'Enable', 'romcommerce' ) . '</label></td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Placements', 'romcommerce' ) . '</th><td>';
-		echo '<label><input type="checkbox" name="rc_placement_product" value="1"' . checked( $this->placement( 'product' ), true, false ) . '> ';
-		echo esc_html__( 'Under the Add to Cart button', 'romcommerce' ) . '</label><br>';
-		echo '<label><input type="checkbox" name="rc_placement_cart" value="1"' . checked( $this->placement( 'cart' ), true, false ) . '> ';
-		echo esc_html__( 'On the cart page', 'romcommerce' ) . '</label><br>';
-		echo '<label><input type="checkbox" name="rc_placement_checkout" value="1"' . checked( $this->placement( 'checkout' ), true, false ) . '> ';
-		echo esc_html__( 'On the checkout page', 'romcommerce' ) . '</label>';
+		$placements = $this->placements();
+		$labels     = array(
+			'product'  => __( 'Product page', 'romcommerce' ),
+			'cart'     => __( 'Cart page', 'romcommerce' ),
+			'checkout' => __( 'Checkout page', 'romcommerce' ),
+		);
+		foreach ( $labels as $key => $label ) {
+			echo '<p class="rc-area-row"><label><input type="checkbox" name="rc_placement_' . esc_attr( $key ) . '" value="1"' . checked( $this->placement( $key ), true, false ) . '> ' . esc_html( $label ) . '</label> ';
+			Placement::area_field( 'rc_area[' . $key . ']', Placement::find( $placements, $key ) );
+			echo '</p>';
+		}
 		echo '<p class="description">' . esc_html__( 'Toggle off any placement your theme already provides to avoid a double indicator.', 'romcommerce' ) . '</p></td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Colours', 'romcommerce' ) . '</th><td>';
@@ -252,9 +325,20 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		echo '<input type="color" name="rc_inactive_color" value="' . esc_attr( $this->inactive_color() ) . '"></label>';
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row">' . esc_html__( 'Corner radius', 'romcommerce' ) . '</th><td>';
-		echo '<input type="number" name="rc_border_radius" value="' . esc_attr( (string) $this->border_radius() ) . '" min="0" max="30" step="1" class="small-text"> px';
-		echo '<p class="description">' . esc_html__( '0 for square corners, up to 30 for a fully rounded bar.', 'romcommerce' ) . '</p></td></tr>';
+		echo '<tr><th scope="row"><label for="rc-fsb-shape">' . esc_html__( 'Bar shape', 'romcommerce' ) . '</label></th><td>';
+		echo '<select name="rc_shape" id="rc-fsb-shape">';
+		foreach (
+			array(
+				'rounded' => __( 'Rounded', 'romcommerce' ),
+				'square'  => __( 'Square', 'romcommerce' ),
+			) as $value => $label
+		) {
+			echo '<option value="' . esc_attr( $value ) . '"' . selected( $this->shape(), $value, false ) . '>' . esc_html( $label ) . '</option>';
+		}
+		echo '</select></td></tr>';
+
+		echo '<tr><th scope="row"><label for="rc-fsb-thickness">' . esc_html__( 'Bar thickness', 'romcommerce' ) . '</label></th><td>';
+		echo '<input type="number" id="rc-fsb-thickness" name="rc_thickness" value="' . esc_attr( (string) $this->thickness() ) . '" min="1" max="5" step="1" class="small-text"> px</td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Manual thresholds', 'romcommerce' ) . '</th><td>';
 		echo '<textarea name="rc_overrides" rows="4" class="large-text" placeholder="RO:200&#10;HU:250">' . esc_textarea( $this->overrides_text() ) . '</textarea>';

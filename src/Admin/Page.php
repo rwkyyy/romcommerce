@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace RomCommerce\Admin;
 
+use RomCommerce\Modules\HasPlacements;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Plugin;
 use RomCommerce\Settings;
+use RomCommerce\Support\Elementor;
+use RomCommerce\Support\Placement;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -174,7 +177,7 @@ final class Page {
 		echo '<a href="' . esc_url( $this->url( array( 'tab' => 'modules' ) ) ) . '">' . esc_html__( 'Modules', 'romcommerce' ) . ' <span class="rc-chev" aria-hidden="true">&#9662;</span></a>';
 		if ( $modules_open ) {
 			echo '<ul class="rc-cats">';
-			foreach ( ModuleRegistry::CATEGORIES as $cat_id => $cat_label ) {
+			foreach ( ModuleRegistry::categories() as $cat_id => $cat_label ) {
 				$this->rail_category( $cat_id, $cat_label, $category, $module );
 			}
 			echo '</ul>';
@@ -345,12 +348,12 @@ final class Page {
 
 		$this->canvas_head( __( 'Modules', 'romcommerce' ), __( 'Lite: complete & free', 'romcommerce' ) );
 
-		if ( '' !== $category && isset( ModuleRegistry::CATEGORIES[ $category ] ) ) {
+		if ( '' !== $category && ModuleRegistry::category_exists( $category ) ) {
 			$this->render_cat_block( $category );
 			return;
 		}
 
-		foreach ( ModuleRegistry::CATEGORIES as $cat_id => $cat_label ) {
+		foreach ( ModuleRegistry::categories() as $cat_id => $cat_label ) {
 			$this->render_cat_block( $cat_id );
 		}
 	}
@@ -360,11 +363,38 @@ final class Page {
 
 		echo '<p class="rc-pm-intro">' . esc_html__( 'Where your active modules render on the storefront. Pick a surface to redraw the map; open a module to change where it shows.', 'romcommerce' ) . '</p>';
 
+		if ( Elementor::active() ) {
+			$this->elementor_notice();
+		}
+
 		( new PlacementMap() )->render();
 	}
 
+	/**
+	 * Shown inside the app only, on the Placements screen and on panes with a
+	 * position the asterisks apply to; never as a sitewide admin notice.
+	 * `inline` keeps WordPress's admin script from moving it under the page title.
+	 */
+	private function elementor_notice(): void {
+		$text = Elementor::product_template_in_use()
+			? __( 'Your product pages use an Elementor Pro template. Its widgets don\'t run most of WooCommerce\'s product page hooks, so positions marked * show nothing there. Pick an unmarked position (the Add to Cart ones need Elementor\'s Add to Cart widget in the template), or use the module\'s shortcode in an Elementor Shortcode widget where it has one.', 'romcommerce' )
+			: __( 'Elementor is active. If your product pages are built with an Elementor Pro template, positions marked * show nothing there: its widgets don\'t run those WooCommerce hooks. Pick an unmarked position, or use the module\'s shortcode in an Elementor Shortcode widget where it has one.', 'romcommerce' );
+
+		echo '<div class="notice notice-warning inline rc-elementor-notice"><p>' . esc_html( $text ) . ' <a href="' . esc_url( Placement::HOOK_MAP_URL ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Hook map', 'romcommerce' ) . '</a></p></div>';
+	}
+
+	private function has_elementor_sensitive_placement( HasPlacements $module ): bool {
+		foreach ( $module->placements() as $placement ) {
+			if ( '' !== Placement::elementor_note( $placement ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private function render_cat_block( string $cat_id ): void {
-		$label   = ModuleRegistry::CATEGORIES[ $cat_id ];
+		$label   = ModuleRegistry::categories()[ $cat_id ];
 		$modules = ModuleRegistry::in_category( $cat_id );
 		$count   = count( $modules );
 
@@ -461,6 +491,10 @@ final class Page {
 		echo '<a class="rc-back" href="' . esc_url( $back ) . '">&larr; ' . esc_html__( 'All modules', 'romcommerce' ) . '</a>';
 
 		$instance = Plugin::instance()->modules()->get( $module_id );
+		if ( $instance instanceof HasPlacements && Elementor::active() && $this->has_elementor_sensitive_placement( $instance ) ) {
+			$this->elementor_notice();
+		}
+
 		if ( $instance instanceof HasSettingsUi ) {
 			$instance->render_settings();
 		} elseif ( 'pro' === $meta['tier'] ) {

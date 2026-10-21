@@ -8,14 +8,15 @@ use RomCommerce\Admin\SettingsForm;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
 use RomCommerce\Settings;
+use RomCommerce\Support\Blocks;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * One-click "empty cart" action. Renders a link in the cart-actions area (and
  * via a [romcommerce_clear_cart] shortcode) that clears the whole cart in one
- * click, with an optional confirmation prompt. Classic cart only; the block
- * cart is deferred with the rest of the Blocks track.
+ * click, with an optional confirmation prompt. On the block cart, which has
+ * no actions row, the link sits under the product list.
  */
 final class Module implements ModuleInterface, HasSettingsUi {
 
@@ -42,6 +43,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 		if ( $this->show_on_cart() ) {
 			add_action( 'woocommerce_cart_actions', array( $this, 'render_button' ) );
+			Blocks::insert( 'woocommerce/cart-line-items-block', 'after', array( $this, 'render_block_button' ) );
 		}
 
 		add_shortcode( 'romcommerce_clear_cart', array( $this, 'shortcode' ) );
@@ -78,6 +80,13 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 	public function render_button(): void {
 		echo $this->button_html(); // phpcs:ignore WordPress.Security.EscapeOutput -- built from escaped parts in button_html()
+	}
+
+	public function render_block_button(): void {
+		$button = $this->button_html();
+		if ( '' !== $button ) {
+			echo '<div class="romcommerce-clear-cart-block" style="text-align:right;margin:1em 0;">' . $button . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- built from escaped parts in button_html()
+		}
 	}
 
 	/** @param array<string, mixed>|string $atts */
@@ -147,7 +156,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 		echo '<tr><th scope="row">' . esc_html__( 'Cart page button', 'romcommerce' ) . '</th><td>';
 		echo '<label><input type="checkbox" name="rc_show_on_cart" value="1"' . checked( $this->show_on_cart(), true, false ) . '> ';
-		echo esc_html__( 'Show the button in the cart actions area', 'romcommerce' ) . '</label></td></tr>';
+		echo esc_html__( 'Show the button on the cart page', 'romcommerce' ) . '</label></td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Confirmation', 'romcommerce' ) . '</th><td>';
 		echo '<label><input type="checkbox" name="rc_confirm" value="1"' . checked( $this->confirm(), true, false ) . '> ';

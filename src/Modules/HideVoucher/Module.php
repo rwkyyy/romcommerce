@@ -14,8 +14,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Hide the coupon/voucher field at checkout (and optionally on the cart) —
  * stops customers leaving to hunt for a code, a common cart-abandonment driver.
- * Classic checkout only; the block checkout is deferred with the rest of the
- * Blocks track.
+ * The block cart and checkout render the coupon form as its own inner block,
+ * so there it's dropped from the page instead.
  */
 final class Module implements ModuleInterface, HasSettingsUi {
 
@@ -38,9 +38,20 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		// so the coupon form action exists to be removed.
 		add_action( 'init', array( $this, 'remove_checkout_coupon_form' ) );
 
+		add_filter( 'render_block_woocommerce/checkout-order-summary-coupon-form-block', array( $this, 'remove_checkout_block_coupon_form' ) );
+
 		if ( $this->hide_on_cart() ) {
 			add_filter( 'woocommerce_coupons_enabled', array( $this, 'disable_cart_coupon_field' ) );
+			add_filter( 'render_block_woocommerce/cart-order-summary-coupon-form-block', '__return_empty_string' );
 		}
+	}
+
+	/**
+	 * @param string $content
+	 * @return string
+	 */
+	public function remove_checkout_block_coupon_form( $content ) {
+		return $this->hide_on_checkout() ? '' : $content;
 	}
 
 	public function remove_checkout_coupon_form(): void {

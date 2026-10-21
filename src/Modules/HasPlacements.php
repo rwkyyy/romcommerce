@@ -22,6 +22,10 @@ defined( 'ABSPATH' ) || exit;
  * module hooks its placement wiring onto init via a register_placements()
  * method rather than looping placements() straight from boot().
  *
+ * Placement::hook() alone covers the product page on classic and block
+ * themes. The block cart and checkout need Placement::hook_block() as well,
+ * opted into per module, since their markup is static there.
+ *
  * Like HasSettingsUi, this may be called on a module whose boot() never ran
  * (ModuleLoader stores every registered module regardless of is_enabled());
  * implementations must not assume boot() executed. `active` reflects the
@@ -31,8 +35,20 @@ defined( 'ABSPATH' ) || exit;
 interface HasPlacements {
 
 	/**
-	 * @return array<int, array{slot: string, active: bool}> One entry per slot
-	 *         this module can occupy; `active` is its current on/off state.
+	 * Return the list already passed through Support\Placement::resolve(), so
+	 * `slot` is where the placement renders right now: the merchant's choice
+	 * from `choices` if one is stored, else the declared default. `key` is the
+	 * placement's stable id (the stored choice is filed under it, since `slot`
+	 * changes when the merchant moves it); `choices` lists every slot the
+	 * merchant may move it to, default included — omit it for a fixed spot.
+	 *
+	 * `priority` is optional and only needed when the module hooks its default
+	 * slot at a priority other than the slot's own; the map sorts occupants of
+	 * a slot by it, so it must be the priority the module actually wires.
+	 * resolve() drops it once the placement moves off its default slot.
+	 *
+	 * @return array<int, array{key: string, slot: string, active: bool, priority?: int, choices?: array<int, string>}>
+	 *         One entry per placement; `active` is its current on/off state.
 	 */
 	public function placements(): array;
 }

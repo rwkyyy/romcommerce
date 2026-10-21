@@ -4,3 +4,9 @@ composer.lock
 .phpunit.result.cache
 phpstan-baseline.neon.tmp
 .DS_Store
+/node_modules/
+/.dist/
+/artifacts/
+/test-results/
+/playwright-report/
+/.wp-env.override.json

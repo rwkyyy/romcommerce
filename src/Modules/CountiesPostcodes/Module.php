@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RomCommerce\Modules\CountiesPostcodes;
 
+use RomCommerce\Admin\ProSection;
 use RomCommerce\Admin\SettingsForm;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
@@ -36,6 +37,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 	public function boot(): void {
 		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_postcodes' ), 10, 2 );
+		add_action( 'woocommerce_blocks_validate_location_address_fields', array( $this, 'validate_block_address' ), 10, 3 );
 	}
 
 	/** @return array<string, string> RO county code => name, from WooCommerce core. */
@@ -66,19 +68,47 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	 * @param \WP_Error            $errors
 	 */
 	private function check( array $data, string $prefix, $errors ): void {
-		$country  = isset( $data[ $prefix . '_country' ] ) ? (string) $data[ $prefix . '_country' ] : '';
-		$postcode = isset( $data[ $prefix . '_postcode' ] ) ? trim( (string) $data[ $prefix . '_postcode' ] ) : '';
+		$message = self::postcode_error(
+			isset( $data[ $prefix . '_country' ] ) ? (string) $data[ $prefix . '_country' ] : '',
+			isset( $data[ $prefix . '_postcode' ] ) ? (string) $data[ $prefix . '_postcode' ] : ''
+		);
 
-		if ( 'RO' !== $country || '' === $postcode ) {
+		if ( null !== $message ) {
+			$errors->add( 'romcommerce_postcode_' . $prefix, $message );
+		}
+	}
+
+	/**
+	 * Block checkout counterpart of validate_postcodes(), once per address
+	 * (billing and shipping each arrive as their own $group).
+	 *
+	 * @param \WP_Error            $errors
+	 * @param array<string, mixed> $address
+	 * @param string               $group
+	 */
+	public function validate_block_address( $errors, $address, $group ): void {
+		if ( ! $errors instanceof \WP_Error || ! is_array( $address ) ) {
 			return;
 		}
 
-		if ( ! preg_match( '/^\d{6}$/', $postcode ) ) {
-			$errors->add(
-				'romcommerce_postcode_' . $prefix,
-				__( 'Codul poștal din România trebuie să conțină exact 6 cifre.', 'romcommerce' )
-			);
+		$message = self::postcode_error(
+			isset( $address['country'] ) ? (string) $address['country'] : '',
+			isset( $address['postcode'] ) ? (string) $address['postcode'] : ''
+		);
+
+		if ( null !== $message ) {
+			$errors->add( 'romcommerce_postcode_' . ( 'shipping' === $group ? 'shipping' : 'billing' ), $message );
 		}
+	}
+
+	public static function postcode_error( string $country, string $postcode ): ?string {
+		$postcode = trim( $postcode );
+
+		if ( 'RO' !== $country || '' === $postcode || preg_match( '/^\d{6}$/', $postcode ) ) {
+			return null;
+		}
+
+		return __( 'Codul poștal din România trebuie să conțină exact 6 cifre.', 'romcommerce' );
 	}
 
 	public function render_settings(): void {
@@ -100,6 +130,6 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
 
-		echo '<hr><p><span class="romcommerce-badge">Pro</span> ' . esc_html__( 'RomCommerce Pro adds bidirectional postcode/street autocomplete from a Romanian address dataset for a faster checkout.', 'romcommerce' ) . '</p>';
+		ProSection::line( __( 'Address autocomplete', 'romcommerce' ), __( 'Postcode and street autocomplete in both directions, from a Romanian address dataset, for a faster checkout.', 'romcommerce' ) );
 	}
 }

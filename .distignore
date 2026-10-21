@@ -4,6 +4,7 @@
 .distignore
 readme.md
 tests
+bin
 vendor
 composer.json
 composer.lock
@@ -14,3 +15,14 @@ phpstan-baseline.neon
 .phpunit.cache
 .phpunit.result.cache
 .DS_Store
+package.json
+package-lock.json
+node_modules
+.wp-env.json
+.wp-env.override.json
+.dist
+artifacts
+test-results
+playwright-report
+playwright.config.js
+phpunit-integration.xml.dist

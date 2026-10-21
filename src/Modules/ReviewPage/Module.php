@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RomCommerce\Modules\ReviewPage;
 
+use RomCommerce\Admin\ProSection;
 use RomCommerce\Admin\SettingsForm;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
@@ -404,7 +405,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
 
-		echo '<hr><p><span class="romcommerce-badge">Pro</span> ' . esc_html__( 'RomCommerce Pro adds review-page template customization and automatic review-reminder cadence.', 'romcommerce' ) . '</p>';
+		ProSection::line( __( 'Review page templates and reminders', 'romcommerce' ), __( 'Customise the review page template and send review reminders on a schedule.', 'romcommerce' ) );
 	}
 
 	private function handle_save( bool $enabled, int $page_id ): void {

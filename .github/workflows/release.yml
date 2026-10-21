@@ -19,6 +19,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # The deploy action copies the workspace to SVN minus .distignore, and
+      # checkout leaves .git/ in it: a dropped .distignore line would publish
+      # git metadata to the public wp.org repo.
+      - name: Refuse to ship git metadata
+        run: |
+          staged="$(mktemp -d)"
+          rsync -a --exclude-from=.distignore ./ "$staged"/
+          leaked="$(find "$staged" \( -name .git -o -name .github \) -print)"
+          if [ -n "$leaked" ]; then
+            echo "::error::.distignore lets these through to wp.org: $leaked"
+            exit 1
+          fi
 
       - name: WordPress Plugin Deploy
         uses: 10up/action-wordpress-plugin-deploy@stable

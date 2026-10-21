@@ -1,0 +1,12 @@
+{
+    "name": "romcommerce/integration-tests",
+    "description": "Dev-only integration test dependencies, installed inside the wp-env tests container so they resolve against that container's PHP (7.4 on the oldest-supported matrix). PHPUnit 9.6 is the newest line the WP core test library supports across WP 6.0 to current.",
+    "license": "GPL-2.0-or-later",
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "yoast/phpunit-polyfills": "^1.1"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

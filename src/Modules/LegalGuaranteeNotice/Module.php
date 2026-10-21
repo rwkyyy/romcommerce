@@ -107,9 +107,8 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		return __( 'Legal Guarantee Notice', 'romcommerce' );
 	}
 
-	// Default on: a legal-floor compliance feature, not an opt-in extra.
 	public function is_enabled(): bool {
-		return Settings::is_enabled( self::ID, true );
+		return Settings::is_enabled( self::ID );
 	}
 
 	public function boot(): void {
@@ -136,14 +135,18 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 	public function register_placements(): void {
 		$callbacks = array(
-			'footer'               => array( $this, 'render_footer_trigger' ),
-			'checkout_submit'      => array( $this, 'render_checkout_trigger' ),
-			'product_page_summary' => array( $this, 'render_product_page_trigger' ),
+			'footer'   => array( $this, 'render_footer_trigger' ),
+			'checkout' => array( $this, 'render_checkout_trigger' ),
+			'product'  => array( $this, 'render_product_page_trigger' ),
 		);
 
 		foreach ( $this->placements() as $placement ) {
-			if ( $placement['active'] && isset( $callbacks[ $placement['slot'] ] ) ) {
-				Placement::hook( $placement['slot'], $callbacks[ $placement['slot'] ] );
+			if ( $placement['active'] && isset( $callbacks[ $placement['key'] ] ) ) {
+				Placement::hook( $placement['slot'], $callbacks[ $placement['key'] ] );
+
+				if ( 'checkout' === $placement['key'] ) {
+					Placement::hook_block( $placement['slot'], $callbacks['checkout'] );
+				}
 			}
 		}
 	}
@@ -155,22 +158,30 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	 * and order-email line stay off the map, being product-meta-gated and
 	 * email-only respectively, not merchant-placed storefront widgets.
 	 *
-	 * @return array<int, array{slot: string, active: bool}>
+	 * @return array<int, array{key: string, slot: string, active: bool, choices?: array<int, string>}>
 	 */
 	public function placements(): array {
-		return array(
+		return Placement::resolve(
+			self::ID,
 			array(
-				'slot'   => 'footer',
-				'active' => '' !== $this->page_url() && 'none' !== $this->alignment(),
-			),
-			array(
-				'slot'   => 'product_page_summary',
-				'active' => $this->show_on_product_page(),
-			),
-			array(
-				'slot'   => 'checkout_submit',
-				'active' => $this->show_on_checkout(),
-			),
+				array(
+					'key'    => 'footer',
+					'slot'   => 'footer',
+					'active' => '' !== $this->page_url() && 'none' !== $this->alignment(),
+				),
+				array(
+					'key'     => 'product',
+					'slot'    => 'product_page_summary',
+					'active'  => $this->show_on_product_page(),
+					'choices' => Placement::surface_slots( 'product' ),
+				),
+				array(
+					'key'     => 'checkout',
+					'slot'    => 'checkout_submit',
+					'active'  => $this->show_on_checkout(),
+					'choices' => Placement::surface_slots( 'checkout' ),
+				),
+			)
 		);
 	}
 
@@ -428,17 +439,30 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	}
 
 	public function render_product_page_trigger(): void {
-		global $product;
+		$product = $this->current_product();
 
-		if ( ! $product instanceof WC_Product ) {
-			$product = wc_get_product( get_the_ID() );
-		}
-
-		if ( $product instanceof WC_Product && $this->product_excluded( $product ) ) {
+		if ( null !== $product && $this->product_excluded( $product ) ) {
 			return;
 		}
 
 		$this->render_inline_link();
+	}
+
+	/**
+	 * Reads WooCommerce's global $product without writing to it: assigning a
+	 * fallback into that global would leak into every later reader of it
+	 * (theme templates, other plugins) for the rest of the request.
+	 */
+	private function current_product(): ?WC_Product {
+		global $product;
+
+		if ( $product instanceof WC_Product ) {
+			return $product;
+		}
+
+		$fallback = wc_get_product( get_the_ID() );
+
+		return $fallback instanceof WC_Product ? $fallback : null;
 	}
 
 	private function render_inline_link(): void {
@@ -473,13 +497,9 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	}
 
 	public function render_garan_badge(): void {
-		global $product;
+		$product = $this->current_product();
 
-		if ( ! $product instanceof WC_Product ) {
-			$product = wc_get_product( get_the_ID() );
-		}
-
-		if ( ! $product instanceof WC_Product ) {
+		if ( null === $product ) {
 			return;
 		}
 
@@ -680,9 +700,13 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 				'desc_tip'          => true,
 				'description'       => __( 'Only for a voluntary producer durability guarantee that is free of charge and covers the entire product. The EU GARAN label shows automatically on this product\'s page once this is 2.5 years or more; leave blank or below 2.5 to not show it. Half-year values (2.5, 3.5…) are allowed; anything else is rounded to the nearest half. RomCommerce does not verify eligibility.', 'romcommerce' ),
 				'type'              => 'number',
+				// No min / half-step constraint: this field sits in a tab panel that is
+				// usually hidden, and a constraint violation there blocks the whole
+				// product save with an unfocusable-control error. Blank/below-threshold
+				// values are valid by design and sanitize_garan_years() does the snapping.
 				'custom_attributes' => array(
-					'min'  => '2.5',
-					'step' => '0.5',
+					'min'  => '0',
+					'step' => 'any',
 				),
 			)
 		);
@@ -782,18 +806,31 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			return;
 		}
 
-		$years         = isset( $_POST['_romcommerce_garan_years'] ) ? $this->sanitize_garan_years( wp_unslash( $_POST['_romcommerce_garan_years'] ) ) : 0.0;
+		$years         = isset( $_POST['_romcommerce_garan_years'] ) ? $this->sanitize_garan_years( sanitize_text_field( wp_unslash( $_POST['_romcommerce_garan_years'] ) ) ) : 0.0;
 		$brand         = isset( $_POST['_romcommerce_garan_brand'] ) ? sanitize_text_field( wp_unslash( $_POST['_romcommerce_garan_brand'] ) ) : '';
 		$brand_use_woo = isset( $_POST['_romcommerce_garan_brand_use_woo'] );
 		$model         = isset( $_POST['_romcommerce_garan_model'] ) ? sanitize_text_field( wp_unslash( $_POST['_romcommerce_garan_model'] ) ) : '';
 		$image_id      = isset( $_POST['_romcommerce_garan_image_id'] ) ? absint( wp_unslash( $_POST['_romcommerce_garan_image_id'] ) ) : 0;
 
-		$product->update_meta_data( '_romcommerce_garan_years', (string) $years );
+		$product->update_meta_data( '_romcommerce_garan_years', $years > 0 ? (string) $years : '' );
 		$product->update_meta_data( '_romcommerce_garan_brand', $brand );
 		$product->update_meta_data( '_romcommerce_garan_brand_use_woo', $brand_use_woo ? 'yes' : 'no' );
 		$product->update_meta_data( '_romcommerce_garan_model', $model );
 		$product->update_meta_data( '_romcommerce_garan_image_id', (string) $image_id );
 		$product->save();
+
+		// The value is kept as typed, so without this the merchant sees e.g. "1"
+		// in the field after Update and can reasonably assume the label is live.
+		if ( $years > 0 && $years < self::GARAN_MIN_YEARS && class_exists( 'WC_Admin_Meta_Boxes' ) ) {
+			\WC_Admin_Meta_Boxes::add_error(
+				sprintf(
+					/* translators: 1: entered guarantee duration in years, 2: minimum duration in years. */
+					__( 'EU GARAN: %1$s years is below the %2$s-year minimum, so the label will not be shown on this product.', 'romcommerce' ),
+					$this->format_garan_years( $years ),
+					$this->format_garan_years( self::GARAN_MIN_YEARS )
+				)
+			);
+		}
 	}
 
 	/**
@@ -905,6 +942,8 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 					)
 				);
 
+				Placement::save_choices( self::ID, $this->placements(), isset( $_POST['romcommerce_lg_area'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['romcommerce_lg_area'] ) ) : array() );
+
 				echo '<div class="notice notice-success"><p>' . esc_html__( 'Settings saved.', 'romcommerce' ) . '</p></div>';
 			}
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
@@ -957,8 +996,13 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		echo '</td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Extra placements', 'romcommerce' ) . '</th><td>';
-		echo '<label style="display:block;"><input type="checkbox" name="romcommerce_lg_checkout" value="1"' . checked( $show_on_checkout, true, false ) . '> ' . esc_html__( 'Checkout page, above the terms and conditions checkbox', 'romcommerce' ) . '</label>';
-		echo '<label style="display:block;"><input type="checkbox" name="romcommerce_lg_product_page" value="1"' . checked( $show_on_product_page, true, false ) . '> ' . esc_html__( 'Single product pages', 'romcommerce' ) . '</label>';
+		$placements = $this->placements();
+		echo '<p class="rc-area-row"><label><input type="checkbox" name="romcommerce_lg_checkout" value="1"' . checked( $show_on_checkout, true, false ) . '> ' . esc_html__( 'Checkout page', 'romcommerce' ) . '</label> ';
+		Placement::area_field( 'romcommerce_lg_area[checkout]', Placement::find( $placements, 'checkout' ) );
+		echo '</p>';
+		echo '<p class="rc-area-row"><label><input type="checkbox" name="romcommerce_lg_product_page" value="1"' . checked( $show_on_product_page, true, false ) . '> ' . esc_html__( 'Single product pages', 'romcommerce' ) . '</label> ';
+		Placement::area_field( 'romcommerce_lg_area[product]', Placement::find( $placements, 'product' ) );
+		echo '</p>';
 		echo '<p class="description">' . esc_html__( 'The notice already appears in the footer and order emails. These add it to extra spots.', 'romcommerce' ) . '</p>';
 		echo '</td></tr>';
 

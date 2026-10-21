@@ -35,9 +35,8 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		return __( 'SAL Pictogram', 'romcommerce' );
 	}
 
-	// Default on: a legal-floor compliance feature, not an opt-in extra.
 	public function is_enabled(): bool {
-		return Settings::is_enabled( self::ID, true );
+		return Settings::is_enabled( self::ID );
 	}
 
 	private const ALIGNMENTS = array( 'left', 'center', 'right', 'none' );
@@ -63,11 +62,12 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	 * pictogram themselves via the shortcode, so the Placements map should
 	 * show the footer slot as off.
 	 *
-	 * @return array<int, array{slot: string, active: bool}>
+	 * @return array<int, array{key: string, slot: string, active: bool}>
 	 */
 	public function placements(): array {
 		return array(
 			array(
+				'key'    => 'footer',
 				'slot'   => 'footer',
 				'active' => 'none' !== $this->alignment(),
 			),
@@ -89,7 +89,7 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			return;
 		}
 
-		echo '<div id="romcommerce-sal-pictogram" data-rc-footer-order="' . esc_attr( (string) Placement::footer_rank( self::ID ) ) . '" style="text-align:' . esc_attr( $this->alignment() ) . ';">';
+		echo '<div id="romcommerce-sal-pictogram" data-rc-footer-order="' . esc_attr( (string) Placement::footer_rank( self::ID ) ) . '" style="text-align:' . esc_attr( $this->alignment() ) . ';padding:12px 16px;">';
 		echo $this->pictogram_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built and escaped field-by-field in pictogram_markup().
 		echo '</div>';
 	}

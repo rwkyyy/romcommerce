@@ -48,58 +48,84 @@ final class LogTest extends TestCase {
 		Log::insert( 42, '19.9900', '2026-09-25 00:00:00' );
 	}
 
-	public function test_last_price_returns_null_when_nothing_logged_yet(): void {
+	public function test_latest_returns_null_when_nothing_logged_yet(): void {
 		$wpdb = $this->mockWpdb();
-		$wpdb->shouldReceive( 'get_var' )->andReturn( null );
+		$wpdb->shouldReceive( 'get_row' )->andReturn( null );
 
-		self::assertNull( Log::last_price( 42 ) );
+		self::assertNull( Log::latest( 42 ) );
 	}
 
-	public function test_last_price_returns_the_most_recent_value(): void {
+	public function test_latest_returns_the_most_recent_row_typed(): void {
 		$wpdb = $this->mockWpdb();
-		$wpdb->shouldReceive( 'get_var' )->andReturn( '24.99' );
+		$wpdb->shouldReceive( 'get_row' )->andReturn(
+			array(
+				'id'        => '7',
+				'price'     => '24.9900',
+				'logged_at' => '2026-10-04 12:00:00',
+			)
+		);
 
-		self::assertSame( '24.99', Log::last_price( 42 ) );
+		self::assertSame(
+			array(
+				'id'        => 7,
+				'price'     => '24.9900',
+				'logged_at' => '2026-10-04 12:00:00',
+			),
+			Log::latest( 42 )
+		);
 	}
 
 	/**
-	 * The Omnibus floor must include the price already in effect when the
-	 * 30-day window opened, not just entries logged inside it — a price set
-	 * 60 days ago and never changed since was still the effective price
-	 * throughout the last 30 days (see Log::thirty_day_floor()'s docblock
-	 * and docs/decisions.md, Stage 2). This is the actual rule the method
-	 * exists to implement, so it is the one most worth pinning here.
+	 * The window is the 30 days before the anchor, and the anchor's own row is
+	 * excluded through the id bound, so the reduction never enters its own
+	 * reference (HG 947/2000 art. 4^1, see Log::reference_price()).
 	 */
-	public function test_thirty_day_floor_considers_the_price_carried_into_the_window(): void {
+	public function test_floor_before_queries_the_30_days_before_the_anchor(): void {
+		global $wpdb;
+
+		$wpdb         = Mockery::mock();
+		$wpdb->prefix = 'wp_';
+		$prepared     = array();
+		$wpdb->shouldReceive( 'prepare' )->andReturnUsing(
+			static function ( string $sql, ...$args ) use ( &$prepared ): string {
+				$prepared[] = $args;
+				return $sql;
+			}
+		);
+		$wpdb->shouldReceive( 'get_var' )->andReturn( null, null );
+
+		Log::floor_before( 42, '2026-10-04 12:00:00', 7 );
+
+		self::assertSame( array( 42, '2026-09-04 12:00:00', '2026-10-04 12:00:00', '2026-10-04 12:00:00', 7 ), $prepared[0] );
+		self::assertSame( array( 42, '2026-09-04 12:00:00' ), $prepared[1] );
+	}
+
+	/**
+	 * A price set long before the window and left unchanged was still being
+	 * applied throughout it, so it counts even though its row predates it.
+	 */
+	public function test_floor_before_considers_the_price_carried_into_the_window(): void {
 		$wpdb = $this->mockWpdb();
 		// First get_var call is the in-window MIN(), second is the carried-in price.
 		$wpdb->shouldReceive( 'get_var' )->andReturn( '30.00', '19.99' );
 
-		self::assertSame( '19.99', Log::thirty_day_floor( 42 ) );
+		self::assertSame( '19.99', Log::floor_before( 42, '2026-10-04 12:00:00' ) );
 	}
 
-	public function test_thirty_day_floor_uses_the_in_window_minimum_when_it_is_lower(): void {
+	public function test_floor_before_uses_the_in_window_minimum_when_it_is_lower(): void {
 		$wpdb = $this->mockWpdb();
 		$wpdb->shouldReceive( 'get_var' )->andReturn( '15.00', '19.99' );
 
-		// min() of the two float-cast candidates, then cast back to string —
-		// PHP's float-to-string drops the trailing zero (15.0 -> '15'), same
-		// as the real thirty_day_floor() behaviour, not a rounding bug.
-		self::assertSame( '15', Log::thirty_day_floor( 42 ) );
+		// min() of the float-cast candidates, cast back to string: PHP drops the
+		// trailing zero (15.0 -> '15'), same as production, not a rounding bug.
+		self::assertSame( '15', Log::floor_before( 42, '2026-10-04 12:00:00' ) );
 	}
 
-	public function test_thirty_day_floor_falls_back_to_whichever_side_has_data(): void {
-		$wpdb = $this->mockWpdb();
-		$wpdb->shouldReceive( 'get_var' )->andReturn( null, '19.99' );
-
-		self::assertSame( '19.99', Log::thirty_day_floor( 42 ) );
-	}
-
-	public function test_thirty_day_floor_is_null_when_the_product_has_no_history_at_all(): void {
+	public function test_floor_before_is_null_when_there_is_no_earlier_history(): void {
 		$wpdb = $this->mockWpdb();
 		$wpdb->shouldReceive( 'get_var' )->andReturn( null, null );
 
-		self::assertNull( Log::thirty_day_floor( 42 ) );
+		self::assertNull( Log::floor_before( 42, '2026-10-04 12:00:00' ) );
 	}
 
 	public function test_recent_returns_the_rows_as_is(): void {
