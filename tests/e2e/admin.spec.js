@@ -267,7 +267,10 @@ test.describe( 'Frequently bought together on the product editor', () => {
 		await page.goto( `/wp-admin/post.php?post=${ id }&action=edit` );
 
 		await page.locator( '.linked_product_options a' ).click();
-		await page.locator( '#romcommerce_fbt_ids + .select2 .select2-search__field' ).fill( 'redus' );
+		// Typed key by key: on CI, selectWoo missed fill()'s lone input event and never searched.
+		const search = page.locator( '#romcommerce_fbt_ids + .select2 .select2-search__field' );
+		await search.click();
+		await search.pressSequentially( 'redus' );
 		await page.locator( '.select2-results__option', { hasText: 'Produs redus' } ).click();
 		await page.click( '#publish' );
 		await expect( page.locator( '#message.updated' ) ).toBeVisible();
