@@ -25,13 +25,13 @@ for raw in open("bin/plugin-check-allowlist.txt", encoding="utf-8"):
 
 failures = []
 for row in rows:
-    key = f"{row['file']},{row['code']}"
-    if row["type"] == "ERROR":
-        key = "ERROR " + key
-    if key in allowed:
-        allowed[key] = True
-        continue
-    failures.append(f"{row['type']} {row['file']}:{row['line']} {row['code']}\n    {row['message']}")
+    prefix = "ERROR " if row["type"] == "ERROR" else ""
+    for key in (f"{prefix}{row['file']},{row['code']}", f"{prefix}*,{row['code']}"):
+        if key in allowed:
+            allowed[key] = True
+            break
+    else:
+        failures.append(f"{row['type']} {row['file']}:{row['line']} {row['code']}\n    {row['message']}")
 
 stale = [key for key, seen in allowed.items() if not seen]
 

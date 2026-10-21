@@ -2,7 +2,8 @@
 # An error needs the entry to start with "ERROR ", so accepting one is never an
 # accident. Every other warning or error fails bin/plugin-check.sh. An entry that no
 # longer matches anything also fails, so this list can't silently go stale.
+# A file of "*" matches the code in any file, for results tied to scan order.
 src/Plugin.php,PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound  # bundled ro_RO fallback, see docs/decisions.md 2026-10-03
-romcommerce.php,WordPress.NamingConventions.PrefixAllGlobals.InvalidPrefixPassed  # Plugin Check misreads the "romcommerce/admin_branding/*" hook names as a prefix; not a code issue
+*,WordPress.NamingConventions.PrefixAllGlobals.InvalidPrefixPassed  # Plugin Check misreads the "romcommerce/admin_branding/*" hook names as a prefix; not a code issue. Reported once, on whichever file PHPCS scans first (romcommerce.php on macOS, uninstall.php on CI)
 src/Modules/AvailabilitySorting/Module.php,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound  # re-applies WooCommerce's own woocommerce_default_catalog_orderby filter to read the store's effective default sort, see docs/feature-specs.md
 ERROR src/Modules/MerchantWidget/Module.php,PluginCheck.CodeAnalysis.Offloading.OffloadedContent  # Google's own Merchant Center widget script (a third-party service, not our assets offloaded); disclosed in readme External services; owner approved 2026-10-10
