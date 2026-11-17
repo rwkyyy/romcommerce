@@ -15,7 +15,7 @@ final class PluginBootTest extends TestCase {
 	public function test_every_registered_module_boots_against_real_woocommerce(): void {
 		$modules = Plugin::instance()->modules()->all();
 
-		$this->assertCount( 29, $modules, 'A module was added or removed: update romcommerce_tests_enable_all_modules() too.' );
+		$this->assertCount( 33, $modules, 'A module was added or removed: update romcommerce_tests_enable_all_modules() too.' );
 
 		foreach ( $modules as $id => $module ) {
 			$this->assertTrue( $module->is_enabled(), "Module {$id} should be enabled by the test bootstrap." );

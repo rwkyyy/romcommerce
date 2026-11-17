@@ -4,11 +4,10 @@
 # area is "modules" or a page (home, product, cart, checkout). Entries for a
 # tag other than the previous release fail as stale, so clear them after each
 # release.
-
-# No module on by default (owner decision 2026-10-05, docs/decisions.md);
-# owner re-enables on existing installs by hand, no migration (2026-10-07).
-v0.6 untouched modules -legal-guarantee-notice
-v0.6 untouched modules -sal-pictogram
-v0.6 untouched home -romcommerce-sal-pictogram
-v0.6 untouched home -romcommerce-sal-pictogram-js-after
-v0.6 configured product +romcommerce-placement-inline-css  # shared rule giving every RomCommerce element inside the Add to Cart form its own full-width line (Elementor inline/auto layouts squeezed them beside the button), 2026-10-14
+# Merchant Center widget "Load later" is on by default, existing stores too: the
+# page adds Google's script itself after the first scroll, tap or key press (or
+# 5 s), so the enqueued script tag goes. Owner, 2026-11-06; in the 0.9 upgrade notice.
+v0.8 configured home -romcommerce-merchant-widget-js
+v0.8 configured product -romcommerce-merchant-widget-js
+v0.8 configured cart -romcommerce-merchant-widget-js
+v0.8 configured checkout -romcommerce-merchant-widget-js

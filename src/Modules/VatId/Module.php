@@ -26,6 +26,9 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 	private const ID = 'vat-id-validation';
 
+	/** Billing country posted with the block checkout request being validated, once seen. */
+	private ?string $block_billing_country = null;
+
 	public function id(): string {
 		return self::ID;
 	}
@@ -42,7 +45,36 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		// Priority 20 so PF/PJ's presence checks (priority 10) run first; this
 		// only judges the validity of a value that is actually present.
 		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate' ), 20, 2 );
+		add_action( 'woocommerce_blocks_validate_location_address_fields', array( $this, 'remember_block_billing_country' ), 10, 3 );
 		add_action( 'woocommerce_blocks_validate_location_contact_fields', array( $this, 'validate_block' ), 20, 2 );
+	}
+
+	/**
+	 * The contact-location hook isn't given the address, so the billing country
+	 * is taken from the address validation WooCommerce runs before it in the
+	 * same request.
+	 *
+	 * @param \WP_Error            $errors
+	 * @param array<string, mixed> $address
+	 * @param string               $group
+	 */
+	public function remember_block_billing_country( $errors, $address, $group ): void {
+		if ( 'billing' === $group && is_array( $address ) && isset( $address['country'] ) ) {
+			$this->block_billing_country = (string) $address['country'];
+		}
+	}
+
+	/**
+	 * The CUI checksum is Romanian, so a foreign company's EU VAT number would
+	 * fail it. An empty country (field removed by a checkout editor) counts as
+	 * the store's own, so Romanian stores that hide the field keep the check.
+	 */
+	private static function is_romanian( string $country ): bool {
+		if ( '' === $country ) {
+			$country = WC()->countries->get_base_country();
+		}
+
+		return 'RO' === strtoupper( $country );
 	}
 
 	/**
@@ -53,6 +85,17 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	 */
 	public function validate_block( $errors, $fields ): void {
 		if ( ! $errors instanceof \WP_Error || ! is_array( $fields ) ) {
+			return;
+		}
+
+		$country = $this->block_billing_country;
+		if ( null === $country ) {
+			// Older WooCommerce versions may validate the contact fields first;
+			// the session customer holds the billing address the block last synced.
+			$country = WC()->customer ? WC()->customer->get_billing_country() : '';
+		}
+
+		if ( ! self::is_romanian( $country ) ) {
 			return;
 		}
 
@@ -71,6 +114,10 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	 * @param \WP_Error            $errors
 	 */
 	public function validate( $data, $errors ): void {
+		if ( ! self::is_romanian( isset( $data['billing_country'] ) ? (string) $data['billing_country'] : '' ) ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- WooCommerce verifies its checkout nonce before this hook fires; wc_clean() sanitizes (not a WPCS-recognized sanitizer).
 		if ( ! isset( $_POST[ Fields::PERSON_TYPE ] ) || Fields::TYPE_PJ !== wc_clean( wp_unslash( $_POST[ Fields::PERSON_TYPE ] ) ) ) {
 			return;
@@ -94,7 +141,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 			echo '<div class="notice notice-success"><p>' . esc_html__( 'Settings saved.', 'romcommerce' ) . '</p></div>';
 		}
 
-		echo '<p>' . esc_html__( 'Validates the CUI/CIF format and checksum at checkout for company (PJ) orders. Works alongside the PF/PJ billing fields.', 'romcommerce' ) . '</p>';
+		echo '<p>' . esc_html__( 'Validates the CUI/CIF format and checksum at checkout for company (PJ) orders with a Romanian billing address. Works alongside the PF/PJ billing fields.', 'romcommerce' ) . '</p>';
 
 		echo '<form method="post">';
 		SettingsForm::nonce_field( self::ID );

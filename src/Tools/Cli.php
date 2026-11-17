@@ -118,13 +118,16 @@ final class Cli {
 	 *
 	 * <job>
 	 * : maof-phone-index (index order phones for MAOF), price-history-baseline
-	 * (record current prices), sale-category-resync (resync the sale
-	 * category), coupon-cleanup (run the enabled coupon cleanup jobs; the
-	 * trash purge is permanent), store-report (email the weekly report for
-	 * the last full week).
+	 * (record current prices), sale-category-resync (resync the sale and
+	 * new products categories), coupon-cleanup (run the enabled coupon cleanup
+	 * jobs; the trash purge is permanent), store-report (email the weekly report for
+	 * the last full week), sku-fill (give products without a SKU one),
+	 * out-of-stock-cleanup (move the out-of-stock products that are due to
+	 * the trash), discount-sorting (work out every product's discount for the
+	 * "Sort by discount" order).
 	 *
 	 * [--yes]
-	 * : Skip the confirmation for coupon-cleanup.
+	 * : Skip the confirmation for coupon-cleanup and out-of-stock-cleanup.
 	 *
 	 * @param array<int, string>    $args
 	 * @param array<string, string> $assoc_args
@@ -134,6 +137,10 @@ final class Cli {
 
 		if ( 'coupon-cleanup' === $job ) {
 			WP_CLI::confirm( 'Run coupon cleanup now? If emptying the coupon trash is switched on, those coupons are deleted permanently.', $assoc_args );
+		}
+
+		if ( 'out-of-stock-cleanup' === $job ) {
+			WP_CLI::confirm( 'Move every out-of-stock product that is due to the trash now?', $assoc_args );
 		}
 
 		try {

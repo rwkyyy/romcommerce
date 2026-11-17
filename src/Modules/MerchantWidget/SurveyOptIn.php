@@ -51,9 +51,12 @@ final class SurveyOptIn {
 		$this->style         = in_array( $style, self::STYLES, true ) ? $style : 'CENTER_DIALOG';
 	}
 
-	/** Google only accepts the opt-in on HTTPS pages. */
+	/**
+	 * Google only accepts the opt-in on HTTPS pages. wp_is_using_https() covers
+	 * HTTPS sites behind a proxy, where is_ssl() alone reads the plain-HTTP hop.
+	 */
 	public function enqueue(): void {
-		if ( ! is_ssl() ) {
+		if ( ! is_ssl() && ! wp_is_using_https() ) {
 			return;
 		}
 
@@ -90,7 +93,10 @@ final class SurveyOptIn {
 	 * The order this confirmation page belongs to, when the link's order key
 	 * matches (the same credential WooCommerce's own thank-you page checks, so
 	 * changing the number in the address can't reveal another customer's
-	 * e-mail), the order wasn't abandoned, and it was placed moments ago.
+	 * e-mail), the order didn't fail or get cancelled, and it was placed
+	 * moments ago. Pending is allowed: card gateways that redirect back before
+	 * their payment confirmation arrives land here with the order still
+	 * pending, and Google asks that every customer sees the opt-in.
 	 */
 	public static function received_order( int $now ): ?WC_Order {
 		if ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) {
@@ -105,7 +111,7 @@ final class SurveyOptIn {
 			return null;
 		}
 
-		if ( $order->has_status( array( 'pending', 'failed', 'cancelled', 'refunded' ) ) ) {
+		if ( $order->has_status( array( 'failed', 'cancelled', 'refunded' ) ) ) {
 			return null;
 		}
 

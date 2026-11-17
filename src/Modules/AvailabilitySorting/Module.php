@@ -12,12 +12,14 @@ use RomCommerce\Settings;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Moves out-of-stock products to the end of catalog listings while keeping
- * whatever sort order is active (the store's default, or the shopper's pick)
- * as the order inside each group. Stock is prepended to the SQL ORDER BY,
- * not applied by re-sorting each page in PHP, so pagination stays consistent:
- * page 2 continues where page 1 stopped instead of each page burying its own
- * out-of-stock products.
+ * Catalog Sorting (Availability Sorting until 2026-11-11, when Discount
+ * Sorting was merged in as DiscountOrder). Two parts, each with its own
+ * switch. The stock order moves out-of-stock products to the end of catalog
+ * listings while keeping whatever sort order is active (the store's default,
+ * or the shopper's pick) as the order inside each group. Stock is prepended
+ * to the SQL ORDER BY, not applied by re-sorting each page in PHP, so
+ * pagination stays consistent: page 2 continues where page 1 stopped instead
+ * of each page burying its own out-of-stock products.
  */
 final class Module implements ModuleInterface, HasSettingsUi {
 
@@ -29,12 +31,19 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	public const SORT_ALWAYS       = 'always';
 	public const SORT_DEFAULT_ONLY = 'default_only';
 
+	/** @var DiscountOrder */
+	private $discount;
+
+	public function __construct() {
+		$this->discount = new DiscountOrder( self::ID );
+	}
+
 	public function id(): string {
 		return self::ID;
 	}
 
 	public function title(): string {
-		return __( 'Availability Sorting', 'romcommerce' );
+		return __( 'Catalog Sorting', 'romcommerce' );
 	}
 
 	public function is_enabled(): bool {
@@ -48,6 +57,12 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		// from posts_clauses at priority 10; running later prepends to their order
 		// instead of being overwritten by it.
 		add_filter( 'posts_clauses', array( $this, 'order_clauses' ), 999, 2 );
+
+		$this->discount->boot();
+	}
+
+	public function discount(): DiscountOrder {
+		return $this->discount;
 	}
 
 	/**
@@ -57,7 +72,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	 * @param \WP_Query $query
 	 */
 	public function flag_catalog_query( $query ): void {
-		if ( ! $query instanceof \WP_Query ) {
+		if ( ! $query instanceof \WP_Query || ! $this->stock_enabled() ) {
 			return;
 		}
 
@@ -80,7 +95,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	public function flag_shortcode_query( $args ) {
 		$args = is_array( $args ) ? $args : array();
 
-		if ( $this->shortcodes() ) {
+		if ( $this->stock_enabled() && $this->shortcodes() ) {
 			$args[ self::QUERY_VAR ] = implode( ',', $this->buried_statuses() );
 		}
 
@@ -158,6 +173,12 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		return $this->backorder_last() ? array( 'outofstock', 'onbackorder' ) : array( 'outofstock' );
 	}
 
+	// Before the merge this module was the stock order alone, with no switch of
+	// its own: a store that has the module on keeps it on.
+	private function stock_enabled(): bool {
+		return (bool) ( Settings::get( self::ID )['stock_enabled'] ?? true );
+	}
+
 	private function shopper_sort(): string {
 		$value = Settings::get( self::ID )['shopper_sort'] ?? self::SORT_DEFAULT_ONLY;
 
@@ -175,33 +196,50 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	public function render_settings(): void {
 		if ( SettingsForm::verify( self::ID ) ) {
 			// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified above via SettingsForm::verify().
-			Settings::set_enabled( self::ID, isset( $_POST['rc_enabled'] ) );
-			$shopper_sort = sanitize_key( wp_unslash( $_POST['rc_shopper_sort'] ?? '' ) );
-			Settings::update(
-				self::ID,
-				array(
-					'shopper_sort'   => self::SORT_ALWAYS === $shopper_sort ? self::SORT_ALWAYS : self::SORT_DEFAULT_ONLY,
-					'backorder_last' => isset( $_POST['rc_backorder_last'] ),
-					'shortcodes'     => isset( $_POST['rc_shortcodes'] ),
-				)
-			);
+			if ( isset( $_POST['rc_recalculate'] ) ) {
+				$this->discount->recalculate();
+			} else {
+				$this->handle_save(
+					isset( $_POST['rc_enabled'] ),
+					isset( $_POST['rc_stock_enabled'] ),
+					sanitize_key( wp_unslash( $_POST['rc_shopper_sort'] ?? '' ) ),
+					isset( $_POST['rc_backorder_last'] ),
+					isset( $_POST['rc_shortcodes'] ),
+					DiscountOrder::sanitize(
+						isset( $_POST['rc_discount_enabled'] ),
+						sanitize_key( wp_unslash( $_POST['rc_discount_mode'] ?? '' ) ),
+						sanitize_key( wp_unslash( $_POST['rc_discount_measure'] ?? '' ) ),
+						absint( wp_unslash( $_POST['rc_discount_hour'] ?? DiscountOrder::DEFAULT_HOUR ) )
+					)
+				);
+				echo '<div class="notice notice-success"><p>' . esc_html__( 'Settings saved.', 'romcommerce' ) . '</p></div>';
+			}
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
-			echo '<div class="notice notice-success"><p>' . esc_html__( 'Settings saved.', 'romcommerce' ) . '</p></div>';
 		}
 
-		echo '<p>' . esc_html__( 'Moves out-of-stock products to the end of the shop, category, tag and product search listings. Your sort order still applies: in-stock products come first in that order, then out-of-stock products in the same order.', 'romcommerce' ) . '</p>';
+		echo '<p>' . esc_html__( 'Two catalog orders, each with its own switch: out-of-stock products last, and "Sort by discount".', 'romcommerce' ) . '</p>';
+
+		echo '<form method="post">';
+		SettingsForm::nonce_field( self::ID );
+		echo '<table class="form-table"><tbody>';
+		echo '<tr><th scope="row">' . esc_html__( 'Module', 'romcommerce' ) . '</th><td>';
+		echo '<label><input type="checkbox" name="rc_enabled" value="1"' . checked( $this->is_enabled(), true, false ) . '> ';
+		echo esc_html__( 'Enable', 'romcommerce' ) . '</label></td></tr>';
+		echo '</tbody></table>';
+
+		echo '<h3>' . esc_html__( 'Out-of-stock products last', 'romcommerce' ) . '</h3>';
 
 		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
 			echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'WooCommerce is set to hide out-of-stock products from the catalog (WooCommerce → Settings → Products → Inventory), so there are none to move. Only the "on backorder" option below has an effect.', 'romcommerce' ) . '</p></div>';
 		}
 
-		echo '<form method="post">';
-		SettingsForm::nonce_field( self::ID );
 		echo '<table class="form-table"><tbody>';
 
-		echo '<tr><th scope="row">' . esc_html__( 'Module', 'romcommerce' ) . '</th><td>';
-		echo '<label><input type="checkbox" name="rc_enabled" value="1"' . checked( $this->is_enabled(), true, false ) . '> ';
-		echo esc_html__( 'Enable', 'romcommerce' ) . '</label></td></tr>';
+		echo '<tr><th scope="row">' . esc_html__( 'Out-of-stock products', 'romcommerce' ) . '</th><td>';
+		echo '<label><input type="checkbox" name="rc_stock_enabled" value="1"' . checked( $this->stock_enabled(), true, false ) . '> ';
+		echo esc_html__( 'Move out-of-stock products to the end', 'romcommerce' ) . '</label>';
+		echo '<p class="description">' . esc_html__( 'Moves out-of-stock products to the end of the shop, category, tag and product search listings. Your sort order still applies: in-stock products come first in that order, then out-of-stock products in the same order.', 'romcommerce' ) . '</p>';
+		echo '</td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Shopper sorting', 'romcommerce' ) . '</th><td><fieldset>';
 		echo '<label><input type="radio" name="rc_shopper_sort" value="' . esc_attr( self::SORT_DEFAULT_ONLY ) . '"' . checked( $this->shopper_sort(), self::SORT_DEFAULT_ONLY, false ) . '> ';
@@ -220,7 +258,37 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo esc_html__( 'Also apply to product lists from the [products] shortcode and its variants ([sale_products], [best_selling_products]…)', 'romcommerce' ) . '</label></td></tr>';
 
 		echo '</tbody></table>';
+
+		echo '<h3>' . esc_html__( 'Sort by discount', 'romcommerce' ) . '</h3>';
+		echo '<table class="form-table"><tbody>';
+		$this->discount->render_rows( $this->is_enabled() );
+		echo '</tbody></table>';
+
 		submit_button( __( 'Save changes', 'romcommerce' ) );
+		$this->discount->render_recalculate_button( $this->is_enabled() );
 		echo '</form>';
+	}
+
+	/**
+	 * @param array<string, mixed> $discount_settings from DiscountOrder::sanitize().
+	 */
+	private function handle_save( bool $enabled, bool $stock_enabled, string $shopper_sort, bool $backorder_last, bool $shortcodes, array $discount_settings ): void {
+		$before = $this->discount->snapshot( $this->is_enabled() );
+
+		Settings::set_enabled( self::ID, $enabled );
+		Settings::update(
+			self::ID,
+			array_merge(
+				array(
+					'stock_enabled'  => $stock_enabled,
+					'shopper_sort'   => self::SORT_ALWAYS === $shopper_sort ? self::SORT_ALWAYS : self::SORT_DEFAULT_ONLY,
+					'backorder_last' => $backorder_last,
+					'shortcodes'     => $shortcodes,
+				),
+				$discount_settings
+			)
+		);
+
+		$this->discount->after_save( $before, $enabled );
 	}
 }

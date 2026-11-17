@@ -45,6 +45,13 @@ jobs:
             exit 1
           fi
 
+          # release.yml builds the GitHub release notes from this section;
+          # checking here keeps a version without one from being tagged.
+          if ! bash bin/release-notes.sh "$HEADER_VERSION" >/dev/null; then
+            echo "::error::readme.txt has no changelog section \"= $HEADER_VERSION =\"."
+            exit 1
+          fi
+
           echo "version=$HEADER_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Check whether this version is already tagged

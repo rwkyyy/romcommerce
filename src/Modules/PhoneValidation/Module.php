@@ -41,6 +41,42 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_classic' ), 10, 2 );
 		add_action( 'woocommerce_blocks_validate_location_address_fields', array( $this, 'validate_block_address' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_filter( 'woocommerce_shipping_fields', array( $this, 'add_shipping_phone' ) );
+	}
+
+	/**
+	 * A phone field in the classic checkout's delivery address (the block
+	 * checkout has its own). The key is WooCommerce's own shipping_phone, so
+	 * the order stores it as its shipping phone, where AWB plugins that use a
+	 * delivery phone read it; without "Ship to a different address"
+	 * WooCommerce copies the billing phone into it.
+	 *
+	 * @param array<string, array<string, mixed>>|mixed $fields
+	 * @return array<string, array<string, mixed>>|mixed
+	 */
+	public function add_shipping_phone( $fields ) {
+		$mode = $this->shipping_phone_mode();
+		if ( 'off' === $mode || ! is_array( $fields ) || isset( $fields['shipping_phone'] ) ) {
+			return $fields;
+		}
+
+		$fields['shipping_phone'] = array(
+			'label'        => __( 'Phone', 'romcommerce' ),
+			'type'         => 'tel',
+			'required'     => 'required' === $mode,
+			'class'        => array( 'form-row-wide' ),
+			'validate'     => array( 'phone' ),
+			'autocomplete' => 'tel',
+			'priority'     => 100,
+		);
+
+		return $fields;
+	}
+
+	private function shipping_phone_mode(): string {
+		$mode = (string) ( Settings::get( self::ID )['shipping_phone'] ?? 'off' );
+
+		return in_array( $mode, array( 'off', 'optional', 'required' ), true ) ? $mode : 'off';
 	}
 
 	/**
@@ -152,8 +188,13 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 	public function render_settings(): void {
 		if ( SettingsForm::verify( self::ID ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via SettingsForm::verify().
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified above via SettingsForm::verify().
 			Settings::set_enabled( self::ID, isset( $_POST['rc_enabled'] ) );
+			$mode = isset( $_POST['rc_shipping_phone'] ) ? sanitize_key( wp_unslash( $_POST['rc_shipping_phone'] ) ) : 'off';
+			// phpcs:enable WordPress.Security.NonceVerification.Missing
+			$settings                   = Settings::get( self::ID );
+			$settings['shipping_phone'] = in_array( $mode, array( 'optional', 'required' ), true ) ? $mode : 'off';
+			Settings::update( self::ID, $settings );
 			echo '<div class="notice notice-success"><p>' . esc_html__( 'Settings saved.', 'romcommerce' ) . '</p></div>';
 		}
 
@@ -171,8 +212,21 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo '<table class="form-table"><tbody><tr>';
 		echo '<th scope="row">' . esc_html__( 'Module', 'romcommerce' ) . '</th>';
 		echo '<td><label><input type="checkbox" name="rc_enabled" value="1"' . checked( $this->is_enabled(), true, false ) . '> ';
-		echo esc_html__( 'Validate phone numbers at checkout', 'romcommerce' ) . '</label></td>';
-		echo '</tr></tbody></table>';
+		echo esc_html__( 'Validate phone numbers at checkout', 'romcommerce' ) . '</label></td></tr>';
+
+		echo '<tr><th scope="row"><label for="rc-shipping-phone">' . esc_html__( 'Delivery phone', 'romcommerce' ) . '</label></th><td>';
+		echo '<select id="rc-shipping-phone" name="rc_shipping_phone">';
+		$modes = array(
+			'off'      => __( 'Not on the classic checkout', 'romcommerce' ),
+			'optional' => __( 'Optional', 'romcommerce' ),
+			'required' => __( 'Required', 'romcommerce' ),
+		);
+		foreach ( $modes as $value => $label ) {
+			echo '<option value="' . esc_attr( $value ) . '"' . selected( $this->shipping_phone_mode(), $value, false ) . '>' . esc_html( $label ) . '</option>';
+		}
+		echo '</select>';
+		echo '<p class="description">' . esc_html__( 'Adds a phone field to the delivery address on the classic checkout and in My account, checked like the billing phone. It is saved as the order\'s shipping phone, which AWB plugins that use a delivery phone read; without a different delivery address, the billing phone is used. The block checkout has its own phone field for the delivery address, set in the Checkout block.', 'romcommerce' ) . '</p></td></tr>';
+		echo '</tbody></table>';
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
 

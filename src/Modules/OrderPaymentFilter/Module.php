@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace RomCommerce\Modules\OrderPaymentFilter;
 
+use Automattic\WooCommerce\Utilities\OrderUtil;
 use RomCommerce\Admin\SettingsForm;
 use RomCommerce\Modules\HasSettingsUi;
 use RomCommerce\Modules\ModuleInterface;
 use RomCommerce\Settings;
+use WC_Order;
 use WP_Query;
 
 defined( 'ABSPATH' ) || exit;
@@ -23,6 +25,11 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 	/** Prefixed so a payment filter WooCommerce adds later under a plain name can't collide with it. */
 	public const QUERY_VAR = 'rc_payment_method';
+
+	private const USED_CACHE = 'romcommerce_payment_filter_used';
+
+	public const LIST_ACTIVE  = 'active';
+	public const LIST_HISTORY = 'history';
 
 	public function id(): string {
 		return self::ID;
@@ -101,23 +108,40 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	}
 
 	/**
-	 * Every gateway WooCommerce knows, switched on or not, since older orders
-	 * keep the method they were paid with. A method whose gateway has since
-	 * been removed still shows while it is the active filter, by its id.
+	 * The gateways switched on now, since some payment plugins register dozens
+	 * of methods a store never switches on. The order-history setting adds
+	 * every method an order was paid with: a gateway switched off or removed
+	 * since can still hold thousands of orders. A removed gateway is titled as
+	 * on its latest order.
 	 *
 	 * @return array<string, string> Gateway id => title.
 	 */
 	public static function options( string $current = '' ): array {
-		$options = array();
+		$options  = array();
+		$used     = self::LIST_HISTORY === self::listed() ? self::used_methods() : array();
+		$gateways = function_exists( 'WC' ) && WC()->payment_gateways() ? WC()->payment_gateways()->payment_gateways() : array();
 
-		if ( function_exists( 'WC' ) && WC()->payment_gateways() ) {
-			foreach ( WC()->payment_gateways()->payment_gateways() as $id => $gateway ) {
-				$title = trim( wp_strip_all_tags( (string) $gateway->get_title() ) );
-				if ( '' === $title ) {
-					$title = trim( wp_strip_all_tags( (string) $gateway->get_method_title() ) );
-				}
-				$options[ (string) $id ] = '' !== $title ? $title : (string) $id;
+		foreach ( $gateways as $id => $gateway ) {
+			$id = (string) $id;
+			if ( 'yes' !== $gateway->enabled && ! isset( $used[ $id ] ) ) {
+				continue;
 			}
+
+			$title = trim( wp_strip_all_tags( (string) $gateway->get_title() ) );
+			if ( '' === $title ) {
+				$title = trim( wp_strip_all_tags( (string) $gateway->get_method_title() ) );
+			}
+			$options[ $id ] = '' !== $title ? $title : $id;
+		}
+
+		foreach ( $used as $id => $order_id ) {
+			if ( isset( $options[ $id ] ) ) {
+				continue;
+			}
+
+			$order          = wc_get_order( $order_id );
+			$title          = $order instanceof WC_Order ? trim( wp_strip_all_tags( $order->get_payment_method_title() ) ) : '';
+			$options[ $id ] = '' !== $title ? $title : $id;
 		}
 
 		if ( '' !== $current && ! isset( $options[ $current ] ) ) {
@@ -125,6 +149,44 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		}
 
 		return $options;
+	}
+
+	/**
+	 * Every payment method stored on a shop order, read with SQL because
+	 * wc_get_orders() can't return distinct values. It scans every order, so
+	 * it is cached for a day; a method first used within that day comes from
+	 * a switched-on gateway, which is listed anyway.
+	 *
+	 * @return array<string, int> Payment method id => latest order ID.
+	 */
+	private static function used_methods(): array {
+		$cached = get_transient( self::USED_CACHE );
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		global $wpdb;
+
+		if ( class_exists( OrderUtil::class ) && OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- cached in a transient; no WooCommerce API lists distinct payment methods.
+			$rows = $wpdb->get_results( "SELECT payment_method AS method, MAX(id) AS latest FROM {$wpdb->prefix}wc_orders WHERE type = 'shop_order' AND payment_method <> '' GROUP BY payment_method", ARRAY_A );
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- cached in a transient; no WooCommerce API lists distinct payment methods.
+			$rows = $wpdb->get_results( "SELECT pm.meta_value AS method, MAX(pm.post_id) AS latest FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = '_payment_method' AND pm.meta_value <> '' AND p.post_type = 'shop_order' GROUP BY pm.meta_value", ARRAY_A );
+		}
+
+		$used = array();
+		foreach ( (array) $rows as $row ) {
+			$used[ (string) $row['method'] ] = (int) $row['latest'];
+		}
+
+		set_transient( self::USED_CACHE, $used, DAY_IN_SECONDS );
+
+		return $used;
+	}
+
+	private static function listed(): string {
+		return self::LIST_HISTORY === ( Settings::get( self::ID )['listed'] ?? '' ) ? self::LIST_HISTORY : self::LIST_ACTIVE;
 	}
 
 	/**
@@ -150,12 +212,15 @@ final class Module implements ModuleInterface, HasSettingsUi {
 
 	public function render_settings(): void {
 		if ( SettingsForm::verify( self::ID ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified above via SettingsForm::verify().
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified above via SettingsForm::verify().
 			Settings::set_enabled( self::ID, isset( $_POST['rc_enabled'] ) );
+			$listed = sanitize_key( wp_unslash( $_POST['rc_listed'] ?? '' ) );
+			// phpcs:enable WordPress.Security.NonceVerification.Missing
+			Settings::update( self::ID, array( 'listed' => self::LIST_HISTORY === $listed ? self::LIST_HISTORY : self::LIST_ACTIVE ) );
 			echo '<div class="notice notice-success"><p>' . esc_html__( 'Settings saved.', 'romcommerce' ) . '</p></div>';
 		}
 
-		echo '<p>' . esc_html__( 'Adds a payment method dropdown to the WooCommerce orders list, next to the date and customer filters, so you can see only the orders paid by card, cash on delivery, bank transfer and so on. It lists every payment method installed, including switched-off ones, because older orders keep the method they were paid with.', 'romcommerce' ) . '</p>';
+		echo '<p>' . esc_html__( 'Adds a payment method dropdown to the WooCommerce orders list, next to the date and customer filters, so you can see only the orders paid by card, cash on delivery, bank transfer and so on.', 'romcommerce' ) . '</p>';
 
 		echo '<form method="post">';
 		SettingsForm::nonce_field( self::ID );
@@ -164,6 +229,14 @@ final class Module implements ModuleInterface, HasSettingsUi {
 		echo '<tr><th scope="row">' . esc_html__( 'Module', 'romcommerce' ) . '</th><td>';
 		echo '<label><input type="checkbox" name="rc_enabled" value="1"' . checked( $this->is_enabled(), true, false ) . '> ';
 		echo esc_html__( 'Enable', 'romcommerce' ) . '</label></td></tr>';
+
+		echo '<tr><th scope="row">' . esc_html__( 'Payment methods listed', 'romcommerce' ) . '</th><td><fieldset>';
+		echo '<label><input type="radio" name="rc_listed" value="' . esc_attr( self::LIST_ACTIVE ) . '"' . checked( self::listed(), self::LIST_ACTIVE, false ) . '> ';
+		echo esc_html__( 'Switched on now', 'romcommerce' ) . '</label><br>';
+		echo '<label><input type="radio" name="rc_listed" value="' . esc_attr( self::LIST_HISTORY ) . '"' . checked( self::listed(), self::LIST_HISTORY, false ) . '> ';
+		echo esc_html__( 'Switched on now, plus every method used on past orders', 'romcommerce' ) . '</label>';
+		echo '<p class="description">' . esc_html__( 'The second also lists methods switched off or removed since, so their orders can still be filtered. It reads all your orders once a day to build the list, which takes longer on large stores.', 'romcommerce' ) . '</p>';
+		echo '</fieldset></td></tr>';
 
 		echo '</tbody></table>';
 		submit_button( __( 'Save changes', 'romcommerce' ) );

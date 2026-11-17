@@ -42,7 +42,7 @@ final class Admin {
 	 * @return array<string, string>
 	 */
 	public function add_column( array $columns ): array {
-		$columns[ self::COLUMN ] = __( 'MAOF', 'romcommerce' );
+		$columns[ self::COLUMN ] = __( 'Alte comenzi active', 'romcommerce' );
 
 		return $columns;
 	}
@@ -77,19 +77,31 @@ final class Admin {
 
 		$count = $this->finder->active_duplicate_count( $order );
 		if ( $count < 1 ) {
-			echo '<span aria-hidden="true">—</span>';
+			echo '<span title="' . esc_attr__( 'Clientul nu mai are alte comenzi neîncheiate (plată în așteptare, în procesare sau în așteptare).', 'romcommerce' ) . '">—</span>';
 			return;
 		}
 
-		echo '<span title="' . esc_attr__( 'Posibile comenzi asociate: verificare manuală necesară', 'romcommerce' ) . '" style="display:inline-block;padding:2px 8px;border-radius:3px;background:#f0a202;color:#1e1e1e;font-weight:600;">';
+		$explanation = sprintf(
+			/* translators: %d: number of the customer's other active orders */
+			_n(
+				'Același client (aceeași adresă de e-mail sau același telefon) mai are %d comandă neîncheiată (plată în așteptare, în procesare sau în așteptare). Verificați înainte de expediere: poate fi o comandă dublă sau se pot livra împreună. Detalii în comandă, caseta MAOF.',
+				'Același client (aceeași adresă de e-mail sau același telefon) mai are %d comenzi neîncheiate (plată în așteptare, în procesare sau în așteptare). Verificați înainte de expediere: pot fi comenzi duble sau se pot livra împreună. Detalii în comandă, caseta MAOF.',
+				$count,
+				'romcommerce'
+			),
+			$count
+		);
+
+		echo '<span title="' . esc_attr( $explanation ) . '" style="display:inline-block;padding:2px 8px;border-radius:3px;background:#f0a202;color:#1e1e1e;font-weight:600;">';
 		echo esc_html(
 			sprintf(
-				/* translators: %d: number of other active orders */
-				_n( '%d activă', '%d active', $count, 'romcommerce' ),
+				/* translators: %d: number of the customer's other active orders */
+				_n( '%d comandă', '%d comenzi', $count, 'romcommerce' ),
 				$count
 			)
 		);
 		echo '</span>';
+		echo '<span class="screen-reader-text"> ' . esc_html( $explanation ) . '</span>';
 	}
 
 	/**

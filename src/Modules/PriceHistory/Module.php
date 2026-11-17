@@ -338,6 +338,7 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		$emphasis = $this->emphasis();
 
 		echo '<p>' . esc_html__( 'Records every effective price change and, next to a reduced price, shows the lowest price applied in the 30 days before that reduction started (the Omnibus reference price).', 'romcommerce' ) . '</p>';
+		echo '<p>' . esc_html__( 'The history starts when you switch the module on: every product\'s current price is recorded then, in the background. WooCommerce keeps no earlier prices, so for the first 30 days the lowest price only reaches back to that day. Price changes made while the module is off are not recorded.', 'romcommerce' ) . '</p>';
 
 		echo '<form method="post">';
 		SettingsForm::nonce_field( self::ID );

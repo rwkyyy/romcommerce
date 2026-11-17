@@ -18,6 +18,7 @@
     --rc-blue-bright: #3F51B5;
     --rc-red: #F4363A;
     --rc-red-deep: #B71C1C;
+    --rc-red-mid: #D32F2F;
     --rc-amber: #F9A825;
     --rc-amber-bright: #FFCA28;
     --rc-ink: #1E1E1E;
@@ -47,13 +48,9 @@
     box-sizing: border-box;
 }
 
-/* Category accent colour, keyed off the category id, cycling the logo's own
-   R-O-M letter colours (red / yellow / blue) in that order. Each hue's own
-   catalogued shades run darkest first, brightest last, across its repeats —
-   red's 1st use (category 1) is its deep shade, red's 2nd use (category 4)
-   is its bright one; same for yellow (amber, then amber-bright). Blue has a
-   3rd, brighter shade (--rc-blue-bright) still unused, reserved for a future
-   7th category continuing blue's own darkest-to-brightest run. */
+/* Category accent colour, top to bottom in the logo's order, red / yellow /
+   blue (the Romanian flag reversed), then again in another of the brand's
+   shades of each (owner, 2026-11-09). */
 .romcommerce-admin .rc-cat-compliance-legal {
     --rc-accent: var(--rc-red-deep);
 }
@@ -62,16 +59,24 @@
     --rc-accent: var(--rc-amber);
 }
 
-.romcommerce-admin .rc-cat-orders-fulfilment {
+.romcommerce-admin .rc-cat-cart-fees {
     --rc-accent: var(--rc-navy);
 }
 
-.romcommerce-admin .rc-cat-storefront-merchandising {
+.romcommerce-admin .rc-cat-orders-fulfilment {
     --rc-accent: var(--rc-red);
 }
 
-.romcommerce-admin .rc-cat-admin-branding {
+.romcommerce-admin .rc-cat-products-catalogue {
     --rc-accent: var(--rc-amber-bright);
+}
+
+.romcommerce-admin .rc-cat-reviews-trust {
+    --rc-accent: var(--rc-blue-bright);
+}
+
+.romcommerce-admin .rc-cat-admin-branding {
+    --rc-accent: var(--rc-red-mid);
 }
 
 .romcommerce-admin .rc-app {
@@ -741,6 +746,12 @@
 
 .romcommerce-admin .rc-back:hover {
     color: var(--rc-red-deep);
+}
+
+.romcommerce-admin .rc-related {
+    margin: -6px 0 14px;
+    font-size: 12px;
+    color: var(--rc-text-soft);
 }
 
 .romcommerce-admin .rc-pane h2 {
@@ -2015,4 +2026,16 @@
     flex-basis: 100%;
     order: 1;
     margin: 4px 0 0;
+}
+
+.romcommerce-admin .rc-view-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 18px;
+}
+
+.romcommerce-admin .rc-view-filter label {
+    cursor: pointer;
+    font-weight: 600;
 }

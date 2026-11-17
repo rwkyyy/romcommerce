@@ -19,7 +19,7 @@ final class ChannelsTest extends TestCase {
 		$catalog = Channels::catalog();
 
 		self::assertSame(
-			array( 'whatsapp', 'phone', 'email', 'messenger', 'facebook', 'facebook_group', 'instagram', 'youtube', 'tiktok', 'telegram' ),
+			array( 'whatsapp', 'phone', 'email', 'messenger', 'facebook', 'facebook_group', 'instagram', 'youtube', 'tiktok', 'telegram', 'waze', 'location' ),
 			array_keys( $catalog )
 		);
 	}

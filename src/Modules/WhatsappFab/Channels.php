@@ -13,7 +13,9 @@ defined( 'ABSPATH' ) || exit;
  * monogram used only if a glyph is ever missing. The brand glyphs are the
  * official logos as published by Simple Icons (CC0, simpleicons.org), used
  * only to link to the brand's own service; the Facebook group channel shares
- * the Facebook logo, its label tells the two apart.
+ * the Facebook logo, its label tells the two apart. The location channel takes
+ * any map service's link (Google Maps, Apple Maps, …), so it carries a plain
+ * map pin rather than one brand's logo (owner, 2026-11-03).
  *
  * `supports_message` marks the channels whose link format actually carries a
  * prefilled message to the recipient app (wa.me's `text=`, t.me's `text=`,
@@ -28,6 +30,8 @@ final class Channels {
 	public const KIND_URL      = 'url';
 	public const KIND_TEL      = 'tel';
 	public const KIND_MAILTO   = 'mailto';
+	public const KIND_WAZE     = 'waze';
+	public const KIND_MAP      = 'map';
 
 	private const MESSENGER = 'M12 0C5.24 0 0 4.952 0 11.64c0 3.499 1.434 6.521 3.769 8.61a.96.96 0 0 1 .323.683l.065 2.135a.96.96 0 0 0 1.347.85l2.381-1.053a.96.96 0 0 1 .641-.046A13 13 0 0 0 12 23.28c6.76 0 12-4.952 12-11.64S18.76 0 12 0m6.806 7.44c.522-.03.971.567.63 1.094l-4.178 6.457a.707.707 0 0 1-.977.208l-3.87-2.504a.44.44 0 0 0-.49.007l-4.363 3.01c-.637.438-1.415-.317-.995-.966l4.179-6.457a.706.706 0 0 1 .977-.21l3.87 2.505c.15.097.344.094.491-.007l4.362-3.008a.7.7 0 0 1 .364-.13';
 
@@ -41,6 +45,8 @@ final class Channels {
 
 	private const TELEGRAM = 'M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z';
 
+	private const WAZE = 'M13.218 0C9.915 0 6.835 1.49 4.723 4.148c-1.515 1.913-2.31 4.272-2.31 6.706v1.739c0 .894-.62 1.738-1.862 1.813-.298.025-.547.224-.547.522-.05.82.82 2.31 2.012 3.502.82.844 1.788 1.515 2.832 2.036a3 3 0 0 0 2.955 3.528 2.966 2.966 0 0 0 2.931-2.385h2.509c.323 1.689 2.086 2.856 3.974 2.21 1.64-.546 2.36-2.409 1.763-3.924a12.84 12.84 0 0 0 1.838-1.465 10.73 10.73 0 0 0 3.18-7.65c0-2.882-1.118-5.589-3.155-7.625A10.899 10.899 0 0 0 13.218 0zm0 1.217c2.558 0 4.967.994 6.78 2.807a9.525 9.525 0 0 1 2.807 6.78A9.526 9.526 0 0 1 20 17.585a9.647 9.647 0 0 1-6.78 2.807h-2.46a3.008 3.008 0 0 0-2.93-2.41 3.03 3.03 0 0 0-2.534 1.367v.024a8.945 8.945 0 0 1-2.41-1.788c-.844-.844-1.316-1.614-1.515-2.11a2.858 2.858 0 0 0 1.441-.846 2.959 2.959 0 0 0 .795-2.036v-1.789c0-2.11.696-4.197 2.012-5.861 1.863-2.385 4.62-3.726 7.6-3.726zm-2.41 5.986a1.192 1.192 0 0 0-1.191 1.192 1.192 1.192 0 0 0 1.192 1.193A1.192 1.192 0 0 0 12 8.395a1.192 1.192 0 0 0-1.192-1.192zm7.204 0a1.192 1.192 0 0 0-1.192 1.192 1.192 1.192 0 0 0 1.192 1.193 1.192 1.192 0 0 0 1.192-1.193 1.192 1.192 0 0 0-1.192-1.192zm-7.377 4.769a.596.596 0 0 0-.546.845 4.813 4.813 0 0 0 4.346 2.757 4.77 4.77 0 0 0 4.347-2.757.596.596 0 0 0-.547-.845h-.025a.561.561 0 0 0-.521.348 3.59 3.59 0 0 1-3.254 2.061 3.591 3.591 0 0 1-3.254-2.061.64.64 0 0 0-.546-.348z';
+
 	/**
 	 * @return array<string, array{label: string, color: string, kind: string, hint: string, icon: string, text: string, supports_message: bool}>
 	 */
@@ -48,7 +54,7 @@ final class Channels {
 		return array(
 			'whatsapp'       => array(
 				'label'            => __( 'WhatsApp', 'romcommerce' ),
-				'color'            => '#25D366',
+				'color'            => '#0C7A5F',
 				'kind'             => self::KIND_WHATSAPP,
 				'hint'             => __( 'Phone in international format, digits only (e.g. 40712345678)', 'romcommerce' ),
 				'icon'             => self::whatsapp_icon(),
@@ -136,6 +142,25 @@ final class Channels {
 				'text'             => 'TG',
 				'supports_message' => true,
 			),
+			// #0099CC rather than Waze's #33CCFF: white on the brand cyan is 1.9:1, on this 3.3:1.
+			'waze'           => array(
+				'label'            => __( 'Waze', 'romcommerce' ),
+				'color'            => '#0099CC',
+				'kind'             => self::KIND_WAZE,
+				'hint'             => __( 'Waze link, coordinates (e.g. 44.4268, 26.1025) or address', 'romcommerce' ),
+				'icon'             => self::glyph( self::WAZE ),
+				'text'             => 'W',
+				'supports_message' => false,
+			),
+			'location'       => array(
+				'label'            => __( 'Location', 'romcommerce' ),
+				'color'            => '#D84315',
+				'kind'             => self::KIND_MAP,
+				'hint'             => __( 'Map link (Google Maps, Apple Maps or any other) or address', 'romcommerce' ),
+				'icon'             => self::location_icon(),
+				'text'             => '',
+				'supports_message' => false,
+			),
 		);
 	}
 
@@ -149,6 +174,10 @@ final class Channels {
 
 	private static function phone_icon(): string {
 		return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>';
+	}
+
+	private static function location_icon(): string {
+		return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>';
 	}
 
 	private static function email_icon(): string {

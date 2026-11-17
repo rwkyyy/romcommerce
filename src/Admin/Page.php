@@ -27,6 +27,8 @@ final class Page {
 
 	private const PRO_URL = 'https://romcommerce.ro/pro';
 
+	private const ACTIVE_ONLY_META = 'romcommerce_active_only';
+
 	/** Transient success message shown once at the top of the canvas. */
 	private string $notice = '';
 
@@ -75,14 +77,25 @@ final class Page {
 	 */
 	private function process_request(): void {
 		$this->handle_toggle();
+		$this->handle_active_only();
 	}
 
 	/** @return array{0: string, 1: string, 2: string} tab, category, module */
 	private function state(): array {
+		$module   = $this->query_arg( 'module', '' );
+		$category = $this->query_arg( 'category', '' );
+
+		// A module's own category wins over the URL's, so links saved before the
+		// 2026-11-09 regrouping still open the right group in the rail.
+		$meta = '' !== $module ? ModuleRegistry::get( $module ) : null;
+		if ( null !== $meta ) {
+			$category = $meta['category'];
+		}
+
 		return array(
 			$this->query_arg( 'tab', 'dashboard' ),
-			$this->query_arg( 'category', '' ),
-			$this->query_arg( 'module', '' ),
+			$category,
+			$module,
 		);
 	}
 
@@ -164,6 +177,64 @@ final class Page {
 			: __( 'Module disabled.', 'romcommerce' );
 	}
 
+	/**
+	 * The "Show only active modules" switch. A per-user view preference, kept
+	 * in user meta so it survives page loads, with its own nonce like the
+	 * module toggle.
+	 */
+	private function handle_active_only(): void {
+		if ( ! isset( $_POST['romcommerce_active_only'], $_POST['romcommerce_active_only_nonce'] ) || ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['romcommerce_active_only_nonce'] ) ), 'romcommerce_active_only' ) ) {
+			return;
+		}
+
+		if ( '1' === sanitize_text_field( wp_unslash( $_POST['romcommerce_active_only'] ) ) ) {
+			update_user_meta( get_current_user_id(), self::ACTIVE_ONLY_META, '1' );
+		} else {
+			delete_user_meta( get_current_user_id(), self::ACTIVE_ONLY_META );
+		}
+	}
+
+	private function active_only(): bool {
+		return '1' === get_user_meta( get_current_user_id(), self::ACTIVE_ONLY_META, true );
+	}
+
+	/**
+	 * A category's modules as the nav and grid list them.
+	 *
+	 * @return array<string, array{tier: string, category: string, label: string, description: string}>
+	 */
+	private function listed_modules( string $cat_id ): array {
+		$modules = ModuleRegistry::in_category( $cat_id );
+		if ( ! $this->active_only() ) {
+			return $modules;
+		}
+
+		return array_filter(
+			$modules,
+			static function ( string $mod_id ): bool {
+				$instance = Plugin::instance()->modules()->get( $mod_id );
+
+				return null !== $instance && $instance->is_enabled();
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+	}
+
+	private function active_only_switch(): void {
+		$on = $this->active_only();
+
+		echo '<form method="post" class="rc-view-filter">';
+		wp_nonce_field( 'romcommerce_active_only', 'romcommerce_active_only_nonce' );
+		echo '<input type="hidden" name="romcommerce_active_only" value="' . ( $on ? '0' : '1' ) . '">';
+		echo '<button type="submit" id="rc-view-filter" class="rc-switch' . ( $on ? ' is-on' : '' ) . '" role="switch" aria-checked="' . ( $on ? 'true' : 'false' ) . '"></button>';
+		echo '<label for="rc-view-filter">' . esc_html__( 'Show only active modules', 'romcommerce' ) . '</label>';
+		echo '</form>';
+	}
+
 	private function render_rail( string $tab, string $category, string $module ): void {
 		echo '<nav class="rc-rail">';
 		echo '<div class="rc-wordmark"><img src="' . esc_url( $this->asset( 'logo-wordmark.svg' ) ) . '" alt="RomCommerce"></div>';
@@ -225,7 +296,7 @@ final class Page {
 
 		if ( $open ) {
 			echo '<ul class="rc-mods">';
-			foreach ( ModuleRegistry::in_category( $cat_id ) as $mod_id => $meta ) {
+			foreach ( $this->listed_modules( $cat_id ) as $mod_id => $meta ) {
 				$this->rail_module( $cat_id, $mod_id, $meta, $active_module );
 			}
 			echo '</ul>';
@@ -347,14 +418,22 @@ final class Page {
 		}
 
 		$this->canvas_head( __( 'Modules', 'romcommerce' ), __( 'Lite: complete & free', 'romcommerce' ) );
+		$this->active_only_switch();
 
 		if ( '' !== $category && ModuleRegistry::category_exists( $category ) ) {
-			$this->render_cat_block( $category );
+			if ( ! $this->render_cat_block( $category ) ) {
+				echo '<p>' . esc_html__( 'No module in this category is active.', 'romcommerce' ) . '</p>';
+			}
 			return;
 		}
 
-		foreach ( ModuleRegistry::categories() as $cat_id => $cat_label ) {
-			$this->render_cat_block( $cat_id );
+		$shown = 0;
+		foreach ( array_keys( ModuleRegistry::categories() ) as $cat_id ) {
+			$shown += $this->render_cat_block( $cat_id ) ? 1 : 0;
+		}
+
+		if ( 0 === $shown ) {
+			echo '<p>' . esc_html__( 'No module is active yet. Switch off "Show only active modules" to see them all.', 'romcommerce' ) . '</p>';
 		}
 	}
 
@@ -393,10 +472,14 @@ final class Page {
 		return false;
 	}
 
-	private function render_cat_block( string $cat_id ): void {
+	/** @return bool Whether the category had a module to show. */
+	private function render_cat_block( string $cat_id ): bool {
 		$label   = ModuleRegistry::categories()[ $cat_id ];
-		$modules = ModuleRegistry::in_category( $cat_id );
+		$modules = $this->listed_modules( $cat_id );
 		$count   = count( $modules );
+		if ( 0 === $count ) {
+			return false;
+		}
 
 		echo '<div class="rc-cat-block rc-cat-' . esc_attr( $cat_id ) . '">';
 		echo '<div class="rc-cat-head"><span class="rc-tile"></span><h3>' . esc_html( $label ) . '</h3><div class="rc-rule"></div>';
@@ -413,6 +496,8 @@ final class Page {
 			$this->module_card( $cat_id, $mod_id, $meta );
 		}
 		echo '</div></div>';
+
+		return true;
 	}
 
 	/** @param array{tier: string, category: string, label: string, description: string} $meta */
@@ -489,6 +574,7 @@ final class Page {
 
 		echo '<div class="rc-pane rc-cat-' . esc_attr( $meta['category'] ) . '">';
 		echo '<a class="rc-back" href="' . esc_url( $back ) . '">&larr; ' . esc_html__( 'All modules', 'romcommerce' ) . '</a>';
+		$this->related_links( $module_id );
 
 		$instance = Plugin::instance()->modules()->get( $module_id );
 		if ( $instance instanceof HasPlacements && Elementor::active() && $this->has_elementor_sensitive_placement( $instance ) ) {
@@ -506,6 +592,33 @@ final class Page {
 		}
 
 		echo '</div>';
+	}
+
+	private function related_links( string $module_id ): void {
+		$links = array();
+		foreach ( ModuleRegistry::related( $module_id ) as $related_id ) {
+			$related = ModuleRegistry::get( $related_id );
+			if ( null === $related ) {
+				continue;
+			}
+
+			$links[] = '<a href="' . esc_url(
+				$this->url(
+					array(
+						'tab'      => 'modules',
+						'category' => $related['category'],
+						'module'   => $related_id,
+					)
+				)
+			) . '">' . esc_html( $related['label'] ) . '</a>';
+		}
+
+		if ( array() === $links ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- each link is escaped as it is built above.
+		echo '<p class="rc-related">' . esc_html__( 'Related modules:', 'romcommerce' ) . ' ' . implode( ', ', $links ) . '</p>';
 	}
 
 	private function render_license(): void {

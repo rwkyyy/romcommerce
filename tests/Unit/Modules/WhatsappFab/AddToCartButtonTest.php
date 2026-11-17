@@ -288,7 +288,34 @@ final class AddToCartButtonTest extends TestCase {
 	public function test_an_invalid_stored_colour_falls_back_to_the_readable_default(): void {
 		$this->settings( array( 'atc_color' => 'red; background:url(x)' ) );
 
-		self::assertSame( '#25D366', $this->invokePrivate( new Module(), 'atc_color' ) );
+		self::assertSame( '#0C7A5F', $this->invokePrivate( new Module(), 'atc_color' ) );
+	}
+
+	public function test_whatsapps_old_default_saved_before_0_9_reads_as_the_new_default(): void {
+		$this->settings(
+			array(
+				'atc_color' => '#25d366',
+				'channels'  => array( 'whatsapp' => array( 'color' => '#25D366' ) ),
+			)
+		);
+		$module = new Module();
+
+		self::assertSame( '#0C7A5F', $this->invokePrivate( $module, 'atc_color' ) );
+		self::assertSame( '', $this->invokePrivate( $module, 'channel_settings', array( 'whatsapp' ) )['color'] );
+	}
+
+	public function test_the_old_green_picked_since_0_9_is_kept(): void {
+		$this->settings(
+			array(
+				'atc_color'      => '#25D366',
+				'channels'       => array( 'whatsapp' => array( 'color' => '#25D366' ) ),
+				'color_defaults' => 2,
+			)
+		);
+		$module = new Module();
+
+		self::assertSame( '#25D366', $this->invokePrivate( $module, 'atc_color' ) );
+		self::assertSame( '#25D366', $this->invokePrivate( $module, 'channel_settings', array( 'whatsapp' ) )['color'] );
 	}
 
 	public function test_a_valid_stored_colour_reaches_the_stylesheet(): void {

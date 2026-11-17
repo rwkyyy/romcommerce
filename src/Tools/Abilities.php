@@ -129,7 +129,7 @@ final class Abilities {
 			),
 			'romcommerce/run-job'            => array(
 				'label'               => __( 'Run a RomCommerce background job now', 'romcommerce' ),
-				'description'         => __( 'Runs one of RomCommerce Lite\'s background jobs now: maof-phone-index, price-history-baseline, sale-category-resync, coupon-cleanup or store-report (emails the weekly report for the last full week). The first two work in batches for up to 20 seconds per call; call again until "complete" is true. Coupon cleanup permanently deletes trashed coupons when that option is switched on.', 'romcommerce' ),
+				'description'         => __( 'Runs one of RomCommerce Lite\'s background jobs now: maof-phone-index, price-history-baseline, sale-category-resync, coupon-cleanup, store-report (emails the weekly report for the last full week), sku-fill (gives products and variations without a SKU one), out-of-stock-cleanup (moves the out-of-stock products that are due to the trash) or discount-sorting (works out every product\'s discount for the "Sort by discount" order). maof-phone-index, price-history-baseline, sku-fill, out-of-stock-cleanup and discount-sorting work in batches for up to 20 seconds per call; call again until "complete" is true. Coupon cleanup permanently deletes trashed coupons when that option is switched on.', 'romcommerce' ),
 				'category'            => self::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',

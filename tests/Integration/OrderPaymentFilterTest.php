@@ -12,6 +12,7 @@ namespace RomCommerce\Tests\Integration;
 
 use Automattic\WooCommerce\Utilities\OrderUtil;
 use RomCommerce\Modules\OrderPaymentFilter\Module;
+use RomCommerce\Settings;
 use WP_Query;
 
 final class OrderPaymentFilterTest extends TestCase {
@@ -20,6 +21,8 @@ final class OrderPaymentFilterTest extends TestCase {
 		unset( $_GET[ Module::QUERY_VAR ] );
 		$GLOBALS['wp_the_query'] = $GLOBALS['wp_query'];
 		set_current_screen( 'front' );
+		delete_option( 'woocommerce_cod_settings' );
+		WC()->payment_gateways()->init();
 		parent::tear_down();
 	}
 
@@ -79,16 +82,36 @@ final class OrderPaymentFilterTest extends TestCase {
 		self::assertCount( 2, $this->listed_order_ids() );
 	}
 
-	public function test_the_dropdown_lists_the_installed_gateways_and_keeps_the_choice(): void {
+	public function test_the_dropdown_lists_switched_on_gateways_and_keeps_the_choice(): void {
+		update_option( 'woocommerce_cod_settings', array( 'enabled' => 'yes' ) );
+		WC()->payment_gateways()->init();
+		$this->order_paid_with( 'bacs' );
 		$_GET[ Module::QUERY_VAR ] = 'cod';
 
+		$html = $this->dropdown();
+
+		self::assertSame( 1, substr_count( $html, 'name="rc_payment_method"' ) );
+		self::assertStringNotContainsString( 'value="bacs"', $html );
+		self::assertMatchesRegularExpression( '/value="cod"\s+selected/', $html );
+	}
+
+	public function test_order_history_also_lists_the_methods_of_past_orders(): void {
+		$this->order_paid_with( 'bacs' );
+		$this->order_paid_with( 'gone_gateway' );
+		Settings::update( 'order-payment-filter', array( 'listed' => Module::LIST_HISTORY ) );
+		delete_transient( 'romcommerce_payment_filter_used' );
+
+		$html = $this->dropdown();
+
+		self::assertStringContainsString( 'value="bacs"', $html );
+		self::assertStringContainsString( 'value="gone_gateway"', $html );
+	}
+
+	private function dropdown(): string {
 		ob_start();
 		do_action( 'woocommerce_order_list_table_restrict_manage_orders', 'shop_order', 'top' );
 		do_action( 'woocommerce_order_list_table_restrict_manage_orders', 'shop_order_refund', 'top' );
-		$html = (string) ob_get_clean();
 
-		self::assertSame( 1, substr_count( $html, 'name="rc_payment_method"' ) );
-		self::assertStringContainsString( 'value="bacs"', $html );
-		self::assertMatchesRegularExpression( '/value="cod"\s+selected/', $html );
+		return (string) ob_get_clean();
 	}
 }

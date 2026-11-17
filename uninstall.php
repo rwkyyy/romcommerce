@@ -43,6 +43,10 @@ function romcommerce_uninstall_site(): void {
 	romcommerce_uninstall_delete_maof_phone_index();
 	// Mirrors PriceHistory\Reference::META_KEY: a cache, rebuilt from the log.
 	delete_post_meta_by_key( '_romcommerce_omnibus_reference' );
+	// Mirrors AvailabilitySorting\Recalculator::META_KEY: a cache, rebuilt daily.
+	delete_post_meta_by_key( '_romcommerce_discount' );
+	// Mirrors Admin\Page::ACTIVE_ONLY_META: a view setting, not the merchant's data.
+	delete_metadata( 'user', 0, 'romcommerce_active_only', '', true );
 	romcommerce_uninstall_delete_options();
 }
 
@@ -54,8 +58,12 @@ function romcommerce_uninstall_clear_cron(): void {
 	$hooks = array(
 		'romcommerce_trash_expired_coupons',
 		'romcommerce_empty_coupon_trash',
+		'romcommerce_discount_sorting',
+		'romcommerce_discount_sorting_batch',
 		'romcommerce_maof_phone_backfill',
+		'romcommerce_out_of_stock_cleanup',
 		'romcommerce_price_history_baseline',
+		'romcommerce_sku_generator_fill',
 		'romcommerce_store_report_send',
 	);
 

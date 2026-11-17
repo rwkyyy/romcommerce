@@ -65,7 +65,14 @@ capture() {
 			product_id="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["add_to_cart"])' "$urls_dir/snapshot.json")"
 			curl -s -L -c "$jar" -b "$jar" "$url?add-to-cart=$product_id" -o /dev/null
 		fi
-		curl -s -L -c "$jar" -b "$jar" "$url" -o "$urls_dir/$page.html"
+		local status
+		status="$(curl -s -L -c "$jar" -b "$jar" "$url" -o "$urls_dir/$page.html" -w '%{http_code}')"
+		# Two 404 pages compare equal, so a broken site would pass silently. This
+		# happens locally once the integration suite has reset the tests site.
+		if [ "$status" != "200" ]; then
+			echo "::error::$scenario $phase: $page page ($url) returned HTTP $status. Reset the tests site (npx wp-env clean tests) and rerun."
+			exit 1
+		fi
 	done
 }
 

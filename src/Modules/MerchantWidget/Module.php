@@ -35,6 +35,11 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 	private const POSITIONS = array( 'RIGHT_BOTTOM', 'LEFT_BOTTOM' );
 
+	private const PAGES = array( 'all', 'no_checkout', 'shop' );
+
+	/** The widest screen "Hide on phones" treats as a phone. */
+	private const PHONE_MAX_WIDTH = 767;
+
 	/**
 	 * Google's documented defaults. An override is passed to start() only when
 	 * it differs, so Google stays free to retune its own defaults.
@@ -60,6 +65,16 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 	/** Merchant Center account IDs are plain digits; anything longer than this is not one. */
 	private const MERCHANT_ID_MAX_DIGITS = 20;
+
+	/**
+	 * Google for WooCommerce (slug google-listings-and-ads) options, checked
+	 * against 3.10.0. It saves the ID before it verifies and claims the
+	 * website, so an ID from a setup left halfway may not own this domain;
+	 * only a finished setup counts.
+	 */
+	private const GLA_MERCHANT_ID_OPTION = 'gla_merchant_id';
+
+	private const GLA_SETUP_DONE_OPTION = 'gla_mc_setup_completed_at';
 
 	public function id(): string {
 		return self::ID;
@@ -112,15 +127,60 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			) )->enqueue();
 		}
 
-		if ( ! (bool) ( $settings['show_widget'] ?? true ) ) {
+		if ( ! (bool) ( $settings['show_widget'] ?? true ) || ! $this->shows_on_this_page( $this->pages( $settings ) ) ) {
+			return;
+		}
+
+		wp_register_script( 'romcommerce-merchant-widget-start', false, array(), ROMCOMMERCE_VERSION, true );
+		wp_enqueue_script( 'romcommerce-merchant-widget-start' );
+
+		$load_later     = (bool) ( $settings['load_later'] ?? true );
+		$hide_on_phones = ! empty( $settings['hide_on_phones'] );
+		if ( $load_later || $hide_on_phones ) {
+			wp_add_inline_script( 'romcommerce-merchant-widget-start', $this->loader_js( $this->start_config(), $load_later, $hide_on_phones ) );
 			return;
 		}
 
 		wp_enqueue_script( 'romcommerce-merchant-widget', self::SCRIPT_URL, array(), null, $this->script_args() ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Google's hosted script; a version query would only defeat its own caching.
-
-		wp_register_script( 'romcommerce-merchant-widget-start', false, array(), ROMCOMMERCE_VERSION, true );
-		wp_enqueue_script( 'romcommerce-merchant-widget-start' );
 		wp_add_inline_script( 'romcommerce-merchant-widget-start', $this->start_script_js( $this->start_config() ) );
+	}
+
+	/** @param array<string, mixed> $settings */
+	private function pages( array $settings ): string {
+		$pages = (string) ( $settings['pages'] ?? 'all' );
+
+		return in_array( $pages, self::PAGES, true ) ? $pages : 'all';
+	}
+
+	private function shows_on_this_page( string $pages ): bool {
+		if ( 'shop' === $pages ) {
+			return function_exists( 'is_woocommerce' ) && is_woocommerce();
+		}
+
+		if ( 'no_checkout' === $pages ) {
+			return ! ( ( function_exists( 'is_cart' ) && is_cart() ) || ( function_exists( 'is_checkout' ) && is_checkout() ) || ( function_exists( 'is_account_page' ) && is_account_page() ) );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Adds Google's script from the page itself instead of enqueuing it, so
+	 * "Load later" can wait for the visitor's first scroll, tap or key press
+	 * (or 5 seconds) and "Hide on phones" skips the download there entirely.
+	 *
+	 * @param array<string, int|string> $config
+	 */
+	private function loader_js( array $config, bool $later, bool $skip_phones ): string {
+		return '(function(){'
+			. ( $skip_phones ? 'if(window.matchMedia&&window.matchMedia("(max-width: ' . self::PHONE_MAX_WIDTH . 'px)").matches){return;}' : '' )
+			. 'var started=false,loaded=false,events=["scroll","pointerdown","keydown","touchstart"];'
+			// start() throws if the widget already exists, e.g. a theme or another plugin started it too.
+			. 'function go(){if(started||!window.merchantwidget){return;}started=true;try{window.merchantwidget.start(' . wp_json_encode( $config ) . ');}catch(e){}}'
+			. 'function load(){if(loaded){return;}loaded=true;events.forEach(function(t){window.removeEventListener(t,load);});'
+			. 'var s=document.createElement("script");s.src=' . wp_json_encode( self::SCRIPT_URL ) . ';s.async=true;s.addEventListener("load",go);document.body.appendChild(s);}'
+			. ( $later ? 'events.forEach(function(t){window.addEventListener(t,load,{passive:true});});setTimeout(load,5000);' : 'load();' )
+			. '})();';
 	}
 
 	/**
@@ -218,6 +278,17 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		return '';
 	}
 
+	/** Offered in the pane for the merchant to apply, never used on its own. */
+	private function google_for_woocommerce_id(): string {
+		if ( ! get_option( self::GLA_SETUP_DONE_OPTION ) ) {
+			return '';
+		}
+
+		$id = get_option( self::GLA_MERCHANT_ID_OPTION );
+
+		return is_scalar( $id ) ? $this->sanitize_merchant_id( (string) $id ) : '';
+	}
+
 	/** The contact button sharing the bottom-right corner is the one collision this plugin can see. */
 	private function collides_with_contact_button(): bool {
 		if ( 'RIGHT_BOTTOM' !== $this->position() || ! Settings::is_enabled( 'whatsapp-fab' ) ) {
@@ -232,13 +303,16 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			// SettingsForm::verify() has confirmed the nonce and capability on the line above.
 			// phpcs:disable WordPress.Security.NonceVerification.Missing
 			$settings = array(
-				'position'      => ( isset( $_POST['rc_position'] ) && 'LEFT_BOTTOM' === sanitize_text_field( wp_unslash( $_POST['rc_position'] ) ) ) ? 'LEFT_BOTTOM' : 'RIGHT_BOTTOM',
-				'region'        => isset( $_POST['rc_region'] ) ? $this->sanitize_region( sanitize_text_field( wp_unslash( $_POST['rc_region'] ) ) ) : '',
-				'merchant_id'   => isset( $_POST['rc_merchant_id'] ) ? $this->sanitize_merchant_id( sanitize_textarea_field( wp_unslash( $_POST['rc_merchant_id'] ) ) ) : '',
-				'show_widget'   => isset( $_POST['rc_show_widget'] ),
-				'survey'        => isset( $_POST['rc_survey'] ),
-				'delivery_days' => isset( $_POST['rc_delivery_days'] ) ? max( 1, min( SurveyOptIn::DELIVERY_DAYS_MAX, absint( wp_unslash( $_POST['rc_delivery_days'] ) ) ) ) : SurveyOptIn::DELIVERY_DAYS_DEFAULT,
-				'survey_style'  => ( isset( $_POST['rc_survey_style'] ) && in_array( sanitize_text_field( wp_unslash( $_POST['rc_survey_style'] ) ), SurveyOptIn::STYLES, true ) ) ? sanitize_text_field( wp_unslash( $_POST['rc_survey_style'] ) ) : 'CENTER_DIALOG',
+				'position'       => ( isset( $_POST['rc_position'] ) && 'LEFT_BOTTOM' === sanitize_text_field( wp_unslash( $_POST['rc_position'] ) ) ) ? 'LEFT_BOTTOM' : 'RIGHT_BOTTOM',
+				'region'         => isset( $_POST['rc_region'] ) ? $this->sanitize_region( sanitize_text_field( wp_unslash( $_POST['rc_region'] ) ) ) : '',
+				'merchant_id'    => isset( $_POST['rc_merchant_id'] ) ? $this->sanitize_merchant_id( sanitize_textarea_field( wp_unslash( $_POST['rc_merchant_id'] ) ) ) : '',
+				'show_widget'    => isset( $_POST['rc_show_widget'] ),
+				'pages'          => ( isset( $_POST['rc_pages'] ) && in_array( sanitize_key( wp_unslash( $_POST['rc_pages'] ) ), self::PAGES, true ) ) ? sanitize_key( wp_unslash( $_POST['rc_pages'] ) ) : 'all',
+				'hide_on_phones' => isset( $_POST['rc_hide_on_phones'] ),
+				'load_later'     => isset( $_POST['rc_load_later'] ),
+				'survey'         => isset( $_POST['rc_survey'] ),
+				'delivery_days'  => isset( $_POST['rc_delivery_days'] ) ? max( 1, min( SurveyOptIn::DELIVERY_DAYS_MAX, absint( wp_unslash( $_POST['rc_delivery_days'] ) ) ) ) : SurveyOptIn::DELIVERY_DAYS_DEFAULT,
+				'survey_style'   => ( isset( $_POST['rc_survey_style'] ) && in_array( sanitize_text_field( wp_unslash( $_POST['rc_survey_style'] ) ), SurveyOptIn::STYLES, true ) ) ? sanitize_text_field( wp_unslash( $_POST['rc_survey_style'] ) ) : 'CENTER_DIALOG',
 			);
 			foreach ( array_keys( self::MARGIN_DEFAULTS ) as $key ) {
 				$margin           = isset( $_POST['rc_margin'][ $key ] ) ? $this->sanitize_margin( sanitize_text_field( wp_unslash( $_POST['rc_margin'][ $key ] ) ) ) : null;
@@ -248,7 +322,7 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
 		}
 
-		echo '<p>' . esc_html__( 'Shows Google\'s store widget, with your Merchant Center store rating, as a badge in a corner of every page.', 'romcommerce' ) . '</p>';
+		echo '<p>' . esc_html__( 'Shows Google\'s store widget, with your Merchant Center store rating, as a badge in a corner of every page. It can also ask customers, on the order confirmation page, to rate your store through Google Customer Reviews.', 'romcommerce' ) . '</p>';
 		echo '<p class="description">' . esc_html__( 'Before you turn it on: this website must already be claimed and verified in your Google Merchant Center account. This module does not create, claim or verify anything in Merchant Center, and the badge only shows what Google has for your store.', 'romcommerce' ) . '</p>';
 		echo '<p class="description">' . esc_html__( 'The widget loads a script from Google\'s servers for every visitor. Mention it in your privacy policy and, if you use one, your cookie banner.', 'romcommerce' ) . '</p>';
 
@@ -268,24 +342,60 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 		echo '<tr><th scope="row">' . esc_html__( 'Store badge', 'romcommerce' ) . '</th><td>';
 		echo '<label><input type="checkbox" name="rc_show_widget" value="1"' . checked( (bool) ( $settings['show_widget'] ?? true ), true, false ) . '> ';
-		echo esc_html__( 'Show the store widget with your rating on every page', 'romcommerce' ) . '</label></td></tr>';
+		echo esc_html__( 'Show the store widget with your rating', 'romcommerce' ) . '</label></td></tr>';
+
+		echo '<tr><th scope="row"><label for="rc-pages">' . esc_html__( 'Pages', 'romcommerce' ) . '</label></th><td><select id="rc-pages" name="rc_pages">';
+		$page_labels = array(
+			'all'         => __( 'Every page', 'romcommerce' ),
+			'no_checkout' => __( 'Every page except cart, checkout and account', 'romcommerce' ),
+			'shop'        => __( 'Shop, category and product pages only', 'romcommerce' ),
+		);
+		foreach ( $page_labels as $value => $label ) {
+			echo '<option value="' . esc_attr( $value ) . '"' . selected( $this->pages( $settings ), $value, false ) . '>' . esc_html( $label ) . '</option>';
+		}
+		echo '</select>';
+		echo '<p class="description">' . esc_html__( 'For the badge only. The review survey shows on the order confirmation page either way.', 'romcommerce' ) . '</p></td></tr>';
+
+		echo '<tr><th scope="row">' . esc_html__( 'Phones', 'romcommerce' ) . '</th><td>';
+		echo '<label><input type="checkbox" name="rc_hide_on_phones" value="1"' . checked( ! empty( $settings['hide_on_phones'] ), true, false ) . '> ';
+		echo esc_html__( 'Hide the badge on phones', 'romcommerce' ) . '</label>';
+		/* translators: %d: screen width in pixels */
+		echo '<p class="description">' . esc_html( sprintf( __( 'Screens up to %d pixels wide. Nothing is downloaded from Google there.', 'romcommerce' ), self::PHONE_MAX_WIDTH ) ) . '</p></td></tr>';
+
+		echo '<tr><th scope="row">' . esc_html__( 'Loading', 'romcommerce' ) . '</th><td>';
+		echo '<label><input type="checkbox" name="rc_load_later" value="1"' . checked( (bool) ( $settings['load_later'] ?? true ), true, false ) . '> ';
+		echo esc_html__( 'Load Google\'s script after the visitor\'s first scroll, tap or key press, or after 5 seconds', 'romcommerce' ) . '</label>';
+		echo '<p class="description">' . esc_html__( 'Keeps it out of the first page load, so pages open faster; the badge appears a moment later. Switched off, the script still loads deferred, after the page has been read.', 'romcommerce' ) . '</p></td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Position', 'romcommerce' ) . '</th><td>';
 		Placement::position_field(
 			'rc_position',
 			array(
-				'RIGHT_BOTTOM' => __( 'Bottom right', 'romcommerce' ),
 				'LEFT_BOTTOM'  => __( 'Bottom left', 'romcommerce' ),
+				'RIGHT_BOTTOM' => __( 'Bottom right', 'romcommerce' ),
 			),
 			$this->position()
 		);
 		echo '<p class="description">' . esc_html__( 'Bottom right is Google\'s default. Pick the corner that live-chat or contact buttons don\'t use. On phones, Google always centres the widget.', 'romcommerce' ) . '</p></td></tr>';
 
 		echo '<tr><th scope="row"><label for="rc-merchant-id">' . esc_html__( 'Merchant Center ID', 'romcommerce' ) . '</label></th><td>';
-		echo '<input type="text" id="rc-merchant-id" name="rc_merchant_id" value="' . esc_attr( $this->sanitize_merchant_id( (string) ( $settings['merchant_id'] ?? '' ) ) ) . '" class="regular-text" inputmode="numeric" placeholder="123456789">';
+		$merchant_id = $this->sanitize_merchant_id( (string) ( $settings['merchant_id'] ?? '' ) );
+		echo '<input type="text" id="rc-merchant-id" name="rc_merchant_id" value="' . esc_attr( $merchant_id ) . '" class="regular-text" inputmode="numeric" placeholder="123456789">';
+		$found = $this->google_for_woocommerce_id();
+		if ( '' !== $found && $found !== $merchant_id ) {
+			echo '<p>' . esc_html(
+				sprintf(
+					/* translators: %s: Merchant Center account ID */
+					__( 'Found in Google for WooCommerce: %s', 'romcommerce' ),
+					$found
+				)
+			) . ' <button type="button" class="button button-small" data-rc-fill="rc-merchant-id" data-rc-value="' . esc_attr( $found ) . '">' . esc_html__( 'Use this ID', 'romcommerce' ) . '</button></p>';
+		}
 		echo '<p class="description">' . esc_html__( 'Optional for the badge, required for the review survey below. Paste the ID, or the whole widget code from Merchant Center and the ID is taken from it. Left blank, Google finds your account from this site\'s address. If you fill it in, it must be the account that claimed this site\'s domain, or the badge does not show. An account can\'t show its rating on another domain.', 'romcommerce' ) . '</p></td></tr>';
 
 		echo '</tbody></table>';
+
+		$this->render_survey_settings( $settings );
 
 		echo '<details><summary>' . esc_html__( 'Advanced', 'romcommerce' ) . '</summary>';
 		echo '<p class="description">' . esc_html__( 'Distances from the edge of the screen, in pixels. Leave a field blank to use Google\'s default.', 'romcommerce' ) . '</p>';
@@ -301,8 +411,6 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		echo '<p class="description">' . esc_html__( 'A two-letter country code. RO shows your Romanian rating to every visitor. Left blank, Google uses the visitor\'s location instead, so visitors from a country where your store has no rating see no widget.', 'romcommerce' ) . '</p></td></tr>';
 		echo '</tbody></table></details>';
 
-		$this->render_survey_settings( $settings );
-
 		submit_button( __( 'Save changes', 'romcommerce' ) );
 		echo '</form>';
 	}
@@ -314,6 +422,7 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		echo '<h3>' . esc_html__( 'Google Customer Reviews survey', 'romcommerce' ) . '</h3>';
 		echo '<p class="description">' . esc_html__( 'After an order, Google\'s own dialog on the order confirmation page asks the customer whether they want a short survey by e-mail after delivery. Google Customer Reviews must be switched on in your Merchant Center account, and the Merchant Center ID above is required. It only shows on HTTPS pages.', 'romcommerce' ) . '</p>';
 		echo '<p class="description">' . esc_html__( 'Google runs Customer Reviews only in some countries, and its list (October 2026) doesn\'t include Romania. Check that your Merchant Center offers it before relying on it.', 'romcommerce' ) . ' <a href="https://support.google.com/merchants/answer/7125187" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Google\'s country list', 'romcommerce' ) . '</a></p>';
+		echo '<p class="description">' . esc_html__( 'To check it, place a new order on the live site. The dialog only shows on the confirmation page during the first hour after the order, so reopening an older order\'s confirmation page shows nothing.', 'romcommerce' ) . '</p>';
 		echo '<p class="description">' . esc_html__( 'When the dialog shows, the customer\'s browser sends Google the order number, the customer\'s e-mail address, the delivery country, the estimated delivery date and the products\' GTINs (when set). Mention it in your privacy policy. Google asks that every customer sees the dialog.', 'romcommerce' ) . '</p>';
 
 		if ( $survey && '' === $this->sanitize_merchant_id( (string) ( $settings['merchant_id'] ?? '' ) ) ) {
@@ -332,11 +441,11 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 		$style  = (string) ( $settings['survey_style'] ?? 'CENTER_DIALOG' );
 		$labels = array(
-			'CENTER_DIALOG'       => __( 'Centre of the screen (Google\'s default)', 'romcommerce' ),
-			'BOTTOM_RIGHT_DIALOG' => __( 'Bottom right', 'romcommerce' ),
 			'BOTTOM_LEFT_DIALOG'  => __( 'Bottom left', 'romcommerce' ),
-			'TOP_RIGHT_DIALOG'    => __( 'Top right', 'romcommerce' ),
+			'BOTTOM_RIGHT_DIALOG' => __( 'Bottom right', 'romcommerce' ),
 			'TOP_LEFT_DIALOG'     => __( 'Top left', 'romcommerce' ),
+			'TOP_RIGHT_DIALOG'    => __( 'Top right', 'romcommerce' ),
+			'CENTER_DIALOG'       => __( 'Centre of the screen (Google\'s default)', 'romcommerce' ),
 			'BOTTOM_TRAY'         => __( 'Bar along the bottom', 'romcommerce' ),
 		);
 		echo '<tr><th scope="row"><label for="rc-survey-style">' . esc_html__( 'Dialog position', 'romcommerce' ) . '</label></th><td><select id="rc-survey-style" name="rc_survey_style">';

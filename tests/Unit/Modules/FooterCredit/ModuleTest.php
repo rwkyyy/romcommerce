@@ -26,7 +26,7 @@ final class ModuleTest extends TestCase {
 		( new Module() )->render();
 		$html = (string) ob_get_clean();
 
-		self::assertStringContainsString( 'Magazin realizat cu <a href="https://romcommerce.ro/" rel="nofollow">RomCommerce</a>', $html );
+		self::assertStringContainsString( 'Comerț online mai simplu cu <a href="https://romcommerce.ro/?utm_source=plugin&utm_medium=footer" rel="nofollow">RomCommerce</a>', $html );
 		self::assertStringContainsString( 'text-align:center', $html );
 	}
 }

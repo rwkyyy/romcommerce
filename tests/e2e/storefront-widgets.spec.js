@@ -154,6 +154,9 @@ test.describe( 'Google Merchant Center widget @frontend', () => {
 		);
 
 		await page.goto( '/product/produs-test/' );
+		// "Load later" is on by default: the script waits for the first key
+		// press, tap or scroll, with a 5 s fallback as long as the poll below.
+		await page.keyboard.press( 'Shift' );
 
 		await expect.poll( () => page.evaluate( () => window.__rcStarts ) ).toEqual( [
 			{ position: 'LEFT_BOTTOM', bottomMargin: 90, region: 'RO' },
@@ -232,7 +235,7 @@ test.describe( 'Show some love @frontend', () => {
 		setEnabled( true );
 		await page.goto( '/' );
 		const link = page.locator( 'footer #romcommerce-footer-credit a' );
-		await expect( link ).toHaveAttribute( 'href', 'https://romcommerce.ro/' );
+		await expect( link ).toHaveAttribute( 'href', 'https://romcommerce.ro/?utm_source=plugin&utm_medium=footer' );
 		await expect( link ).toHaveAttribute( 'rel', 'nofollow' );
 	} );
 } );

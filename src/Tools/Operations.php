@@ -6,11 +6,14 @@ namespace RomCommerce\Tools;
 
 use InvalidArgumentException;
 use RomCommerce\Admin\ModuleRegistry;
+use RomCommerce\Modules\AvailabilitySorting\Module as AvailabilitySorting;
 use RomCommerce\Modules\CouponCleanup\Module as CouponCleanup;
 use RomCommerce\Modules\Maof\PhoneIndex;
+use RomCommerce\Modules\OutOfStockCleanup\Module as OutOfStockCleanup;
 use RomCommerce\Modules\PriceHistory\Baseline;
 use RomCommerce\Modules\PriceHistory\Module as PriceHistory;
 use RomCommerce\Modules\SaleCategorySync\Module as SaleCategorySync;
+use RomCommerce\Modules\SkuGenerator\Module as SkuGenerator;
 use RomCommerce\Modules\StoreReport\Module as StoreReport;
 use RomCommerce\Modules\VatRates\Importer;
 use RomCommerce\Modules\VatRates\Module as VatRatesModule;
@@ -42,6 +45,9 @@ final class Operations {
 		'sale-category-resync'   => 'sale-category-sync',
 		'coupon-cleanup'         => 'coupon-cleanup',
 		'store-report'           => 'store-report',
+		'sku-fill'               => 'sku-generator',
+		'out-of-stock-cleanup'   => 'out-of-stock-cleanup',
+		'discount-sorting'       => 'availability-sorting',
 	);
 
 	/** Safety stop for the batch loops; a batch is 100 orders or products. */
@@ -182,6 +188,38 @@ final class Operations {
 			case 'store-report':
 				if ( $module instanceof StoreReport ) {
 					return array( 'sent' => $module->send_now() );
+				}
+				break;
+
+			case 'sku-fill':
+				if ( ! $module instanceof SkuGenerator ) {
+					break;
+				}
+				$backfill = $module->backfill();
+				$backfill->start();
+				$batches = 1;
+				while ( $backfill->state()['running'] && $batches < self::MAX_BATCHES && $in_time() ) {
+					$backfill->run_batch();
+					++$batches;
+				}
+				return array(
+					'batches'  => $batches,
+					'filled'   => $backfill->state()['filled'],
+					'complete' => ! $backfill->state()['running'],
+				);
+
+			case 'out-of-stock-cleanup':
+				if ( $module instanceof OutOfStockCleanup ) {
+					return $module->run_now( $in_time );
+				}
+				break;
+
+			case 'discount-sorting':
+				if ( $module instanceof AvailabilitySorting ) {
+					if ( ! $module->discount()->enabled() ) {
+						throw new InvalidArgumentException( __( 'Sort by discount is switched off in Catalog Sorting.', 'romcommerce' ) );
+					}
+					return $module->discount()->run_now( $in_time );
 				}
 				break;
 		}

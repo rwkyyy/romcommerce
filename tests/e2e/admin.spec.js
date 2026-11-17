@@ -90,7 +90,7 @@ test.describe( 'RomCommerce admin', () => {
 	} );
 
 	test( 'MAOF settings show how far the phone index backfill has got', async ( { page } ) => {
-		const pane = '/wp-admin/admin.php?page=romcommerce&tab=modules&category=compliance-legal&module=maof';
+		const pane = '/wp-admin/admin.php?page=romcommerce&tab=modules&category=orders-fulfilment&module=maof';
 
 		setOption( 'romcommerce_maof_phone_index', { complete: false, page: 2, done: 40, total: 160 } );
 		await page.goto( pane );
@@ -166,7 +166,7 @@ test.describe( 'Weekly store report', () => {
 } );
 
 test.describe( 'Free shipping bar shape and thickness', () => {
-	const pane = '/wp-admin/admin.php?page=romcommerce&tab=modules&category=storefront-merchandising&module=free-shipping-bar';
+	const pane = '/wp-admin/admin.php?page=romcommerce&tab=modules&category=cart-fees&module=free-shipping-bar';
 	let saved;
 	test.beforeAll( () => {
 		saved = wp( [ 'eval', "echo wp_json_encode( get_option( 'romcommerce_free_shipping_bar', null ) );" ] );
@@ -196,7 +196,7 @@ test.describe( 'Free shipping bar shape and thickness', () => {
 } );
 
 test.describe( 'Contact FAB icons and shape', () => {
-	const pane = '/wp-admin/admin.php?page=romcommerce&tab=modules&category=storefront-merchandising&module=whatsapp-fab';
+	const pane = '/wp-admin/admin.php?page=romcommerce&tab=modules&category=reviews-trust&module=whatsapp-fab';
 	let saved;
 	test.beforeAll( () => {
 		saved = wp( [ 'option', 'get', 'romcommerce_whatsapp_fab', '--format=json' ] );
@@ -246,7 +246,10 @@ test.describe( 'Payment method filter on the orders list', () => {
 		await page.goto( `/wp-admin/${ orders.url }` );
 		const select = page.locator( '#filter-by-rc-payment-method' );
 		await expect( select ).toBeVisible();
-		await expect( select.locator( 'option[value="bacs"]' ) ).toHaveCount( 1 );
+		// The fixture store switches on cash on delivery only, and by default
+		// only switched-on methods are listed.
+		await expect( select.locator( 'option[value="cod"]' ) ).toHaveCount( 1 );
+		await expect( select.locator( 'option[value="bacs"]' ) ).toHaveCount( 0 );
 
 		await select.selectOption( 'cod' );
 		await page.locator( '#order-query-submit, #post-query-submit' ).first().click();

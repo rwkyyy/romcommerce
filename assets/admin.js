@@ -256,6 +256,19 @@
 	} );
 
 	app.addEventListener( 'click', function ( event ) {
+		var button = event.target.closest( '[data-rc-fill]' );
+		if ( ! button || ! app.contains( button ) ) {
+			return;
+		}
+
+		var input = document.getElementById( button.getAttribute( 'data-rc-fill' ) );
+		if ( input ) {
+			input.value = button.getAttribute( 'data-rc-value' ) || '';
+			input.focus();
+		}
+	} );
+
+	app.addEventListener( 'click', function ( event ) {
 		if ( event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			return;
 		}

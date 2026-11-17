@@ -23,6 +23,10 @@ final class WelcomeNotice {
 	public function register(): void {
 		add_action( 'admin_init', array( $this, 'maybe_dismiss' ) );
 		add_action( 'admin_notices', array( $this, 'render' ) );
+		// Every module save (grid toggle or a module's own form) goes through
+		// Settings::set_enabled(), so this is the merchant having found the
+		// panel the notice points at.
+		add_action( 'romcommerce/module_toggled', array( $this, 'dismiss' ) );
 	}
 
 	public function maybe_dismiss(): void {
@@ -32,10 +36,18 @@ final class WelcomeNotice {
 
 		check_admin_referer( self::NONCE );
 
-		update_option( self::OPTION, true, false );
+		$this->dismiss();
 
 		wp_safe_redirect( remove_query_arg( array( self::QUERY_ARG, '_wpnonce' ) ) );
 		exit;
+	}
+
+	public function dismiss(): void {
+		if ( get_option( self::OPTION ) ) {
+			return;
+		}
+
+		update_option( self::OPTION, true, false );
 	}
 
 	public function render(): void {

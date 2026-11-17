@@ -23,7 +23,7 @@ final class ModuleRegistry {
 	 * Category ids in nav order. Labels live in categories(): a constant
 	 * expression can't call __(), and these are shown in the translated admin.
 	 */
-	private const CATEGORY_IDS = array( 'compliance-legal', 'checkout-billing', 'orders-fulfilment', 'storefront-merchandising', 'admin-branding' );
+	private const CATEGORY_IDS = array( 'compliance-legal', 'checkout-billing', 'cart-fees', 'orders-fulfilment', 'products-catalogue', 'reviews-trust', 'admin-branding' );
 
 	private const MODULES = array(
 		// Compliance & Legal
@@ -39,22 +39,6 @@ final class ModuleRegistry {
 			'tier'     => 'lite',
 			'category' => 'compliance-legal',
 		),
-		'pf-pj-billing'              => array(
-			'tier'     => 'lite',
-			'category' => 'compliance-legal',
-		),
-		'vat-id-validation'          => array(
-			'tier'     => 'lite',
-			'category' => 'compliance-legal',
-		),
-		'maof'                       => array(
-			'tier'     => 'lite',
-			'category' => 'compliance-legal',
-		),
-		'reviewer-names'             => array(
-			'tier'     => 'lite',
-			'category' => 'compliance-legal',
-		),
 		'compliance-checklist'       => array(
 			'tier'     => 'pro',
 			'category' => 'compliance-legal',
@@ -65,12 +49,16 @@ final class ModuleRegistry {
 		),
 
 		// Checkout & Billing
-		'counties-postcodes'         => array(
+		'pf-pj-billing'              => array(
 			'tier'     => 'lite',
 			'category' => 'checkout-billing',
 		),
-		'address-autocomplete'       => array(
-			'tier'     => 'pro',
+		'vat-id-validation'          => array(
+			'tier'     => 'lite',
+			'category' => 'checkout-billing',
+		),
+		'counties-postcodes'         => array(
+			'tier'     => 'lite',
 			'category' => 'checkout-billing',
 		),
 		'phone-validation'           => array(
@@ -81,32 +69,70 @@ final class ModuleRegistry {
 			'tier'     => 'lite',
 			'category' => 'checkout-billing',
 		),
+		'eu-countries'               => array(
+			'tier'     => 'lite',
+			'category' => 'checkout-billing',
+		),
+		'address-autocomplete'       => array(
+			'tier'     => 'pro',
+			'category' => 'checkout-billing',
+		),
 		'email-verification'         => array(
 			'tier'     => 'pro',
 			'category' => 'checkout-billing',
 		),
+
+		// Cart & Fees
+		'cod-fee'                    => array(
+			'tier'     => 'lite',
+			'category' => 'cart-fees',
+		),
 		'hide-voucher'               => array(
 			'tier'     => 'lite',
-			'category' => 'checkout-billing',
+			'category' => 'cart-fees',
 		),
 		'coupon-cleanup'             => array(
 			'tier'     => 'lite',
-			'category' => 'checkout-billing',
+			'category' => 'cart-fees',
+		),
+		'free-shipping-bar'          => array(
+			'tier'     => 'lite',
+			'category' => 'cart-fees',
+		),
+		'clear-cart'                 => array(
+			'tier'     => 'lite',
+			'category' => 'cart-fees',
 		),
 		'emergency-delivery-fees'    => array(
 			'tier'     => 'pro',
-			'category' => 'checkout-billing',
+			'category' => 'cart-fees',
 		),
 		'deposits-custom-pricing'    => array(
 			'tier'     => 'pro',
-			'category' => 'checkout-billing',
+			'category' => 'cart-fees',
 		),
 		'gift-wrap'                  => array(
 			'tier'     => 'pro',
-			'category' => 'checkout-billing',
+			'category' => 'cart-fees',
 		),
 
 		// Orders & Fulfilment
+		'maof'                       => array(
+			'tier'     => 'lite',
+			'category' => 'orders-fulfilment',
+		),
+		'multi-address'              => array(
+			'tier'     => 'lite',
+			'category' => 'orders-fulfilment',
+		),
+		'order-payment-filter'       => array(
+			'tier'     => 'lite',
+			'category' => 'orders-fulfilment',
+		),
+		'store-report'               => array(
+			'tier'     => 'lite',
+			'category' => 'orders-fulfilment',
+		),
 		'order-confirmation'         => array(
 			'tier'     => 'pro',
 			'category' => 'orders-fulfilment',
@@ -127,67 +153,61 @@ final class ModuleRegistry {
 			'tier'     => 'pro',
 			'category' => 'orders-fulfilment',
 		),
-		'multi-address'              => array(
-			'tier'     => 'lite',
-			'category' => 'orders-fulfilment',
-		),
-		'store-report'               => array(
-			'tier'     => 'lite',
-			'category' => 'orders-fulfilment',
-		),
-		'order-payment-filter'       => array(
-			'tier'     => 'lite',
-			'category' => 'orders-fulfilment',
-		),
 
-		// Storefront & Merchandising
-		'free-shipping-bar'          => array(
+		// Products & Catalogue
+		'availability-sorting'       => array(
 			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
+			'category' => 'products-catalogue',
+		),
+		'out-of-stock-cleanup'       => array(
+			'tier'     => 'lite',
+			'category' => 'products-catalogue',
+		),
+		'sku-generator'              => array(
+			'tier'     => 'lite',
+			'category' => 'products-catalogue',
 		),
 		'sale-category-sync'         => array(
 			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
+			'category' => 'products-catalogue',
 		),
 		'recommended-price'          => array(
 			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
+			'category' => 'products-catalogue',
 		),
 		'related-products'           => array(
 			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
-		),
-		'availability-sorting'       => array(
-			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
+			'category' => 'products-catalogue',
 		),
 		'frequently-bought-together' => array(
 			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
+			'category' => 'products-catalogue',
 		),
+
+		// Reviews & Trust
 		'review-page'                => array(
 			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
+			'category' => 'reviews-trust',
 		),
 		'reviews-showcase'           => array(
 			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
+			'category' => 'reviews-trust',
 		),
-		'whatsapp-fab'               => array(
+		'reviewer-names'             => array(
 			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
-		),
-		'clear-cart'                 => array(
-			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
-		),
-		'merchant-widget'            => array(
-			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
+			'category' => 'reviews-trust',
 		),
 		'perks-shop'                 => array(
 			'tier'     => 'lite',
-			'category' => 'storefront-merchandising',
+			'category' => 'reviews-trust',
+		),
+		'merchant-widget'            => array(
+			'tier'     => 'lite',
+			'category' => 'reviews-trust',
+		),
+		'whatsapp-fab'               => array(
+			'tier'     => 'lite',
+			'category' => 'reviews-trust',
 		),
 
 		// Admin & Branding
@@ -204,14 +224,31 @@ final class ModuleRegistry {
 		),
 	);
 
+	/**
+	 * Modules that do one job between them but stay separate, so each can be
+	 * switched on alone (owner, 2026-11-09: linked rather than merged). Each
+	 * pane links to the others in its set.
+	 */
+	private const RELATED = array(
+		array( 'pf-pj-billing', 'vat-id-validation' ),
+		array( 'vat-rates', 'eu-countries' ),
+		array( 'hide-voucher', 'coupon-cleanup' ),
+		array( 'availability-sorting', 'out-of-stock-cleanup' ),
+		array( 'availability-sorting', 'price-history' ),
+		array( 'related-products', 'frequently-bought-together' ),
+		array( 'review-page', 'reviews-showcase', 'reviewer-names' ),
+	);
+
 	/** @return array<string, string> category id => translated label, in nav order. */
 	public static function categories(): array {
 		$labels = array(
-			'compliance-legal'         => __( 'Compliance & Legal', 'romcommerce' ),
-			'checkout-billing'         => __( 'Checkout & Billing', 'romcommerce' ),
-			'orders-fulfilment'        => __( 'Orders & Fulfilment', 'romcommerce' ),
-			'storefront-merchandising' => __( 'Storefront & Merchandising', 'romcommerce' ),
-			'admin-branding'           => __( 'Admin & Branding', 'romcommerce' ),
+			'compliance-legal'   => __( 'Compliance & Legal', 'romcommerce' ),
+			'checkout-billing'   => __( 'Checkout & Billing', 'romcommerce' ),
+			'cart-fees'          => __( 'Cart & Fees', 'romcommerce' ),
+			'orders-fulfilment'  => __( 'Orders & Fulfilment', 'romcommerce' ),
+			'products-catalogue' => __( 'Products & Catalogue', 'romcommerce' ),
+			'reviews-trust'      => __( 'Reviews & Trust', 'romcommerce' ),
+			'admin-branding'     => __( 'Admin & Branding', 'romcommerce' ),
 		);
 
 		return array_intersect_key( $labels, array_flip( self::CATEGORY_IDS ) );
@@ -267,7 +304,7 @@ final class ModuleRegistry {
 			),
 			'counties-postcodes'         => array(
 				'label'       => __( 'Counties & Postcodes', 'romcommerce' ),
-				'description' => __( 'Romanian county and postcode base data for checkout address fields.', 'romcommerce' ),
+				'description' => __( 'Romanian county and postcode base data for checkout address fields, with an optional locality list for the chosen county.', 'romcommerce' ),
 			),
 			'address-autocomplete'       => array(
 				'label'       => __( 'Address Autocomplete', 'romcommerce' ),
@@ -281,17 +318,25 @@ final class ModuleRegistry {
 				'label'       => __( 'EU VAT Rates Import', 'romcommerce' ),
 				'description' => __( 'Imports EU member states\' VAT rates into WooCommerce\'s tax tables, for cross-border sales under OSS.', 'romcommerce' ),
 			),
+			'eu-countries'               => array(
+				'label'       => __( 'EU Countries', 'romcommerce' ),
+				'description' => __( 'A checklist of the EU countries against your selling and shipping locations and shipping zones, with buttons that add the missing ones, including an EU shipping zone.', 'romcommerce' ),
+			),
 			'email-verification'         => array(
 				'label'       => __( 'Email Verification', 'romcommerce' ),
 				'description' => __( 'Checks whether a checkout email address is deliverable, without blocking submission.', 'romcommerce' ),
 			),
 			'hide-voucher'               => array(
-				'label'       => __( 'Hide Voucher at Checkout', 'romcommerce' ),
-				'description' => __( 'Hides the coupon/voucher field from the checkout page.', 'romcommerce' ),
+				'label'       => __( 'Hide Coupon at Checkout', 'romcommerce' ),
+				'description' => __( 'Hides the coupon field from the checkout page.', 'romcommerce' ),
 			),
 			'coupon-cleanup'             => array(
 				'label'       => __( 'Coupon Cleanup', 'romcommerce' ),
 				'description' => __( 'Automatically trashes expired coupons daily, with an option to permanently empty the coupon trash after a set number of days.', 'romcommerce' ),
+			),
+			'cod-fee'                    => array(
+				'label'       => __( 'Cash on Delivery Fee', 'romcommerce' ),
+				'description' => __( 'Adds a fee to orders paid by cash on delivery, shown as its own line in the order totals before the order is placed.', 'romcommerce' ),
 			),
 			'emergency-delivery-fees'    => array(
 				'label'       => __( 'Emergency Delivery Fees', 'romcommerce' ),
@@ -337,13 +382,17 @@ final class ModuleRegistry {
 				'label'       => __( 'Payment Method Filter', 'romcommerce' ),
 				'description' => __( 'A payment method dropdown on the WooCommerce orders list, next to the date and customer filters.', 'romcommerce' ),
 			),
+			'sku-generator'              => array(
+				'label'       => __( 'SKU Generator', 'romcommerce' ),
+				'description' => __( 'Gives products and variations saved without a SKU one, from a prefix and the product ID, name or a running number, and fills in the SKUs missing from existing products.', 'romcommerce' ),
+			),
 			'free-shipping-bar'          => array(
 				'label'       => __( 'Free Shipping Bar', 'romcommerce' ),
 				'description' => __( 'A progress indicator showing how much more to spend for free shipping.', 'romcommerce' ),
 			),
 			'sale-category-sync'         => array(
-				'label'       => __( 'Sale Category Sync', 'romcommerce' ),
-				'description' => __( 'Keeps a "Sale" product category in sync with products currently on sale.', 'romcommerce' ),
+				'label'       => __( 'Category Sync', 'romcommerce' ),
+				'description' => __( 'Keeps a sale category filled with products on sale and a new products category with recently published products.', 'romcommerce' ),
 			),
 			'recommended-price'          => array(
 				'label'       => __( 'Recommended Retail Price', 'romcommerce' ),
@@ -354,8 +403,12 @@ final class ModuleRegistry {
 				'description' => __( 'Rule-based control over which related products are shown.', 'romcommerce' ),
 			),
 			'availability-sorting'       => array(
-				'label'       => __( 'Availability Sorting', 'romcommerce' ),
-				'description' => __( 'Moves out-of-stock products to the end of catalog listings, keeping your sort order within each group.', 'romcommerce' ),
+				'label'       => __( 'Catalog Sorting', 'romcommerce' ),
+				'description' => __( 'Out-of-stock products last and a "Sort by discount" order, each with its own switch.', 'romcommerce' ),
+			),
+			'out-of-stock-cleanup'       => array(
+				'label'       => __( 'Out-of-Stock Product Cleanup', 'romcommerce' ),
+				'description' => __( 'Moves published products that have been out of stock and unchanged for the months you choose to the trash, once a day.', 'romcommerce' ),
 			),
 			'frequently-bought-together' => array(
 				'label'       => __( 'Frequently Bought Together', 'romcommerce' ),
@@ -379,7 +432,7 @@ final class ModuleRegistry {
 			),
 			'merchant-widget'            => array(
 				'label'       => __( 'Google Merchant Center Widget', 'romcommerce' ),
-				'description' => __( 'Google\'s store widget with your Merchant Center store rating, as a badge in a corner of every page.', 'romcommerce' ),
+				'description' => __( 'Google\'s store widget with your Merchant Center store rating, as a badge in a corner of every page, and Google Customer Reviews\' survey opt-in after an order.', 'romcommerce' ),
 			),
 			'perks-shop'                 => array(
 				'label'       => __( 'Perks Shop', 'romcommerce' ),
@@ -391,7 +444,7 @@ final class ModuleRegistry {
 			),
 			'footer-credit'              => array(
 				'label'       => __( 'Show Some Love', 'romcommerce' ),
-				'description' => __( 'An optional "Magazin realizat cu RomCommerce" credit in your site footer. Off unless you switch it on.', 'romcommerce' ),
+				'description' => __( 'An optional "Comerț online mai simplu cu RomCommerce" credit in your site footer, on your login page, or both. Off unless you switch it on.', 'romcommerce' ),
 			),
 		);
 
@@ -443,6 +496,18 @@ final class ModuleRegistry {
 	/** @return array{tier: string, category: string, label: string, description: string}|null */
 	public static function get( string $module_id ): ?array {
 		return isset( self::MODULES[ $module_id ] ) ? self::MODULES[ $module_id ] + self::copy( $module_id ) : null;
+	}
+
+	/** @return list<string> The other module ids in every related set this module is in. */
+	public static function related( string $module_id ): array {
+		$related = array();
+		foreach ( self::RELATED as $set ) {
+			if ( in_array( $module_id, $set, true ) ) {
+				$related = array_merge( $related, $set );
+			}
+		}
+
+		return array_values( array_diff( array_unique( $related ), array( $module_id ) ) );
 	}
 
 	/** Whether a module may only be switched on from its own settings pane. */

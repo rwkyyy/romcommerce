@@ -45,7 +45,12 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	private const ATC_SHAPES = array( 'rounded', 'pill', 'square' );
 
 	/** WhatsApp's brand green (owner, 2026-10-14). atc_text_color() puts black text on it: white is only 2:1. */
-	private const ATC_DEFAULT_COLOR = '#25D366';
+	private const ATC_DEFAULT_COLOR = '#0C7A5F';
+
+	private const LEGACY_WHATSAPP_COLOR = '#25D366';
+
+	/** Written with every save from 0.9 on, see settings(). */
+	private const COLOR_DEFAULTS = 2;
 
 	public function id(): string {
 		return self::ID;
@@ -206,7 +211,7 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 
 		echo '<li>';
 		echo '<a class="romcommerce-fab-channel" style="background:' . esc_attr( $this->resolve_color( $channel, $stored ) ) . '" href="' . esc_url( $href ) . '"';
-		if ( Channels::KIND_URL === $channel['kind'] ) {
+		if ( in_array( $channel['kind'], array( Channels::KIND_URL, Channels::KIND_WAZE, Channels::KIND_MAP ), true ) ) {
 			echo ' target="_blank" rel="noopener noreferrer"';
 		}
 		echo ' aria-label="' . esc_attr( $label ) . '"' . $extra_attrs . '>'; // phpcs:ignore WordPress.Security.EscapeOutput -- $extra_attrs built from esc_attr above
@@ -285,6 +290,14 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 			return '' === $text ? 'mailto:' . $email : 'mailto:' . $email . '?body=' . rawurlencode( $text );
 		}
 
+		if ( Channels::KIND_WAZE === $kind ) {
+			return $this->waze_href( $value );
+		}
+
+		if ( Channels::KIND_MAP === $kind ) {
+			return $this->is_link( $value ) ? esc_url_raw( $value ) : 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $value );
+		}
+
 		$url = esc_url_raw( $value );
 		if ( '' === $url || empty( Channels::catalog()[ $id ]['supports_message'] ) ) {
 			return $url;
@@ -295,6 +308,27 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		// add_query_arg() URL-encodes the value itself; passing an already-encoded
 		// string here would double-encode it.
 		return '' === $text ? $url : add_query_arg( 'text', $text, $url );
+	}
+
+	/**
+	 * Merchants often have an address or coordinates rather than a Waze link,
+	 * so those are turned into one; a link is used as entered.
+	 */
+	private function waze_href( string $value ): string {
+		if ( $this->is_link( $value ) ) {
+			return esc_url_raw( $value );
+		}
+
+		if ( preg_match( '/^(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)$/', $value, $coordinates ) ) {
+			return 'https://waze.com/ul?ll=' . $coordinates[1] . ',' . $coordinates[2] . '&navigate=yes';
+		}
+
+		return 'https://waze.com/ul?q=' . rawurlencode( $value ) . '&navigate=yes';
+	}
+
+	/** A full URL, or a bare domain link such as "maps.app.goo.gl/…" or "waze.com/ul?…". */
+	private function is_link( string $value ): bool {
+		return 1 === preg_match( '#^(https?://|[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}/)#i', $value );
 	}
 
 	/**
@@ -373,9 +407,11 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	 * @return array<string, array{label: string, color: string, kind: string, hint: string, icon: string, text: string, supports_message: bool}>
 	 */
 	private function active_channels(): array {
-		$active = array();
-		foreach ( Channels::catalog() as $id => $channel ) {
-			$stored = $this->channel_settings( $id );
+		$catalog = Channels::catalog();
+		$active  = array();
+		foreach ( $this->channel_order() as $id ) {
+			$channel = $catalog[ $id ];
+			$stored  = $this->channel_settings( $id );
 			if ( empty( $stored['enabled'] ) || '' === trim( (string) ( $stored['value'] ?? '' ) ) ) {
 				continue;
 			}
@@ -385,9 +421,82 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		return $active;
 	}
 
+	/**
+	 * Every channel ID exactly once: the saved order first, then any channel
+	 * it doesn't list yet (stores saved before ordering existed, or channels
+	 * added later) in catalog order.
+	 *
+	 * @param array<int|string, mixed>|null $requested Defaults to the saved order.
+	 * @return array<int, string>
+	 */
+	private function channel_order( ?array $requested = null ): array {
+		if ( null === $requested ) {
+			$saved     = $this->settings()['channel_order'] ?? array();
+			$requested = is_array( $saved ) ? $saved : array();
+		}
+
+		$catalog = array_keys( Channels::catalog() );
+		$order   = array();
+		foreach ( $requested as $id ) {
+			if ( is_string( $id ) && in_array( $id, $catalog, true ) && ! in_array( $id, $order, true ) ) {
+				$order[] = $id;
+			}
+		}
+
+		return array_merge( $order, array_values( array_diff( $catalog, $order ) ) );
+	}
+
+	/**
+	 * The full order after a save: the active channels as the pane listed
+	 * them, with a no-JavaScript "id:up" / "id:down" move applied, then every
+	 * other channel in its previous order.
+	 *
+	 * @param array<int, string> $listed Channel IDs from the pane's order list.
+	 * @return array<int, string>
+	 */
+	private function saved_channel_order( array $listed, string $move ): array {
+		$listed = array_values( array_intersect( $this->channel_order( $listed ), $listed ) );
+
+		$pieces = explode( ':', $move );
+		$from   = 2 === count( $pieces ) ? array_search( $pieces[0], $listed, true ) : false;
+		if ( false !== $from && in_array( $pieces[1], array( 'up', 'down' ), true ) ) {
+			$to = 'up' === $pieces[1] ? $from - 1 : $from + 1;
+			if ( $to >= 0 && $to < count( $listed ) ) {
+				$listed[ $from ] = $listed[ $to ];
+				$listed[ $to ]   = $pieces[0];
+			}
+		}
+
+		return $this->channel_order( array_merge( $listed, $this->channel_order() ) );
+	}
+
+	/**
+	 * Before 0.9 a colour field saved the default it showed, so stores that
+	 * saved this pane hold WhatsApp's old #25D366 as a choice. Settings saved
+	 * without the color_defaults marker read that colour as unset and get the
+	 * new default (owner, 2026-11-18); #25D366 picked since then is kept.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function settings(): array {
+		$settings = Settings::get( self::ID );
+		if ( (int) ( $settings['color_defaults'] ?? 0 ) >= self::COLOR_DEFAULTS ) {
+			return $settings;
+		}
+
+		if ( 0 === strcasecmp( (string) ( $settings['atc_color'] ?? '' ), self::LEGACY_WHATSAPP_COLOR ) ) {
+			$settings['atc_color'] = '';
+		}
+		if ( isset( $settings['channels']['whatsapp'] ) && is_array( $settings['channels']['whatsapp'] ) && 0 === strcasecmp( (string) ( $settings['channels']['whatsapp']['color'] ?? '' ), self::LEGACY_WHATSAPP_COLOR ) ) {
+			$settings['channels']['whatsapp']['color'] = '';
+		}
+
+		return $settings;
+	}
+
 	/** @return array<string, mixed> */
 	private function channel_settings( string $id ): array {
-		$channels = Settings::get( self::ID )['channels'] ?? array();
+		$channels = $this->settings()['channels'] ?? array();
 		if ( ! is_array( $channels ) || ! isset( $channels[ $id ] ) || ! is_array( $channels[ $id ] ) ) {
 			return array();
 		}
@@ -396,33 +505,33 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	}
 
 	private function position(): string {
-		return (string) ( Settings::get( self::ID )['position'] ?? 'left' );
+		return (string) ( $this->settings()['position'] ?? 'left' );
 	}
 
 	private function toggle_color(): string {
-		$color = $this->sanitize_hex_color( (string) ( Settings::get( self::ID )['toggle_color'] ?? '' ) );
+		$color = $this->sanitize_hex_color( (string) ( $this->settings()['toggle_color'] ?? '' ) );
 
 		return '' !== $color ? $color : '#303f9f';
 	}
 
 	private function shape(): string {
-		$shape = (string) ( Settings::get( self::ID )['shape'] ?? '' );
+		$shape = (string) ( $this->settings()['shape'] ?? '' );
 
 		return in_array( $shape, self::SHAPES, true ) ? $shape : 'circle';
 	}
 
 	private function atc_shape(): string {
-		$shape = (string) ( Settings::get( self::ID )['atc_shape'] ?? '' );
+		$shape = (string) ( $this->settings()['atc_shape'] ?? '' );
 
 		return in_array( $shape, self::ATC_SHAPES, true ) ? $shape : 'rounded';
 	}
 
 	private function cycle_icons(): bool {
-		return ! empty( Settings::get( self::ID )['cycle_icons'] );
+		return ! empty( $this->settings()['cycle_icons'] );
 	}
 
 	private function atc_enabled(): bool {
-		return ! empty( Settings::get( self::ID )['atc_button'] );
+		return ! empty( $this->settings()['atc_button'] );
 	}
 
 	private function atc_button_ready(): bool {
@@ -430,13 +539,13 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	}
 
 	private function atc_label(): string {
-		$label = trim( (string) ( Settings::get( self::ID )['atc_label'] ?? '' ) );
+		$label = trim( (string) ( $this->settings()['atc_label'] ?? '' ) );
 
 		return '' !== $label ? $label : __( 'Ask on WhatsApp', 'romcommerce' );
 	}
 
 	private function atc_color(): string {
-		$color = $this->sanitize_hex_color( (string) ( Settings::get( self::ID )['atc_color'] ?? '' ) );
+		$color = $this->sanitize_hex_color( (string) ( $this->settings()['atc_color'] ?? '' ) );
 
 		return '' !== $color ? $color : self::ATC_DEFAULT_COLOR;
 	}
@@ -480,9 +589,17 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		// bare elements through a body class (Elementor's ".elementor-kit-N button"
 		// sets border-radius:0, padding and background-color), which outranks a
 		// single class and flattened the toggle into an off-colour square.
-		return '#romcommerce-fab{position:fixed;z-index:9999;bottom:20px;display:flex;flex-direction:column;}'
-			. '#romcommerce-fab.pos-left{left:20px;align-items:flex-start;}'
-			. '#romcommerce-fab.pos-right{right:20px;align-items:flex-end;}'
+		//
+		// The edge distances copy where the Google Merchant Center badge appears
+		// at its default margins, so the two line up: 36px above 480px wide; 16px
+		// side and 46px bottom on narrower screens, where Google centres the badge;
+		// 16px bottom on screens under 480px tall. Same breakpoints as
+		// merchantwidget.js.
+		return '#romcommerce-fab{position:fixed;z-index:9999;bottom:36px;display:flex;flex-direction:column;}'
+			. '#romcommerce-fab.pos-left{left:36px;align-items:flex-start;}'
+			. '#romcommerce-fab.pos-right{right:36px;align-items:flex-end;}'
+			. '@media (max-width:480px){#romcommerce-fab{bottom:46px;}#romcommerce-fab.pos-left{left:16px;}#romcommerce-fab.pos-right{right:16px;}}'
+			. '@media (max-height:479px){#romcommerce-fab{bottom:16px;}}'
 			. '#romcommerce-fab .romcommerce-fab-toggle{width:56px;height:56px;min-width:0;min-height:0;margin:0;padding:0;border-radius:' . $radius . ';border:0;cursor:pointer;background:' . $toggle_color . ';color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.3);}'
 			// A theme's own global a:hover/a:active (or button:hover) rule otherwise
 			// wins the cascade over our plain :hover-less colours above, repainting
@@ -579,6 +696,10 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 				isset( $_POST['rc_cycle_icons'] ),
 				isset( $_POST['rc_shape'] ) ? sanitize_key( wp_unslash( $_POST['rc_shape'] ) ) : '',
 				$this->parse_channels( ( isset( $_POST['rc_channel'] ) && is_array( $_POST['rc_channel'] ) ) ? wp_unslash( $_POST['rc_channel'] ) : array() ),
+				$this->saved_channel_order(
+					isset( $_POST['rc_channel_order'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['rc_channel_order'] ) ) : array(),
+					isset( $_POST['rc_move'] ) ? sanitize_text_field( wp_unslash( $_POST['rc_move'] ) ) : ''
+				),
 				array(
 					'atc_button' => isset( $_POST['rc_atc_button'] ),
 					'atc_label'  => isset( $_POST['rc_atc_label'] ) ? sanitize_text_field( wp_unslash( $_POST['rc_atc_label'] ) ) : '',
@@ -654,6 +775,8 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		) . '</span></div>';
 		echo '<p class="description">' . esc_html__( 'Each channel can use its own colour and icon: the default brand icon, an image from your media library, a custom SVG, or a dashicon (WordPress\' built-in icon set).', 'romcommerce' ) . '</p>';
 
+		$this->render_order_field( $this->active_channels() );
+
 		echo '<div class="rc-item-grid">';
 		foreach ( Channels::catalog() as $id => $channel ) {
 			$stored         = $this->channel_settings( $id );
@@ -706,6 +829,46 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		echo '</form>';
 	}
 
+	/**
+	 * The active channels as a list the merchant reorders with the arrow
+	 * buttons, the same way as the Reviews showcase card parts: with
+	 * JavaScript an arrow just moves its row and Save posts the hidden
+	 * inputs in list order; without it, each arrow is a submit button and
+	 * saved_channel_order() applies the move. The handlers are inline because
+	 * this pane arrives by AJAX, where <script> tags don't run.
+	 *
+	 * @param array<string, array{label: string, ...}> $active
+	 */
+	private function render_order_field( array $active ): void {
+		echo '<h4>' . esc_html__( 'Order in the button', 'romcommerce' ) . '</h4>';
+
+		if ( count( $active ) < 2 ) {
+			echo '<p class="description">' . esc_html__( 'Once two or more channels are enabled and have a number or link, you can set their order here.', 'romcommerce' ) . '</p>';
+			return;
+		}
+
+		// Enter in a text field "clicks" the form's first submit button, which
+		// is the top row's up arrow; this lets that click save the form instead
+		// of being swallowed as a move.
+		$enter_saves = "var f=document.activeElement;if(f&&f.form===this.form&&'INPUT'===f.tagName&&/^(text|number)$/.test(f.type)){return true;}";
+		$move_up     = $enter_saves . "var r=this.closest('li'),s=r.previousElementSibling;if(s){r.parentNode.insertBefore(r,s);}this.focus();return false;";
+		$move_down   = $enter_saves . "var r=this.closest('li'),s=r.nextElementSibling;if(s){r.parentNode.insertBefore(s,r);}this.focus();return false;";
+
+		echo '<ol style="list-style:none;margin:0;padding:0;max-width:30em;">';
+		foreach ( $active as $id => $channel ) {
+			echo '<li style="display:flex;align-items:center;gap:8px;margin:0 0 4px;padding:4px 8px;border:1px solid #c3c4c7;background:#fff;">';
+			echo '<input type="hidden" name="rc_channel_order[]" value="' . esc_attr( $id ) . '">';
+			echo '<span style="flex:1;">' . esc_html( $channel['label'] ) . '</span>';
+			/* translators: %s: channel name, such as "WhatsApp" */
+			echo '<button type="submit" class="button button-small" name="rc_move" value="' . esc_attr( $id . ':up' ) . '" aria-label="' . esc_attr( sprintf( __( 'Move up: %s', 'romcommerce' ), $channel['label'] ) ) . '" onclick="' . esc_attr( $move_up ) . '">&uarr;</button>';
+			/* translators: %s: channel name, such as "WhatsApp" */
+			echo '<button type="submit" class="button button-small" name="rc_move" value="' . esc_attr( $id . ':down' ) . '" aria-label="' . esc_attr( sprintf( __( 'Move down: %s', 'romcommerce' ), $channel['label'] ) ) . '" onclick="' . esc_attr( $move_down ) . '">&darr;</button>';
+			echo '</li>';
+		}
+		echo '</ol>';
+		echo '<p class="description">' . esc_html__( 'Top to bottom as the channels appear when the button opens. Use the arrows to move a channel, then save.', 'romcommerce' ) . '</p>';
+	}
+
 	private function render_atc_settings(): void {
 		echo '<div class="rc-cat-head"><span class="rc-tile"></span><h3>' . esc_html__( 'Add to Cart button', 'romcommerce' ) . '</h3><span class="rc-rule"></span></div>';
 		echo '<p class="description">' . esc_html__( 'A WhatsApp button on the product page, with the product name and link already in the message. It uses the WhatsApp number from the channels below; the WhatsApp channel does not have to be enabled in the floating button.', 'romcommerce' ) . '</p>';
@@ -721,7 +884,7 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		echo esc_html__( 'Show a WhatsApp button on product pages', 'romcommerce' ) . '</label></td></tr>';
 
 		echo '<tr><th scope="row"><label for="rc-atc-label">' . esc_html__( 'Button text', 'romcommerce' ) . '</label></th><td>';
-		echo '<input type="text" id="rc-atc-label" name="rc_atc_label" value="' . esc_attr( (string) ( Settings::get( self::ID )['atc_label'] ?? '' ) ) . '" class="regular-text" placeholder="' . esc_attr__( 'Ask on WhatsApp', 'romcommerce' ) . '">';
+		echo '<input type="text" id="rc-atc-label" name="rc_atc_label" value="' . esc_attr( (string) ( $this->settings()['atc_label'] ?? '' ) ) . '" class="regular-text" placeholder="' . esc_attr__( 'Ask on WhatsApp', 'romcommerce' ) . '">';
 		echo '<p class="description">' . esc_html__( 'Leave blank to use the default text, which follows the site language.', 'romcommerce' ) . '</p></td></tr>';
 
 		echo '<tr><th scope="row">' . esc_html__( 'Button colour', 'romcommerce' ) . '</th><td>';
@@ -764,22 +927,25 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 	 * @param bool                                      $cycle_icons  Whether the toggle button cycles through active channel icons.
 	 * @param string                                    $shape        Requested button shape; anything outside SHAPES saves as circle.
 	 * @param array<string, array<string, string|bool>> $channels     Parsed channel settings.
+	 * @param array<int, string>                        $channel_order Every channel ID, in button order.
 	 * @param array{atc_button: bool, atc_label: string, atc_color: string, atc_shape: string} $atc Sanitized Add-to-Cart button settings.
 	 */
-	private function handle_save( bool $enabled, string $position, string $toggle_color, bool $cycle_icons, string $shape, array $channels, array $atc ): void {
+	private function handle_save( bool $enabled, string $position, string $toggle_color, bool $cycle_icons, string $shape, array $channels, array $channel_order, array $atc ): void {
 		Settings::set_enabled( self::ID, $enabled );
 		Settings::update(
 			self::ID,
 			array(
-				'position'     => $position,
-				'toggle_color' => $toggle_color,
-				'cycle_icons'  => $cycle_icons,
-				'shape'        => in_array( $shape, self::SHAPES, true ) ? $shape : 'circle',
-				'channels'     => $channels,
-				'atc_button'   => $atc['atc_button'],
-				'atc_label'    => $atc['atc_label'],
-				'atc_color'    => $atc['atc_color'],
-				'atc_shape'    => in_array( $atc['atc_shape'], self::ATC_SHAPES, true ) ? $atc['atc_shape'] : 'rounded',
+				'position'       => $position,
+				'toggle_color'   => $toggle_color,
+				'cycle_icons'    => $cycle_icons,
+				'shape'          => in_array( $shape, self::SHAPES, true ) ? $shape : 'circle',
+				'channels'       => $channels,
+				'channel_order'  => $channel_order,
+				'atc_button'     => $atc['atc_button'],
+				'atc_label'      => $atc['atc_label'],
+				'atc_color'      => 0 === strcasecmp( $atc['atc_color'], self::ATC_DEFAULT_COLOR ) ? '' : $atc['atc_color'],
+				'atc_shape'      => in_array( $atc['atc_shape'], self::ATC_SHAPES, true ) ? $atc['atc_shape'] : 'rounded',
+				'color_defaults' => self::COLOR_DEFAULTS,
 			)
 		);
 
@@ -801,7 +967,12 @@ final class Module implements ModuleInterface, HasSettingsUi, HasPlacements {
 		foreach ( Channels::catalog() as $id => $channel ) {
 			$entry = isset( $raw[ $id ] ) && is_array( $raw[ $id ] ) ? $raw[ $id ] : array();
 
+			// A colour input always posts a value, so the default would otherwise be
+			// saved as a choice and a later default change would never reach the store.
 			$color = $this->sanitize_hex_color( (string) ( $entry['color'] ?? '' ) );
+			if ( 0 === strcasecmp( $color, $channel['color'] ) ) {
+				$color = '';
+			}
 
 			$channels[ $id ] = array(
 				'enabled'          => ! empty( $entry['enabled'] ),

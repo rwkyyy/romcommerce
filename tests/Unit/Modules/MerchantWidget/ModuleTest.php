@@ -179,8 +179,25 @@ final class ModuleTest extends TestCase {
 		self::assertStringContainsString( 'if(started||!window.merchantwidget){return;}started=true;', $js );
 	}
 
-	public function test_googles_script_is_deferred_in_the_footer_and_the_start_call_is_a_separate_handle(): void {
+	public function test_by_default_googles_script_waits_for_the_first_interaction(): void {
 		Functions\when( 'is_admin' )->justReturn( false );
+		Functions\expect( 'wp_register_script' )->once()->with( 'romcommerce-merchant-widget-start', false, array(), 'test', true );
+		Functions\expect( 'wp_enqueue_script' )->once()->with( 'romcommerce-merchant-widget-start' );
+		Functions\expect( 'wp_add_inline_script' )->once()->with(
+			'romcommerce-merchant-widget-start',
+			\Mockery::on(
+				static function ( string $js ): bool {
+					return false !== strpos( $js, 'addEventListener(t,load' ) && false !== strpos( $js, 'merchantwidget.js' );
+				}
+			)
+		);
+
+		( new Module() )->enqueue_assets();
+	}
+
+	public function test_without_load_later_googles_script_is_deferred_in_the_footer_and_the_start_call_is_a_separate_handle(): void {
+		Functions\when( 'is_admin' )->justReturn( false );
+		$this->settings( array( 'load_later' => false ) );
 		Functions\expect( 'wp_enqueue_script' )->once()->with(
 			'romcommerce-merchant-widget',
 			'https://www.gstatic.com/shopping/merchant/merchantwidget.js',

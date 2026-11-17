@@ -12,7 +12,7 @@ use RomCommerce\Settings;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Hide the coupon/voucher field at checkout (and optionally on the cart) —
+ * Hide the coupon field at checkout (and optionally on the cart) —
  * stops customers leaving to hunt for a code, a common cart-abandonment driver.
  * The block cart and checkout render the coupon form as its own inner block,
  * so there it's dropped from the page instead.
@@ -26,7 +26,7 @@ final class Module implements ModuleInterface, HasSettingsUi {
 	}
 
 	public function title(): string {
-		return __( 'Hide Voucher at Checkout', 'romcommerce' );
+		return __( 'Hide Coupon at Checkout', 'romcommerce' );
 	}
 
 	public function is_enabled(): bool {

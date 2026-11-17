@@ -2,8 +2,9 @@ name: Deploy to WordPress.org
 
 # Fires on the "vX.Y.Z" tag pushed by version-tag.yml. Deploys trunk + a
 # matching SVN tag to the wp.org plugin repo and attaches a release zip to
-# the GitHub Release. Needs SVN_USERNAME / SVN_PASSWORD secrets (your wp.org
-# plugin-committer credentials).
+# the GitHub Release, with that version's readme.txt changelog as its notes.
+# Needs SVN_USERNAME / SVN_PASSWORD secrets (your wp.org plugin-committer
+# credentials).
 
 on:
   push:
@@ -35,6 +36,13 @@ jobs:
             exit 1
           fi
 
+      # Runs before the SVN deploy so a version without a changelog section
+      # stops the release before anything reaches wp.org. The notes go to
+      # runner.temp because the deploy ships the whole workspace minus
+      # .distignore.
+      - name: Build release notes
+        run: bash bin/release-notes.sh "${GITHUB_REF_NAME#v}" > "$RUNNER_TEMP/release-notes.md"
+
       - name: WordPress Plugin Deploy
         uses: 10up/action-wordpress-plugin-deploy@stable
         with:
@@ -48,5 +56,6 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
+          body_path: ${{ runner.temp }}/release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

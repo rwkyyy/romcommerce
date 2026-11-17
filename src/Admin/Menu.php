@@ -47,7 +47,7 @@ final class Menu {
 			'romcommerce-admin',
 			plugins_url( 'assets/admin.css', ROMCOMMERCE_FILE ),
 			array(),
-			ROMCOMMERCE_VERSION
+			$this->asset_version( 'admin.css' )
 		);
 
 		// Needed for the Floating contact FAB pane's "choose image" icon picker
@@ -68,7 +68,7 @@ final class Menu {
 			'romcommerce-admin',
 			plugins_url( 'assets/admin.js', ROMCOMMERCE_FILE ),
 			array(),
-			ROMCOMMERCE_VERSION,
+			$this->asset_version( 'admin.js' ),
 			true
 		);
 
@@ -86,6 +86,19 @@ final class Menu {
 				'copyFailedLabel' => __( 'Copy failed, select it by hand', 'romcommerce' ),
 			)
 		);
+	}
+
+	/**
+	 * The plugin version alone keeps browsers on the old file until the next
+	 * release, so a screen changed between releases (every save on staging)
+	 * pairs new markup with old styles. The change time moves with every edit,
+	 * at one stat call on this screen only.
+	 */
+	private function asset_version( string $file ): string {
+		$path  = ROMCOMMERCE_DIR . '/assets/' . $file;
+		$mtime = is_readable( $path ) ? filemtime( $path ) : false;
+
+		return false === $mtime ? ROMCOMMERCE_VERSION : ROMCOMMERCE_VERSION . '.' . $mtime;
 	}
 
 	private function icon(): string {

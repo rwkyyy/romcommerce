@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: RomCommerce 0.8\n"
+"Project-Id-Version: RomCommerce 0.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/romcommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-15T09:43:40+00:00\n"
+"POT-Creation-Date: 2026-11-17T21:56:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: romcommerce\n"
@@ -94,10 +94,16 @@ msgstr ""
 msgid "Checkout & Billing"
 msgstr ""
 
+msgid "Cart & Fees"
+msgstr ""
+
 msgid "Orders & Fulfilment"
 msgstr ""
 
-msgid "Storefront & Merchandising"
+msgid "Products & Catalogue"
+msgstr ""
+
+msgid "Reviews & Trust"
 msgstr ""
 
 msgid "Admin & Branding"
@@ -160,7 +166,7 @@ msgstr ""
 msgid "Counties & Postcodes"
 msgstr ""
 
-msgid "Romanian county and postcode base data for checkout address fields."
+msgid "Romanian county and postcode base data for checkout address fields, with an optional locality list for the chosen county."
 msgstr ""
 
 msgid "Address Autocomplete"
@@ -181,22 +187,34 @@ msgstr ""
 msgid "Imports EU member states' VAT rates into WooCommerce's tax tables, for cross-border sales under OSS."
 msgstr ""
 
+msgid "EU Countries"
+msgstr ""
+
+msgid "A checklist of the EU countries against your selling and shipping locations and shipping zones, with buttons that add the missing ones, including an EU shipping zone."
+msgstr ""
+
 msgid "Email Verification"
 msgstr ""
 
 msgid "Checks whether a checkout email address is deliverable, without blocking submission."
 msgstr ""
 
-msgid "Hide Voucher at Checkout"
+msgid "Hide Coupon at Checkout"
 msgstr ""
 
-msgid "Hides the coupon/voucher field from the checkout page."
+msgid "Hides the coupon field from the checkout page."
 msgstr ""
 
 msgid "Coupon Cleanup"
 msgstr ""
 
 msgid "Automatically trashes expired coupons daily, with an option to permanently empty the coupon trash after a set number of days."
+msgstr ""
+
+msgid "Cash on Delivery Fee"
+msgstr ""
+
+msgid "Adds a fee to orders paid by cash on delivery, shown as its own line in the order totals before the order is placed."
 msgstr ""
 
 msgid "Emergency Delivery Fees"
@@ -265,16 +283,22 @@ msgstr ""
 msgid "A payment method dropdown on the WooCommerce orders list, next to the date and customer filters."
 msgstr ""
 
+msgid "SKU Generator"
+msgstr ""
+
+msgid "Gives products and variations saved without a SKU one, from a prefix and the product ID, name or a running number, and fills in the SKUs missing from existing products."
+msgstr ""
+
 msgid "Free Shipping Bar"
 msgstr ""
 
 msgid "A progress indicator showing how much more to spend for free shipping."
 msgstr ""
 
-msgid "Sale Category Sync"
+msgid "Category Sync"
 msgstr ""
 
-msgid "Keeps a \"Sale\" product category in sync with products currently on sale."
+msgid "Keeps a sale category filled with products on sale and a new products category with recently published products."
 msgstr ""
 
 msgid "Recommended Retail Price"
@@ -289,10 +313,16 @@ msgstr ""
 msgid "Rule-based control over which related products are shown."
 msgstr ""
 
-msgid "Availability Sorting"
+msgid "Catalog Sorting"
 msgstr ""
 
-msgid "Moves out-of-stock products to the end of catalog listings, keeping your sort order within each group."
+msgid "Out-of-stock products last and a \"Sort by discount\" order, each with its own switch."
+msgstr ""
+
+msgid "Out-of-Stock Product Cleanup"
+msgstr ""
+
+msgid "Moves published products that have been out of stock and unchanged for the months you choose to the trash, once a day."
 msgstr ""
 
 msgid "Frequently Bought Together"
@@ -328,7 +358,7 @@ msgstr ""
 msgid "Google Merchant Center Widget"
 msgstr ""
 
-msgid "Google's store widget with your Merchant Center store rating, as a badge in a corner of every page."
+msgid "Google's store widget with your Merchant Center store rating, as a badge in a corner of every page, and Google Customer Reviews' survey opt-in after an order."
 msgstr ""
 
 msgid "Perks Shop"
@@ -346,13 +376,16 @@ msgstr ""
 msgid "Show Some Love"
 msgstr ""
 
-msgid "An optional \"Magazin realizat cu RomCommerce\" credit in your site footer. Off unless you switch it on."
+msgid "An optional \"Comerț online mai simplu cu RomCommerce\" credit in your site footer, on your login page, or both. Off unless you switch it on."
 msgstr ""
 
 msgid "Module enabled."
 msgstr ""
 
 msgid "Module disabled."
+msgstr ""
+
+msgid "Show only active modules"
 msgstr ""
 
 msgid "General"
@@ -434,6 +467,12 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
+msgid "No module in this category is active."
+msgstr ""
+
+msgid "No module is active yet. Switch off \"Show only active modules\" to see them all."
+msgstr ""
+
 msgid "Where your active modules render on the storefront. Pick a surface to redraw the map; open a module to change where it shows."
 msgstr ""
 
@@ -481,6 +520,9 @@ msgid "Unlock with RomCommerce Pro"
 msgstr ""
 
 msgid "This module is not built yet."
+msgstr ""
+
+msgid "Related modules:"
 msgstr ""
 
 msgid "Activate your RomCommerce Pro license here once RomCommerce Pro is installed and active."
@@ -687,10 +729,101 @@ msgstr ""
 msgid "Overlay opacity"
 msgstr ""
 
-msgid "Moves out-of-stock products to the end of the shop, category, tag and product search listings. Your sort order still applies: in-stock products come first in that order, then out-of-stock products in the same order."
+msgid "Sort by discount"
+msgstr ""
+
+msgid "Add a \"Sort by discount\" order"
+msgstr ""
+
+msgid "Sorts the shop, category, tag and product search listings with the biggest discounts first, then the other products in your default order."
+msgstr ""
+
+msgid "Use it as"
+msgstr ""
+
+msgid "The shop's default order"
+msgstr ""
+
+msgid "Only a choice in the shop's sorting dropdown"
+msgstr ""
+
+msgid "Either way, \"Sort by discount\" is added to the sorting dropdown. As the default order, it takes the place of WooCommerce's default product sorting while this module is on."
+msgstr ""
+
+msgid "Biggest discount by"
+msgstr ""
+
+msgid "Percentage off the regular price"
+msgstr ""
+
+msgid "Amount saved off the regular price"
+msgstr ""
+
+msgid "Percentage off the lowest price of the 30 days before the sale"
+msgstr ""
+
+msgid "By percentage, half off a cheap product comes before a fifth off an expensive one. By amount, the most money saved comes first, which puts expensive products ahead. A variable product counts its biggest variation discount."
+msgstr ""
+
+msgid "That lowest price is the one Price history shows next to a sale, so the order follows the reductions shoppers see. A sale that isn't below it, or one that started before Price history was on, counts as no reduction. Needs Price history on; while it is off, the percentage off the regular price is used."
+msgstr ""
+
+msgid "Price history is off, so the percentage off the regular price is used for now."
+msgstr ""
+
+msgid "Recalculate every day at"
+msgstr ""
+
+#. translators: %s: timezone name, e.g. Europe/Bucharest
+#, php-format
+msgid "In your site's timezone (%s). A product put on sale or taken off sale keeps its place until then. 01:00 comes after WooCommerce starts and ends the day's scheduled sales at midnight. WordPress runs scheduled tasks on the first visit after this time."
+msgstr ""
+
+msgid "Recalculate now"
+msgstr ""
+
+msgid "Uses the saved settings, so save any change first. The first products are done right away and the rest in the background. If your site uses a page cache, the new order shows once its pages refresh."
+msgstr ""
+
+msgid "In progress"
+msgstr ""
+
+#. translators: %d: number of products with a discount found so far
+#, php-format
+msgid "Working out discounts in the background, %d product with a discount so far."
+msgid_plural "Working out discounts in the background, %d products with a discount so far."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Last calculated"
+msgstr ""
+
+#. translators: 1: date and time, 2: number of products
+#, php-format
+msgid "%1$s: %2$d product with a discount."
+msgid_plural "%1$s: %2$d products with a discount."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Next calculation"
+msgstr ""
+
+msgid "Two catalog orders, each with its own switch: out-of-stock products last, and \"Sort by discount\"."
+msgstr ""
+
+msgid "Out-of-stock products last"
 msgstr ""
 
 msgid "WooCommerce is set to hide out-of-stock products from the catalog (WooCommerce → Settings → Products → Inventory), so there are none to move. Only the \"on backorder\" option below has an effect."
+msgstr ""
+
+msgid "Out-of-stock products"
+msgstr ""
+
+msgid "Move out-of-stock products to the end"
+msgstr ""
+
+msgid "Moves out-of-stock products to the end of the shop, category, tag and product search listings. Your sort order still applies: in-stock products come first in that order, then out-of-stock products in the same order."
 msgstr ""
 
 msgid "Shopper sorting"
@@ -738,16 +871,102 @@ msgstr ""
 msgid "Ask the customer to confirm before emptying the cart"
 msgstr ""
 
+msgid "Cash on delivery fee"
+msgstr ""
+
+#. translators: %s: payment method name.
+#, php-format
+msgid "%s (switched off)"
+msgstr ""
+
+msgid "Adds a fee to orders paid by cash on delivery. The customer sees it as its own line in the order totals as soon as they choose the payment method, before placing the order."
+msgstr ""
+
+msgid "By law, a fee for a payment method can't be higher than what that method costs you, such as your courier's charge for collecting the cash. Mention the fee in your terms and on your payment information page too."
+msgstr ""
+
+msgid "Name shown to customers"
+msgstr ""
+
+msgid "Leave empty to use the default name, translated into the shop's language."
+msgstr ""
+
+msgid "Fee"
+msgstr ""
+
+msgid "Your product prices include VAT, so enter the fee with VAT too. The customer pays exactly this amount."
+msgstr ""
+
+msgid "Your product prices are entered without VAT, so enter the fee without VAT too. VAT is added on top when the fee is taxed."
+msgstr ""
+
+msgid "No fee from"
+msgstr ""
+
+msgid "Orders whose products add up to at least this much, after coupons, pay no fee. Leave empty to always charge it."
+msgstr ""
+
+msgid "Payment methods charged"
+msgstr ""
+
+msgid "No payment methods are switched on in WooCommerce."
+msgstr ""
+
+msgid "WooCommerce's own cash on delivery method is ticked by default. Tick any other method that collects cash on delivery, such as a courier's own."
+msgstr ""
+
+msgid "VAT"
+msgstr ""
+
+msgid "Charge VAT on the fee, at the standard rate"
+msgstr ""
+
 msgid "Codul poștal din România trebuie să conțină exact 6 cifre."
 msgstr ""
 
-msgid "Validates Romanian postal codes (6 digits) at checkout. County data comes from WooCommerce core, so nothing is duplicated."
+msgid "Alegeți localitatea din lista județului selectat."
+msgstr ""
+
+msgid "Alegeți localitatea…"
+msgstr ""
+
+msgid "Alegeți mai întâi județul"
+msgstr ""
+
+msgid "Nicio localitate găsită"
+msgstr ""
+
+msgid "Se caută…"
+msgstr ""
+
+msgid "Romanian address helpers for checkout: postcode validation and a locality list for the chosen county. County data comes from WooCommerce core, so nothing is duplicated."
 msgstr ""
 
 msgid "Postcode validation"
 msgstr ""
 
 msgid "Require a valid 6-digit Romanian postcode at checkout"
+msgstr ""
+
+msgid "Locality list"
+msgstr ""
+
+msgid "Offer the localities of the chosen county in the city field (Romania only)"
+msgstr ""
+
+msgid "The county field moves above the city. The classic checkout and the My account address form get a searchable list; the block checkout gets suggestions while the customer types. Only the chosen county's list loads (a few KB), so the checkout stays fast on slow phones. București lists Sector 1 to Sector 6."
+msgstr ""
+
+msgid "Localities not in the list"
+msgstr ""
+
+msgid "Not allowed: the customer must pick from the list"
+msgstr ""
+
+msgid "Allowed: the customer can also type a locality"
+msgstr ""
+
+msgid "The list has 13,266 localities and dates from 2021. If it misses a customer's village, \"Not allowed\" stops that customer at checkout."
 msgstr ""
 
 msgid "Address autocomplete"
@@ -777,12 +996,101 @@ msgstr ""
 msgid "This is separate from your site's general trash setting — it only affects coupons, and applies even if that site-wide auto-empty is disabled."
 msgstr ""
 
-#. translators: %s: link to romcommerce.ro
-#, php-format
-msgid "Magazin realizat cu %s"
+msgid "Checks the EU countries against WooCommerce's selling and shipping locations and its shipping zones. Tick the countries you want and add them with the buttons below. Nothing is removed, and nothing changes until you press a button."
 msgstr ""
 
-msgid "If you like RomCommerce, you can add a small \"Magazin realizat cu RomCommerce\" line to the bottom of your site footer, linking to romcommerce.ro. It is entirely optional, off unless you switch it on, and nothing in RomCommerce depends on it."
+msgid "EU countries"
+msgstr ""
+
+#. translators: 1: EU countries you sell to, 2: EU countries you ship to, 3: EU countries in a shipping zone, 4: number of EU countries
+#, php-format
+msgid "Selling %1$d/%4$d · Shipping %2$d/%4$d · Zone %3$d/%4$d"
+msgstr ""
+
+msgid "Tick all countries"
+msgstr ""
+
+msgid "Country"
+msgstr ""
+
+msgid "Selling locations"
+msgstr ""
+
+msgid "Shipping locations"
+msgstr ""
+
+msgid "Shipping zone"
+msgstr ""
+
+msgid "Countries missing from at least one column are ticked for you."
+msgstr ""
+
+msgid "Enable the module and save to use the buttons."
+msgstr ""
+
+msgid "Add ticked countries to selling locations"
+msgstr ""
+
+msgid "Add ticked countries to shipping locations"
+msgstr ""
+
+msgid "Add ticked countries to the EU shipping zone"
+msgstr ""
+
+msgid "The EU shipping zone is created the first time, after your other zones, with no shipping methods: add them in WooCommerce, Settings, Shipping. Countries already in another zone are left there."
+msgstr ""
+
+msgid "Tick at least one country first."
+msgstr ""
+
+msgid "Your store already sells to every country."
+msgstr ""
+
+msgid "The ticked countries are now in your selling locations."
+msgstr ""
+
+msgid "Shipping is switched off in WooCommerce, Settings, General, so there is no shipping list to add to."
+msgstr ""
+
+msgid "Your store already ships to every country."
+msgstr ""
+
+msgid "Your shipping locations follow your selling locations, so add the countries to selling locations instead."
+msgstr ""
+
+msgid "The ticked countries are now in your shipping locations."
+msgstr ""
+
+#. translators: 1: number of countries added, 2: shipping zone name
+#, php-format
+msgid "%1$d country added to the \"%2$s\" shipping zone."
+msgid_plural "%1$d countries added to the \"%2$s\" shipping zone."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: comma-separated country names
+#, php-format
+msgid "Left in their own zone: %s."
+msgstr ""
+
+msgid "Add shipping methods to the zone"
+msgstr ""
+
+msgid "European Union"
+msgstr ""
+
+msgid "Listed"
+msgstr ""
+
+msgid "Missing"
+msgstr ""
+
+#. translators: %s: link to romcommerce.ro
+#, php-format
+msgid "Comerț online mai simplu cu %s"
+msgstr ""
+
+msgid "If you like RomCommerce, you can add a small \"Comerț online mai simplu cu RomCommerce\" line to the bottom of your site footer, your login page, or both, linking to romcommerce.ro. It is entirely optional, off unless you switch it on, and nothing in RomCommerce depends on it."
 msgstr ""
 
 msgid "Footer credit"
@@ -794,13 +1102,19 @@ msgstr ""
 msgid "Alignment"
 msgstr ""
 
-msgid "Center"
-msgstr ""
-
 msgid "Left"
 msgstr ""
 
+msgid "Center"
+msgstr ""
+
 msgid "Right"
+msgstr ""
+
+msgid "Login page credit"
+msgstr ""
+
+msgid "Show the RomCommerce credit at the bottom of the login page"
 msgstr ""
 
 msgid "Felicitări! Beneficiați de livrare gratuită."
@@ -1111,13 +1425,23 @@ msgstr ""
 msgid "Notice page created and linked."
 msgstr ""
 
-msgid "Posibile comenzi asociate: verificare manuală necesară"
+msgid "Alte comenzi active"
 msgstr ""
 
-#. translators: %d: number of other active orders
+msgid "Clientul nu mai are alte comenzi neîncheiate (plată în așteptare, în procesare sau în așteptare)."
+msgstr ""
+
+#. translators: %d: number of the customer's other active orders
 #, php-format
-msgid "%d activă"
-msgid_plural "%d active"
+msgid "Același client (aceeași adresă de e-mail sau același telefon) mai are %d comandă neîncheiată (plată în așteptare, în procesare sau în așteptare). Verificați înainte de expediere: poate fi o comandă dublă sau se pot livra împreună. Detalii în comandă, caseta MAOF."
+msgid_plural "Același client (aceeași adresă de e-mail sau același telefon) mai are %d comenzi neîncheiate (plată în așteptare, în procesare sau în așteptare). Verificați înainte de expediere: pot fi comenzi duble sau se pot livra împreună. Detalii în comandă, caseta MAOF."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of the customer's other active orders
+#, php-format
+msgid "%d comandă"
+msgid_plural "%d comenzi"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -1204,7 +1528,7 @@ msgstr ""
 msgid "Pentru prevenirea erorilor de procesare și livrare, a comenzilor duplicate și, după caz, a utilizării abuzive a serviciului, comparăm adresa de e-mail și/sau numărul de telefon furnizate la plasarea comenzii cu datele comenzilor din ultimele 12 luni. Prelucrarea se întemeiază pe interesul nostru legitim de a asigura procesarea corectă și sigură a comenzilor și de a preveni pierderile operaționale, conform art. 6 alin. (1) lit. f) din RGPD. Rezultatul este un indicator intern destinat personalului autorizat și nu determină automat anularea sau refuzarea unei comenzi. În cazul identificării unor posibile comenzi asociate, situația este verificată manual. Puteți solicita accesul sau rectificarea datelor și vă puteți opune prelucrării, în condițiile art. 21 din RGPD, contactându-ne la [adresă de contact]."
 msgstr ""
 
-msgid "Shows Google's store widget, with your Merchant Center store rating, as a badge in a corner of every page."
+msgid "Shows Google's store widget, with your Merchant Center store rating, as a badge in a corner of every page. It can also ask customers, on the order confirmation page, to rate your store through Google Customer Reviews."
 msgstr ""
 
 msgid "Before you turn it on: this website must already be claimed and verified in your Google Merchant Center account. This module does not create, claim or verify anything in Merchant Center, and the badge only shows what Google has for your store."
@@ -1219,19 +1543,62 @@ msgstr ""
 msgid "Store badge"
 msgstr ""
 
-msgid "Show the store widget with your rating on every page"
+msgid "Show the store widget with your rating"
 msgstr ""
 
-msgid "Bottom right"
+msgid "Pages"
+msgstr ""
+
+msgid "Every page"
+msgstr ""
+
+msgid "Every page except cart, checkout and account"
+msgstr ""
+
+msgid "Shop, category and product pages only"
+msgstr ""
+
+msgid "For the badge only. The review survey shows on the order confirmation page either way."
+msgstr ""
+
+msgid "Phones"
+msgstr ""
+
+msgid "Hide the badge on phones"
+msgstr ""
+
+#. translators: %d: screen width in pixels
+#, php-format
+msgid "Screens up to %d pixels wide. Nothing is downloaded from Google there."
+msgstr ""
+
+msgid "Loading"
+msgstr ""
+
+msgid "Load Google's script after the visitor's first scroll, tap or key press, or after 5 seconds"
+msgstr ""
+
+msgid "Keeps it out of the first page load, so pages open faster; the badge appears a moment later. Switched off, the script still loads deferred, after the page has been read."
 msgstr ""
 
 msgid "Bottom left"
+msgstr ""
+
+msgid "Bottom right"
 msgstr ""
 
 msgid "Bottom right is Google's default. Pick the corner that live-chat or contact buttons don't use. On phones, Google always centres the widget."
 msgstr ""
 
 msgid "Merchant Center ID"
+msgstr ""
+
+#. translators: %s: Merchant Center account ID
+#, php-format
+msgid "Found in Google for WooCommerce: %s"
+msgstr ""
+
+msgid "Use this ID"
 msgstr ""
 
 msgid "Optional for the badge, required for the review survey below. Paste the ID, or the whole widget code from Merchant Center and the ID is taken from it. Left blank, Google finds your account from this site's address. If you fill it in, it must be the account that claimed this site's domain, or the badge does not show. An account can't show its rating on another domain."
@@ -1261,6 +1628,9 @@ msgstr ""
 msgid "Google's country list"
 msgstr ""
 
+msgid "To check it, place a new order on the live site. The dialog only shows on the confirmation page during the first hour after the order, so reopening an older order's confirmation page shows nothing."
+msgstr ""
+
 msgid "When the dialog shows, the customer's browser sends Google the order number, the customer's e-mail address, the delivery country, the estimated delivery date and the products' GTINs (when set). Mention it in your privacy policy. Google asks that every customer sees the dialog."
 msgstr ""
 
@@ -1279,13 +1649,13 @@ msgstr ""
 msgid "Days after the order. Google sends the survey after this date, so set it to when most of your orders have arrived."
 msgstr ""
 
-msgid "Centre of the screen (Google's default)"
+msgid "Top left"
 msgstr ""
 
 msgid "Top right"
 msgstr ""
 
-msgid "Top left"
+msgid "Centre of the screen (Google's default)"
 msgstr ""
 
 msgid "Bar along the bottom"
@@ -1408,7 +1778,86 @@ msgstr ""
 msgid "All payment methods"
 msgstr ""
 
-msgid "Adds a payment method dropdown to the WooCommerce orders list, next to the date and customer filters, so you can see only the orders paid by card, cash on delivery, bank transfer and so on. It lists every payment method installed, including switched-off ones, because older orders keep the method they were paid with."
+msgid "Adds a payment method dropdown to the WooCommerce orders list, next to the date and customer filters, so you can see only the orders paid by card, cash on delivery, bank transfer and so on."
+msgstr ""
+
+msgid "Payment methods listed"
+msgstr ""
+
+msgid "Switched on now"
+msgstr ""
+
+msgid "Switched on now, plus every method used on past orders"
+msgstr ""
+
+msgid "The second also lists methods switched off or removed since, so their orders can still be filtered. It reads all your orders once a day to build the list, which takes longer on large stores."
+msgstr ""
+
+msgid "Once a day, moves published products that are out of stock to the trash when they have not changed for the number of months you choose. Products on backorder, drafts and private products are left alone."
+msgstr ""
+
+msgid "The trash is switched off on this site (EMPTY_TRASH_DAYS is 0), so products would be deleted for good instead. The cleanup does not run until the trash is switched back on."
+msgstr ""
+
+msgid "Move to trash after"
+msgstr ""
+
+#. translators: %d: number of months.
+#, php-format
+msgid "%d month"
+msgid_plural "%d months"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "out of stock and unchanged"
+msgstr ""
+
+msgid "Counted from the product's last modified date, which is usually when it sold out. Editing the product starts the count again, and so does a plugin that re-saves products, such as a stock sync."
+msgstr ""
+
+msgid "Due now"
+msgstr ""
+
+#. translators: 1: number of products, 2: date.
+#, php-format
+msgid "%1$d product out of stock and unchanged since before %2$s."
+msgid_plural "%1$d products out of stock and unchanged since before %2$s."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Saved settings only: change the months and save to see the new count."
+msgstr ""
+
+msgid "Last run"
+msgstr ""
+
+#. translators: 1: date and time, 2: number of products.
+#, php-format
+msgid "%1$s: %2$d product moved to the trash."
+msgid_plural "%1$s: %2$d products moved to the trash."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of days.
+#, php-format
+msgid "WordPress deletes products from the trash for good after %d day. Until then you can restore them from Products, Trash."
+msgid_plural "WordPress deletes products from the trash for good after %d days. Until then you can restore them from Products, Trash."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Product images"
+msgstr ""
+
+msgid "When a product is deleted for good, WordPress keeps its images in the Media Library. Delete product images for WooCommerce, a free plugin, removes them at that moment, and keeps any image another product still uses."
+msgstr ""
+
+msgid "Delete product images for WooCommerce is active."
+msgstr ""
+
+msgid "Plugin details"
+msgstr ""
+
+msgid "WordPress.org page"
 msgstr ""
 
 msgid "Delivery truck"
@@ -1590,6 +2039,9 @@ msgstr ""
 msgid "WooCommerce's own Company field is also shown on the block checkout. To avoid asking for the company name twice, hide it in the Checkout block settings (Company name: Hidden)."
 msgstr ""
 
+msgid "Phone"
+msgstr ""
+
 msgid "Numărul de telefon introdus nu este valid."
 msgstr ""
 
@@ -1602,6 +2054,21 @@ msgid "Numbering data: intl-tel-input %s, bundled with the plugin and updated wi
 msgstr ""
 
 msgid "Validate phone numbers at checkout"
+msgstr ""
+
+msgid "Delivery phone"
+msgstr ""
+
+msgid "Not on the classic checkout"
+msgstr ""
+
+msgid "Optional"
+msgstr ""
+
+msgid "Required"
+msgstr ""
+
+msgid "Adds a phone field to the delivery address on the classic checkout and in My account, checked like the billing phone. It is saved as the order's shipping phone, which AWB plugins that use a delivery phone read; without a different delivery address, the billing phone is used. The block checkout has its own phone field for the delivery address, set in the Checkout block."
 msgstr ""
 
 msgid "Numbering data updates"
@@ -1629,6 +2096,9 @@ msgid "Cel mai mic preț din cele 30 de zile dinaintea acestei reduceri:"
 msgstr ""
 
 msgid "Records every effective price change and, next to a reduced price, shows the lowest price applied in the 30 days before that reduction started (the Omnibus reference price)."
+msgstr ""
+
+msgid "The history starts when you switch the module on: every product's current price is recorded then, in the background. WooCommerce keeps no earlier prices, so for the first 30 days the lowest price only reaches back to that day. Price changes made while the module is off are not recorded."
 msgstr ""
 
 msgid "Price history"
@@ -1990,11 +2460,13 @@ msgid "Review date"
 msgstr ""
 
 #. translators: %s: card part, such as "Reviewer name"
+#. translators: %s: channel name, such as "WhatsApp"
 #, php-format
 msgid "Move up: %s"
 msgstr ""
 
 #. translators: %s: card part, such as "Reviewer name"
+#. translators: %s: channel name, such as "WhatsApp"
 #, php-format
 msgid "Move down: %s"
 msgstr ""
@@ -2002,13 +2474,22 @@ msgstr ""
 msgid "Each ticked item gets its own line in the card, top to bottom in this order. Use the arrows to move an item, then save. The review text is always shown."
 msgstr ""
 
-msgid "Keeps the category below in sync automatically: whenever a product is saved, and once a day when WooCommerce starts/ends scheduled sales, products currently on sale are added to it and products no longer on sale are removed from it. You never need to tag products by hand."
+msgid "Sale category created and selected."
+msgstr ""
+
+msgid "New products category created and selected."
+msgstr ""
+
+msgid "Fills the categories below automatically, on every product save and once a day: products on sale go into the sale category, newly published products into the new products category. Products leave once they no longer qualify, so you never tag them by hand."
+msgstr ""
+
+msgid "Products on sale"
+msgstr ""
+
+msgid "Add products on sale to a category"
 msgstr ""
 
 msgid "Sale category"
-msgstr ""
-
-msgid "No product categories exist yet."
 msgstr ""
 
 msgid "Products on sale are added to this category; products no longer on sale are removed from it."
@@ -2017,16 +2498,37 @@ msgstr ""
 msgid "Create a \"Reduceri\" category"
 msgstr ""
 
+msgid "New products"
+msgstr ""
+
+msgid "Add newly published products to a category for"
+msgstr ""
+
+msgid "Leave out products that are out of stock"
+msgstr ""
+
+msgid "New products category"
+msgstr ""
+
+msgid "Products are added on the day they are published and removed once the days above have passed."
+msgstr ""
+
+msgid "Create a \"Noutăți\" category"
+msgstr ""
+
 msgid "Resync all products now"
 msgstr ""
 
-msgid "Only needed for a one-off fix: for example, you just picked this category, or you imported/changed products in a way that skipped the automatic sync. It walks every published product and re-checks its sale state right now; the automatic sync above keeps handling everything afterwards."
+msgid "Only needed for a one-off fix, for example right after you pick a category or after an import that skipped the automatic sync. It re-checks every published product now; the automatic sync handles everything afterwards."
+msgstr ""
+
+msgid "No product categories exist yet."
+msgstr ""
+
+msgid "The new products category must be different from the sale category. Pick another one."
 msgstr ""
 
 msgid "The category could not be created."
-msgstr ""
-
-msgid "Sale category created and selected."
 msgstr ""
 
 msgid "All products resynced."
@@ -2047,6 +2549,119 @@ msgstr ""
 #. translators: %s: the [romcommerce_sal_pictogram] shortcode
 #, php-format
 msgid "Where the pictogram sits inside your site's footer. \"None\" skips the automatic footer placement; use the %s shortcode to place it yourself, e.g. in a legal/contact page or a widget."
+msgstr ""
+
+msgid "Gives a SKU to every product and variation saved without one, built from a prefix and the product ID, its name or a running number. A SKU that is already set, typed or generated, is never changed."
+msgstr ""
+
+msgid "Automatic"
+msgstr ""
+
+msgid "Give a SKU to products saved without one"
+msgstr ""
+
+msgid "In the product editor, through the REST API and in CSV imports. Switch it off to fill in SKUs only with the button below."
+msgstr ""
+
+msgid "Prefix"
+msgstr ""
+
+msgid "e.g. RC-"
+msgstr ""
+
+msgid "Letters, digits and - _ . / only. Leave blank for none."
+msgstr ""
+
+msgid "Built from"
+msgstr ""
+
+msgid "Product ID"
+msgstr ""
+
+msgid "Product name"
+msgstr ""
+
+msgid "Running number"
+msgstr ""
+
+msgid "Product name uses the product's URL slug, or its name while it is a draft."
+msgstr ""
+
+msgid "Minimum digits"
+msgstr ""
+
+msgid "Pads the product ID or running number with leading zeros: 5 turns 42 into 00042. 0 for none."
+msgstr ""
+
+msgid "Next running number"
+msgstr ""
+
+msgid "Only for \"Running number\". Goes up by one with each SKU; numbers already used by another product are skipped."
+msgstr ""
+
+msgid "Variations"
+msgstr ""
+
+msgid "Parent SKU and attribute values"
+msgstr ""
+
+msgid "Parent SKU and variation ID"
+msgstr ""
+
+msgid "No SKU (variations show the parent's)"
+msgstr ""
+
+msgid "A variation set to \"Any\" for every attribute gets its variation ID instead."
+msgstr ""
+
+msgid "Separator"
+msgstr ""
+
+msgid "Between the parent SKU and the variation's part, and between attribute values."
+msgstr ""
+
+msgid "Capital letters"
+msgstr ""
+
+msgid "Write product names and attribute values in capitals"
+msgstr ""
+
+msgid "Example"
+msgstr ""
+
+#. translators: %s: example variation SKU, such as "RC-42-ROSU-M"
+#, php-format
+msgid "A variation: %s"
+msgstr ""
+
+msgid "Product 42, \"Tricou bumbac\", with a Roșu / M variation. Updates when you save."
+msgstr ""
+
+msgid "Existing products"
+msgstr ""
+
+msgid "Enable the module and save to fill in SKUs on existing products."
+msgstr ""
+
+#. translators: %d: number of products and variations given a SKU so far
+#, php-format
+msgid "Filling in SKUs in the background, %d given so far."
+msgstr ""
+
+#. translators: %d: number of products and variations without a SKU
+#, php-format
+msgid "%d product or variation has no SKU."
+msgid_plural "%d products and variations have no SKU."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Continue now"
+msgstr ""
+
+msgid "Fill in missing SKUs"
+msgstr ""
+
+msgid "Uses the saved settings above, so save any change first. The first products are done right away and the rest in the background; open this page again to see the progress. Products that can't get a SKU, such as variations whose parent has none, are left as they are."
 msgstr ""
 
 #. translators: %s: date range
@@ -2305,7 +2920,7 @@ msgstr ""
 msgid "CUI / CIF-ul introdus nu are un format valid."
 msgstr ""
 
-msgid "Validates the CUI/CIF format and checksum at checkout for company (PJ) orders. Works alongside the PF/PJ billing fields."
+msgid "Validates the CUI/CIF format and checksum at checkout for company (PJ) orders with a Romanian billing address. Works alongside the PF/PJ billing fields."
 msgstr ""
 
 msgid "VAT ID validation"
@@ -2369,9 +2984,6 @@ msgstr ""
 msgid "All 27 EU member states"
 msgstr ""
 
-msgid "Country"
-msgstr ""
-
 msgid "Standard"
 msgstr ""
 
@@ -2388,9 +3000,6 @@ msgid "(imported)"
 msgstr ""
 
 msgid "Import selected rates"
-msgstr ""
-
-msgid "VAT"
 msgstr ""
 
 msgid "Reduced rate"
@@ -2462,6 +3071,15 @@ msgstr ""
 msgid "Telegram link (t.me/…)"
 msgstr ""
 
+msgid "Waze"
+msgstr ""
+
+msgid "Waze link, coordinates (e.g. 44.4268, 26.1025) or address"
+msgstr ""
+
+msgid "Map link (Google Maps, Apple Maps or any other) or address"
+msgstr ""
+
 msgid "Deschideți canalele de contact"
 msgstr ""
 
@@ -2528,6 +3146,15 @@ msgid "Colour"
 msgstr ""
 
 msgid "Default"
+msgstr ""
+
+msgid "Order in the button"
+msgstr ""
+
+msgid "Once two or more channels are enabled and have a number or link, you can set their order here."
+msgstr ""
+
+msgid "Top to bottom as the channels appear when the button opens. Use the arrows to move a channel, then save."
 msgstr ""
 
 msgid "Add to Cart button"
@@ -2737,7 +3364,7 @@ msgstr ""
 msgid "Run a RomCommerce background job now"
 msgstr ""
 
-msgid "Runs one of RomCommerce Lite's background jobs now: maof-phone-index, price-history-baseline, sale-category-resync, coupon-cleanup or store-report (emails the weekly report for the last full week). The first two work in batches for up to 20 seconds per call; call again until \"complete\" is true. Coupon cleanup permanently deletes trashed coupons when that option is switched on."
+msgid "Runs one of RomCommerce Lite's background jobs now: maof-phone-index, price-history-baseline, sale-category-resync, coupon-cleanup, store-report (emails the weekly report for the last full week), sku-fill (gives products and variations without a SKU one), out-of-stock-cleanup (moves the out-of-stock products that are due to the trash) or discount-sorting (works out every product's discount for the \"Sort by discount\" order). maof-phone-index, price-history-baseline, sku-fill, out-of-stock-cleanup and discount-sorting work in batches for up to 20 seconds per call; call again until \"complete\" is true. Coupon cleanup permanently deletes trashed coupons when that option is switched on."
 msgstr ""
 
 msgid "Import EU VAT rates"
@@ -2764,6 +3391,9 @@ msgstr ""
 #. translators: %s: module id
 #, php-format
 msgid "Switch on the %s module first."
+msgstr ""
+
+msgid "Sort by discount is switched off in Catalog Sorting."
 msgstr ""
 
 msgid "Switch on the vat-rates module first."
