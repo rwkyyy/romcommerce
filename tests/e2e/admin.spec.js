@@ -19,6 +19,8 @@ test.describe( 'RomCommerce admin', () => {
 	test( 'every module settings pane renders without PHP or console errors', async ( { page } ) => {
 		const modules = liteModules();
 		expect( modules.length ).toBeGreaterThan( 15 );
+		// One test walks every pane at ~1s each, so a flat 30s budget breaks as modules are added.
+		test.setTimeout( 15_000 + modules.length * 3_000 );
 
 		const consoleErrors = [];
 		page.on( 'console', ( msg ) => msg.type() === 'error' && consoleErrors.push( msg.text() ) );
